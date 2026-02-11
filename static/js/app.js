@@ -161,6 +161,8 @@ socket.on('caseload_loaded', (data) => {
     updateDashboardStats(data);
     $('#case-search').disabled = false;
     $('#case-filter').disabled = false;
+    // Show chat button now that cases are loaded
+    $('#btn-chat-toggle').classList.remove('hidden');
 });
 
 async function loadCaseList() {
@@ -1568,6 +1570,298 @@ socket.on('status', (data) => {
 });
 
 // ============================================================
+//  CASELOAD CHAT
+// ============================================================
+
+let chatOpen = false;
+let chatResponseText = '';
+let chatThinkingTokens = 0;
+
+$('#btn-chat-toggle').addEventListener('click', () => {
+    chatOpen = !chatOpen;
+    const panel = document.getElementById('chat-panel');
+    if (chatOpen) {
+        panel.classList.remove('hidden');
+        document.getElementById('chat-input').focus();
+    } else {
+        panel.classList.add('hidden');
+    }
+});
+
+$('#btn-chat-close').addEventListener('click', () => {
+    chatOpen = false;
+    document.getElementById('chat-panel').classList.add('hidden');
+});
+
+$('#btn-chat-clear').addEventListener('click', () => {
+    socket.emit('clear_chat');
+    const messages = document.getElementById('chat-messages');
+    messages.textContent = '';
+    // Re-add welcome
+    const welcome = el('div', { className: 'chat-welcome' },
+        el('p', { className: 'chat-welcome-title' }, 'Ask your caseload anything'),
+        el('p', { className: 'chat-welcome-hint' }, 'Chat history cleared.')
+    );
+    messages.appendChild(welcome);
+});
+
+function sendChatMessage(text) {
+    if (!text.trim() || state.analysisActive) return;
+    const input = document.getElementById('chat-input');
+    input.value = '';
+
+    const messages = document.getElementById('chat-messages');
+
+    // Remove welcome if present
+    const welcome = messages.querySelector('.chat-welcome');
+    if (welcome) welcome.remove();
+
+    // Add user message
+    messages.appendChild(el('div', { className: 'chat-msg chat-msg-user' },
+        el('div', { className: 'chat-msg-content' }, text)
+    ));
+
+    // Add AI response placeholder
+    const aiMsg = el('div', { className: 'chat-msg chat-msg-ai' });
+    const thinkingDetails = el('details', { className: 'thinking-details chat-thinking-details' });
+    const summary = el('summary', {});
+    summary.appendChild(el('span', { className: 'thinking-icon pulse' }, '\u2699'));
+    summary.appendChild(document.createTextNode(' Thinking'));
+    const thinkingCount = el('span', { className: 'thinking-count chat-thinking-count' });
+    summary.appendChild(thinkingCount);
+    thinkingDetails.appendChild(summary);
+    const thinkingStream = el('div', { className: 'side-stream chat-thinking-stream' });
+    thinkingDetails.appendChild(thinkingStream);
+    thinkingDetails.open = true;
+    aiMsg.appendChild(thinkingDetails);
+
+    const responseContent = el('div', { className: 'chat-msg-content chat-response-content markdown-body' });
+    aiMsg.appendChild(responseContent);
+    messages.appendChild(aiMsg);
+    messages.scrollTop = messages.scrollHeight;
+
+    // Store references for streaming
+    state.chatThinkingEl = thinkingStream;
+    state.chatThinkingCount = thinkingCount;
+    state.chatThinkingDetails = thinkingDetails;
+    state.chatResponseEl = responseContent;
+    chatResponseText = '';
+    chatThinkingTokens = 0;
+
+    state.analysisActive = true;
+    setStatus('Chat...', 'analyzing');
+    socket.emit('chat_message', { message: text });
+}
+
+$('#btn-chat-send').addEventListener('click', () => {
+    sendChatMessage(document.getElementById('chat-input').value);
+});
+
+$('#chat-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage(document.getElementById('chat-input').value);
+    }
+});
+
+// Suggestion buttons
+document.querySelectorAll('.chat-suggestion').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const q = btn.dataset.q;
+        if (q) {
+            document.getElementById('chat-input').value = q;
+            sendChatMessage(q);
+        }
+    });
+});
+
+// Chat streaming events
+socket.on('chat_thinking_started', () => {
+    if (state.chatThinkingEl) state.chatThinkingEl.textContent = '';
+});
+
+socket.on('chat_thinking_delta', (data) => {
+    if (state.chatThinkingEl) {
+        state.chatThinkingEl.appendChild(document.createTextNode(data.text));
+        state.chatThinkingEl.scrollTop = state.chatThinkingEl.scrollHeight;
+    }
+    chatThinkingTokens += data.text.split(/\s+/).length;
+    if (state.chatThinkingCount) {
+        state.chatThinkingCount.textContent = chatThinkingTokens.toLocaleString() + ' tokens';
+    }
+    const messages = document.getElementById('chat-messages');
+    if (messages) messages.scrollTop = messages.scrollHeight;
+});
+
+socket.on('chat_thinking_complete', () => {
+    if (state.chatThinkingDetails) state.chatThinkingDetails.open = false;
+});
+
+socket.on('chat_response_started', () => {
+    chatResponseText = '';
+    if (state.chatResponseEl) state.chatResponseEl.textContent = '';
+});
+
+socket.on('chat_response_delta', (data) => {
+    chatResponseText += data.text;
+    if (state.chatResponseEl) {
+        state.chatResponseEl.appendChild(document.createTextNode(data.text));
+        const messages = document.getElementById('chat-messages');
+        if (messages) messages.scrollTop = messages.scrollHeight;
+    }
+});
+
+socket.on('chat_complete', () => {
+    if (chatResponseText && state.chatResponseEl) {
+        safeRenderMarkdown(state.chatResponseEl, chatResponseText);
+    }
+});
+
+socket.on('chat_results', () => {
+    state.analysisActive = false;
+    setStatus('Ready', 'ready');
+    // Safety net: render markdown if not already done
+    if (chatResponseText && state.chatResponseEl && !state.chatResponseEl.querySelector('h1, h2, h3, table, ul, ol')) {
+        safeRenderMarkdown(state.chatResponseEl, chatResponseText);
+    }
+    const messages = document.getElementById('chat-messages');
+    if (messages) messages.scrollTop = messages.scrollHeight;
+});
+
+socket.on('chat_error', (data) => {
+    state.analysisActive = false;
+    setStatus('Ready', 'ready');
+    if (state.chatResponseEl) {
+        state.chatResponseEl.textContent = '';
+        state.chatResponseEl.appendChild(el('div', { className: 'error-message' },
+            el('strong', {}, 'Error: '),
+            el('span', {}, data.error || 'Chat failed')
+        ));
+    }
+});
+
+// ============================================================
+//  HEARING PREP BRIEF
+// ============================================================
+
+let hearingPrepText = '';
+
+$('#btn-hearing-prep').addEventListener('click', () => {
+    if (!state.currentCase || state.analysisActive) return;
+    state.analysisActive = true;
+    hearingPrepText = '';
+    setStatus('Hearing Prep...', 'analyzing');
+
+    // Show in case analysis area
+    const analysisEl = $('#case-analysis');
+    analysisEl.textContent = '';
+    analysisEl.appendChild(el('div', { className: 'analysis-loading hearing-prep-loading' },
+        el('span', { className: 'thinking-icon pulse' }, '\u26A1'),
+        el('span', {}, 'Generating hearing brief — 30 seconds...')
+    ));
+
+    showRightPanel(false);
+    socket.emit('run_hearing_prep', { case_number: state.currentCase.case_number });
+});
+
+socket.on('hearing_prep_thinking_started', () => {});
+socket.on('hearing_prep_thinking_delta', () => {});
+socket.on('hearing_prep_thinking_complete', () => {});
+
+socket.on('hearing_prep_response_started', () => {
+    hearingPrepText = '';
+    const analysisEl = $('#case-analysis');
+    analysisEl.textContent = '';
+});
+
+socket.on('hearing_prep_response_delta', (data) => {
+    hearingPrepText += data.text;
+    const analysisEl = $('#case-analysis');
+    analysisEl.appendChild(document.createTextNode(data.text));
+});
+
+socket.on('hearing_prep_complete', () => {
+    if (hearingPrepText) {
+        const analysisEl = $('#case-analysis');
+        analysisEl.textContent = '';
+        const wrapper = el('div', { className: 'markdown-body hearing-prep-brief' });
+        safeRenderMarkdown(wrapper, hearingPrepText);
+        analysisEl.appendChild(wrapper);
+    }
+});
+
+socket.on('hearing_prep_results', (data) => {
+    stopThinking();
+    if (data.brief && !hearingPrepText) {
+        const analysisEl = $('#case-analysis');
+        analysisEl.textContent = '';
+        const wrapper = el('div', { className: 'markdown-body hearing-prep-brief' });
+        safeRenderMarkdown(wrapper, data.brief);
+        analysisEl.appendChild(wrapper);
+    }
+});
+
+// ============================================================
+//  CLIENT LETTER GENERATOR
+// ============================================================
+
+let clientLetterText = '';
+
+$('#btn-client-letter').addEventListener('click', () => {
+    if (!state.currentCase || state.analysisActive) return;
+    state.analysisActive = true;
+    clientLetterText = '';
+    setStatus('Writing Letter...', 'analyzing');
+
+    const analysisEl = $('#case-analysis');
+    analysisEl.textContent = '';
+    analysisEl.appendChild(el('div', { className: 'analysis-loading' },
+        el('span', { className: 'thinking-icon pulse' }, '\u2709'),
+        el('span', {}, 'Writing client letter in plain English...')
+    ));
+
+    showRightPanel(false);
+    socket.emit('run_client_letter', { case_number: state.currentCase.case_number });
+});
+
+socket.on('client_letter_thinking_started', () => {});
+socket.on('client_letter_thinking_delta', () => {});
+socket.on('client_letter_thinking_complete', () => {});
+
+socket.on('client_letter_response_started', () => {
+    clientLetterText = '';
+    const analysisEl = $('#case-analysis');
+    analysisEl.textContent = '';
+});
+
+socket.on('client_letter_response_delta', (data) => {
+    clientLetterText += data.text;
+    const analysisEl = $('#case-analysis');
+    analysisEl.appendChild(document.createTextNode(data.text));
+});
+
+socket.on('client_letter_complete', () => {
+    if (clientLetterText) {
+        const analysisEl = $('#case-analysis');
+        analysisEl.textContent = '';
+        const wrapper = el('div', { className: 'markdown-body client-letter' });
+        safeRenderMarkdown(wrapper, clientLetterText);
+        analysisEl.appendChild(wrapper);
+    }
+});
+
+socket.on('client_letter_results', (data) => {
+    stopThinking();
+    if (data.letter && !clientLetterText) {
+        const analysisEl = $('#case-analysis');
+        analysisEl.textContent = '';
+        const wrapper = el('div', { className: 'markdown-body client-letter' });
+        safeRenderMarkdown(wrapper, data.letter);
+        analysisEl.appendChild(wrapper);
+    }
+});
+
+// ============================================================
 //  INIT
 // ============================================================
 
@@ -1580,6 +1874,7 @@ socket.on('status', (data) => {
         showView('dashboard');
         $('#case-search').disabled = false;
         $('#case-filter').disabled = false;
+        $('#btn-chat-toggle').classList.remove('hidden');
 
         if (stats.alert_count > 0) {
             const alertResp = await fetch('/api/alerts');

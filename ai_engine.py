@@ -54,6 +54,15 @@ MOTION_MAX_TOKENS = MOTION_THINKING + 64000  # Showcase 128K output capability
 EVIDENCE_THINKING = 20000
 EVIDENCE_MAX_TOKENS = EVIDENCE_THINKING + 8192
 
+CHAT_THINKING = 30000
+CHAT_MAX_TOKENS = CHAT_THINKING + 8192
+
+HEARING_PREP_THINKING = 10000  # Fast — PD needs this in 30 seconds
+HEARING_PREP_MAX_TOKENS = HEARING_PREP_THINKING + 4096
+
+CLIENT_LETTER_THINKING = 10000
+CLIENT_LETTER_MAX_TOKENS = CLIENT_LETTER_THINKING + 8192
+
 
 # ============================================================
 #  SYSTEM PROMPTS
@@ -423,6 +432,111 @@ Attorney signature block with placeholder.
 
 Today is {today}."""
 
+CHAT_PROMPT = """You are Case Nexus, an AI legal caseload assistant for a public defender.
+
+You have the COMPLETE caseload loaded — every active case with full details. The attorney can ask you ANYTHING about their cases, and you should answer by cross-referencing the actual case data.
+
+## HOW TO RESPOND
+
+1. **Be specific** — Always cite case numbers, defendant names, dates, and charges. Never give vague answers when you have the data.
+2. **Be practical** — Give actionable advice, not academic analysis. This attorney is busy.
+3. **Cross-reference** — When answering about one case, check if other cases have relevant connections (same officer, judge, witness, charge type, etc.).
+4. **Format clearly** — Use markdown: headers, bullet points, bold for case numbers and names, tables for comparisons.
+5. **Think like a defense attorney** — Every answer should be oriented toward helping the defense.
+6. **Be concise but complete** — Answer the question fully, but don't pad. A PD has 200 cases and no time for fluff.
+
+## WHAT YOU CAN ANSWER
+
+- Questions about specific cases ("What's happening with CR-2025-0051?")
+- Cross-case analysis ("Which cases involve Officer Freeman?")
+- Deadline tracking ("What cases have hearings this week?")
+- Comparative analysis ("Compare plea offers across my DUI cases")
+- Strategy questions ("Which cases should I prioritize today?")
+- Pattern finding ("Do any of my cases share witnesses?")
+- Quick legal research ("What's the speedy trial deadline for CR-2025-0089?")
+
+Today is {today}. Calculate all deadlines precisely from this date."""
+
+HEARING_PREP_PROMPT = """You are Case Nexus, preparing a rapid hearing brief for a public defender who is walking into court in 10 minutes.
+
+This must be FAST and ACTIONABLE. No fluff. The attorney will read this on their phone while walking to the courtroom.
+
+Generate a hearing prep brief in markdown with EXACTLY these sections:
+
+## CASE AT A GLANCE
+- One-line case summary (defendant, charges, severity)
+- Today's hearing type and what it's for
+- Judge name + any notes from their other cases
+
+## KEY FACTS (5 bullets max)
+The 5 most important facts, in order of importance.
+
+## YOUR ARGUMENTS TODAY
+Numbered list of what to say/ask for in this hearing, with the legal basis for each.
+
+## WHAT THE PROSECUTION WILL SAY
+Their likely arguments and your one-line response to each.
+
+## JUDGE TENDENCIES
+Based on the other cases with this judge in the caseload, note any patterns (lenient on bond? tough on DUI? granted suppression motions before?).
+
+## ONE THING TO REMEMBER
+The single most important thing the attorney must not forget.
+
+Keep the ENTIRE brief under 500 words. Speed over completeness. Today is {today}."""
+
+CLIENT_LETTER_PROMPT = """You are Case Nexus, drafting a letter from a public defender to their client.
+
+Write a clear, empathetic, professional letter that a non-lawyer can understand. The client may have limited education, may be anxious, and may not speak English as a first language — use simple, direct language.
+
+## LETTER FORMAT
+
+Use markdown formatting:
+
+**[Attorney Name]**
+**Public Defender's Office**
+**[County], Georgia**
+
+**Date:** {today}
+
+**Dear [Client Name],**
+
+Then write the letter covering:
+
+### 1. Current Status
+What is happening with their case right now? Where does it stand? What was the last thing that happened?
+
+### 2. What Comes Next
+What is the next hearing/event? When? Where should they be and at what time?
+
+### 3. The Plea Offer (if applicable)
+If there's a plea offer, explain in PLAIN ENGLISH:
+- What the prosecution is offering
+- What it means practically (jail time, probation, fines, criminal record impact)
+- Whether you recommend accepting, rejecting, or negotiating
+- What happens if they reject it (trial, potential sentencing exposure)
+
+### 4. Your Options
+List the client's options clearly, numbered:
+1. Accept the plea offer (explain consequences)
+2. Counter-offer (explain what you'd propose)
+3. Go to trial (explain risks and timeline)
+
+### 5. What You Need From Them
+Any actions the client needs to take (show up to court, bring documents, contact witnesses, etc.)
+
+### 6. How to Reach Me
+Standard contact information block.
+
+## RULES
+- NO legal jargon without explanation (if you must use a legal term, explain it in parentheses)
+- Short paragraphs (2-3 sentences max)
+- Active voice ("You need to come to court" not "Your presence is required")
+- Warm but professional tone
+- Be honest about risks — don't sugarcoat, but don't terrorize either
+
+Today is {today}."""
+
 EVIDENCE_ANALYSIS_PROMPT = """You are Case Nexus, a forensic evidence analyst for a public defender's office. You are examining a piece of evidence using your visual analysis capabilities.
 
 Analyze this evidence image in the context of the criminal case. Provide a thorough, defense-oriented analysis using markdown:
@@ -636,6 +750,86 @@ def generate_motion(case_context: str, motion_type: str,
     )
 
 
+def run_chat(caseload_context: str, message: str, chat_history: list = None,
+             emit_callback=None) -> dict:
+    """Conversational AI over the entire caseload.
+
+    Loads ALL cases into the 1M context window so the attorney can
+    ask any question and get answers that cross-reference all cases.
+    Chat history is maintained for follow-up questions.
+    """
+    from datetime import date
+    today = date.today().isoformat()
+
+    # Build messages array with history
+    messages = []
+    if chat_history:
+        for msg in chat_history:
+            messages.append({"role": msg["role"], "content": msg["content"]})
+
+    # Current message includes caseload context on first message only
+    if not chat_history:
+        user_content = caseload_context + "\n\n---\n\nThe attorney asks: " + message
+    else:
+        user_content = message
+
+    messages.append({"role": "user", "content": user_content})
+
+    if emit_callback:
+        emit_callback("chat_started", {"status": "Searching across caseload..."})
+
+    return _run_streaming_analysis(
+        system_prompt=CHAT_PROMPT.replace("{today}", today),
+        user_content=user_content if not chat_history else None,
+        max_tokens=CHAT_MAX_TOKENS,
+        thinking_budget=CHAT_THINKING,
+        emit_callback=emit_callback,
+        event_prefix="chat",
+        messages_override=messages if chat_history else None,
+    )
+
+
+def run_hearing_prep(case_context: str, caseload_context: str = "",
+                     emit_callback=None) -> dict:
+    """Generate a rapid hearing prep brief for a PD walking into court."""
+    from datetime import date
+    today = date.today().isoformat()
+
+    full_context = case_context
+    if caseload_context:
+        full_context += "\n\n---\n\n# OTHER CASES WITH THIS JUDGE (for tendency analysis)\n" + caseload_context
+
+    if emit_callback:
+        emit_callback("hearing_prep_started", {"status": "Generating hearing brief..."})
+
+    return _run_streaming_analysis(
+        system_prompt=HEARING_PREP_PROMPT.replace("{today}", today),
+        user_content=full_context + "\n\nGenerate a rapid hearing prep brief. Keep it under 500 words. Today is " + today + ".",
+        max_tokens=HEARING_PREP_MAX_TOKENS,
+        thinking_budget=HEARING_PREP_THINKING,
+        emit_callback=emit_callback,
+        event_prefix="hearing_prep",
+    )
+
+
+def run_client_letter(case_context: str, emit_callback=None) -> dict:
+    """Generate a plain-language letter to the client."""
+    from datetime import date
+    today = date.today().isoformat()
+
+    if emit_callback:
+        emit_callback("client_letter_started", {"status": "Drafting client letter..."})
+
+    return _run_streaming_analysis(
+        system_prompt=CLIENT_LETTER_PROMPT.replace("{today}", today),
+        user_content=case_context + "\n\nWrite a clear, empathetic letter to this client explaining their case status, options, and next steps. Today is " + today + ".",
+        max_tokens=CLIENT_LETTER_MAX_TOKENS,
+        thinking_budget=CLIENT_LETTER_THINKING,
+        emit_callback=emit_callback,
+        event_prefix="client_letter",
+    )
+
+
 def analyze_evidence(case_context: str, evidence_item: dict,
                      emit_callback=None) -> dict:
     """Analyze an evidence image using Opus 4.6 vision.
@@ -778,7 +972,8 @@ def analyze_evidence(case_context: str, evidence_item: dict,
 
 def _run_streaming_analysis(system_prompt: str, user_content: str,
                             max_tokens: int, thinking_budget: int,
-                            emit_callback=None, event_prefix: str = "analysis") -> dict:
+                            emit_callback=None, event_prefix: str = "analysis",
+                            messages_override: list = None) -> dict:
     """Core streaming function that pipes extended thinking to the UI.
 
     Every thinking token streams to the frontend via SocketIO so users
@@ -786,6 +981,9 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
     """
     thinking_text = ""
     response_text = ""
+
+    # Use messages_override for chat history, otherwise single user message
+    messages = messages_override or [{"role": "user", "content": user_content}]
 
     try:
         with client.messages.stream(
@@ -796,7 +994,7 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
                 "budget_tokens": thinking_budget,
             },
             system=system_prompt,
-            messages=[{"role": "user", "content": user_content}],
+            messages=messages,
         ) as stream:
             current_block_type = None
 

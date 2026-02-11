@@ -26,6 +26,9 @@
             </div>
         </div>
         <div class="header-right">
+            <button id="btn-chat-toggle" class="btn btn-chat-toggle hidden" title="Ask your caseload anything">
+                &#128172; Chat
+            </button>
             <span class="model-badge">Claude Opus 4.6</span>
             <span id="status-badge" class="status-badge">Ready</span>
         </div>
@@ -172,7 +175,10 @@
                     <button id="btn-back" class="btn btn-ghost">&larr; Back to Dashboard</button>
                     <h2 id="case-title"></h2>
                     <div class="case-actions">
-                        <button id="btn-deep-analysis" class="btn btn-primary">
+                        <button id="btn-hearing-prep" class="btn btn-primary btn-hearing">
+                            <span class="btn-icon">&#9889;</span> Hearing Prep
+                        </button>
+                        <button id="btn-deep-analysis" class="btn btn-secondary">
                             <span class="btn-icon">&#128300;</span> Deep Analysis
                         </button>
                         <button id="btn-adversarial" class="btn btn-secondary">
@@ -180,6 +186,9 @@
                         </button>
                         <button id="btn-motion" class="btn btn-secondary">
                             <span class="btn-icon">&#128196;</span> Draft Motion
+                        </button>
+                        <button id="btn-client-letter" class="btn btn-secondary">
+                            <span class="btn-icon">&#9993;</span> Client Letter
                         </button>
                     </div>
                 </div>
@@ -348,6 +357,37 @@
             </div>
             <div id="right-thinking-stream" class="thinking-stream"></div>
         </aside>
+    </div>
+
+    <!-- Chat Panel (slide-in overlay) -->
+    <div id="chat-panel" class="chat-panel hidden">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <span class="chat-icon">&#128172;</span>
+                <h3>Caseload Chat</h3>
+                <span class="chat-subtitle">Ask anything about your 187 cases</span>
+            </div>
+            <div class="chat-header-right">
+                <button id="btn-chat-clear" class="btn btn-ghost btn-sm" title="Clear history">Clear</button>
+                <button id="btn-chat-close" class="btn btn-ghost btn-sm">&times;</button>
+            </div>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            <div class="chat-welcome">
+                <p class="chat-welcome-title">Ask your caseload anything</p>
+                <p class="chat-welcome-hint">Try these:</p>
+                <div class="chat-suggestions">
+                    <button class="chat-suggestion" data-q="Which cases have hearings this week and what should I prepare for?">&#128197; Hearings this week</button>
+                    <button class="chat-suggestion" data-q="Which of my cases are most at risk for speedy trial violations?">&#9200; Speedy trial risks</button>
+                    <button class="chat-suggestion" data-q="Do any of my cases share the same arresting officer? Are there credibility concerns?">&#128110; Officer patterns</button>
+                    <button class="chat-suggestion" data-q="Compare the plea offers across my drug possession cases. Which ones seem unfair?">&#9878; Plea comparison</button>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Ask about your caseload..." autocomplete="off">
+            <button id="btn-chat-send" class="btn btn-primary btn-chat-send">Send</button>
+        </div>
     </div>
 
     <!-- Motion Type Modal -->

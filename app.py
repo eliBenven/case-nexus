@@ -461,6 +461,185 @@ def handle_analyze_evidence(data):
     thread.start()
 
 
+# --- Chat History (per-session) ---
+chat_histories = {}  # sid -> list of {role, content}
+
+
+@socketio.on("chat_message")
+def handle_chat_message(data):
+    """Handle a caseload chat message — loads ALL cases into context."""
+    message = data.get("message", "").strip()
+    if not message:
+        emit("chat_error", {"error": "Empty message"})
+        return
+
+    sid = request.sid
+    emit("status", {"message": "Thinking about your caseload...", "phase": "chat"})
+
+    # Initialize chat history for this session
+    if sid not in chat_histories:
+        chat_histories[sid] = []
+
+    def run():
+        caseload_context = db.build_caseload_context()
+        history = chat_histories.get(sid, [])
+
+        def emit_cb(event, payload):
+            socketio.emit(event, payload, to=sid)
+
+        result = ai_engine.run_chat(
+            caseload_context=caseload_context,
+            message=message,
+            chat_history=history if history else None,
+            emit_callback=emit_cb,
+        )
+
+        if result.get("success"):
+            # Store in chat history
+            if sid not in chat_histories:
+                chat_histories[sid] = []
+            # On first message, include caseload context
+            if not history:
+                chat_histories[sid].append({
+                    "role": "user",
+                    "content": caseload_context + "\n\n---\n\nThe attorney asks: " + message,
+                })
+            else:
+                chat_histories[sid].append({"role": "user", "content": message})
+            chat_histories[sid].append({
+                "role": "assistant",
+                "content": result.get("response", ""),
+            })
+
+            # Keep history manageable (last 10 exchanges)
+            if len(chat_histories[sid]) > 20:
+                chat_histories[sid] = chat_histories[sid][-20:]
+
+            socketio.emit("chat_results", {
+                "response": result.get("response", ""),
+                "thinking_length": len(result.get("thinking", "")),
+            }, to=sid)
+        else:
+            socketio.emit("chat_error", {
+                "error": result.get("error", "Chat failed"),
+            }, to=sid)
+
+    thread = threading.Thread(target=run, daemon=True)
+    thread.start()
+
+
+@socketio.on("clear_chat")
+def handle_clear_chat():
+    """Clear chat history for this session."""
+    sid = request.sid
+    chat_histories.pop(sid, None)
+    emit("chat_cleared", {})
+
+
+@socketio.on("run_hearing_prep")
+def handle_hearing_prep(data):
+    """Generate a rapid hearing prep brief."""
+    case_number = data.get("case_number")
+    if not case_number:
+        emit("analysis_error", {"error": "No case number provided"})
+        return
+
+    sid = request.sid
+    emit("status", {
+        "message": f"Generating hearing brief for {case_number}...",
+        "phase": "hearing_prep"
+    })
+
+    def run():
+        case_context = db.build_single_case_context(case_number)
+        # Get cases with the same judge for tendency analysis
+        case = db.get_case(case_number)
+        judge_context = ""
+        if case and case.get("judge"):
+            all_cases = db.get_all_cases()
+            judge_cases = [c for c in all_cases
+                          if c.get("judge") == case["judge"]
+                          and c["case_number"] != case_number]
+            if judge_cases:
+                judge_lines = []
+                for jc in judge_cases[:10]:  # Limit to 10 for speed
+                    charges = jc.get("charges", "[]")
+                    judge_lines.append(
+                        f"- {jc['case_number']}: {jc.get('defendant_name', '')}, "
+                        f"Charges: {charges}, Status: {jc.get('status', '')}"
+                    )
+                judge_context = "\n".join(judge_lines)
+
+        def emit_cb(event, payload):
+            payload["case_number"] = case_number
+            socketio.emit(event, payload, to=sid)
+
+        result = ai_engine.run_hearing_prep(
+            case_context=case_context,
+            caseload_context=judge_context,
+            emit_callback=emit_cb,
+        )
+
+        if result.get("success"):
+            socketio.emit("hearing_prep_results", {
+                "case_number": case_number,
+                "brief": result.get("response", ""),
+                "thinking_length": len(result.get("thinking", "")),
+            }, to=sid)
+        else:
+            socketio.emit("analysis_error", {
+                "error": result.get("error", "Hearing prep failed"),
+                "phase": "hearing_prep",
+                "case_number": case_number,
+            }, to=sid)
+
+    thread = threading.Thread(target=run, daemon=True)
+    thread.start()
+
+
+@socketio.on("run_client_letter")
+def handle_client_letter(data):
+    """Generate a plain-language client letter."""
+    case_number = data.get("case_number")
+    if not case_number:
+        emit("analysis_error", {"error": "No case number provided"})
+        return
+
+    sid = request.sid
+    emit("status", {
+        "message": f"Writing client letter for {case_number}...",
+        "phase": "client_letter"
+    })
+
+    def run():
+        case_context = db.build_single_case_context(case_number)
+
+        def emit_cb(event, payload):
+            payload["case_number"] = case_number
+            socketio.emit(event, payload, to=sid)
+
+        result = ai_engine.run_client_letter(
+            case_context=case_context,
+            emit_callback=emit_cb,
+        )
+
+        if result.get("success"):
+            socketio.emit("client_letter_results", {
+                "case_number": case_number,
+                "letter": result.get("response", ""),
+                "thinking_length": len(result.get("thinking", "")),
+            }, to=sid)
+        else:
+            socketio.emit("analysis_error", {
+                "error": result.get("error", "Client letter failed"),
+                "phase": "client_letter",
+                "case_number": case_number,
+            }, to=sid)
+
+    thread = threading.Thread(target=run, daemon=True)
+    thread.start()
+
+
 @socketio.on("search_case_law")
 def handle_search_case_law(data):
     """Search CourtListener for relevant case law."""
