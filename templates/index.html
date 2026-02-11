@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Nexus — AI Legal Caseload Intelligence</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.6/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-icon">&#9878;</span>
+                <span class="logo-text">Case Nexus</span>
+            </div>
+            <span class="tagline">AI-Powered Legal Caseload Intelligence</span>
+        </div>
+        <div class="header-center">
+            <div id="context-indicator" class="context-indicator hidden">
+                <span class="context-dot"></span>
+                <span id="context-text">0 tokens in context</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="model-badge">Claude Opus 4.6</span>
+            <span id="status-badge" class="status-badge">Ready</span>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div id="app" class="app-layout">
+        <!-- Left Sidebar: Case List -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>Caseload</h2>
+                <div id="caseload-stats" class="caseload-stats hidden">
+                    <span id="stat-total" class="stat">0</span>
+                    <span id="stat-felonies" class="stat felony">0 F</span>
+                    <span id="stat-misdemeanors" class="stat misdemeanor">0 M</span>
+                </div>
+            </div>
+            <div class="sidebar-controls">
+                <input type="text" id="case-search" class="case-search" placeholder="Search cases..." disabled>
+                <select id="case-filter" class="case-filter" disabled>
+                    <option value="all">All Cases</option>
+                    <option value="felony">Felonies</option>
+                    <option value="misdemeanor">Misdemeanors</option>
+                    <option value="active">Active</option>
+                    <option value="plea_pending">Plea Pending</option>
+                    <option value="trial_scheduled">Trial Scheduled</option>
+                    <option value="bench_warrant">Bench Warrant</option>
+                </select>
+            </div>
+            <div id="case-list" class="case-list">
+                <div class="empty-state">
+                    <p>No cases loaded</p>
+                    <button id="btn-load-demo" class="btn btn-primary btn-load">Load Demo Caseload</button>
+                    <p class="hint">187 synthetic criminal defense cases</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: Main Content -->
+        <main id="main-content" class="main-content">
+            <!-- Welcome / Dashboard View -->
+            <div id="view-welcome" class="view active">
+                <div class="welcome-hero">
+                    <h1>Case Nexus</h1>
+                    <p class="welcome-subtitle">Load your caseload to begin AI-powered analysis</p>
+                    <div class="welcome-features">
+                        <div class="feature-card">
+                            <div class="feature-icon">&#128269;</div>
+                            <h3>Health Check</h3>
+                            <p>Scan all 187 cases for deadline risks, cross-case connections, and strategic opportunities</p>
+                            <span class="feature-tag">1M Context Window</span>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">&#9878;</div>
+                            <h3>Deep Analysis</h3>
+                            <p>Individual case strategy with visible AI reasoning</p>
+                            <span class="feature-tag">Extended Thinking</span>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">&#9876;</div>
+                            <h3>Adversarial Sim</h3>
+                            <p>Watch prosecution vs defense debate in real-time</p>
+                            <span class="feature-tag">Dual Thinking Chains</span>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">&#128196;</div>
+                            <h3>Motion Drafting</h3>
+                            <p>Generate comprehensive legal motions</p>
+                            <span class="feature-tag">128K Output</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="view-dashboard" class="view">
+                <div class="dashboard-header">
+                    <h2>Caseload Dashboard</h2>
+                    <button id="btn-health-check" class="btn btn-primary">
+                        <span class="btn-icon">&#9889;</span> Run Health Check
+                    </button>
+                </div>
+
+                <!-- Stats Row -->
+                <div id="dashboard-stats" class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="dash-total">0</div>
+                        <div class="stat-label">Total Cases</div>
+                    </div>
+                    <div class="stat-card felony">
+                        <div class="stat-value" id="dash-felonies">0</div>
+                        <div class="stat-label">Felonies</div>
+                    </div>
+                    <div class="stat-card misdemeanor">
+                        <div class="stat-value" id="dash-misdemeanors">0</div>
+                        <div class="stat-label">Misdemeanors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="dash-active">0</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="stat-card alert">
+                        <div class="stat-value" id="dash-alerts">0</div>
+                        <div class="stat-label">Alerts</div>
+                    </div>
+                    <div class="stat-card connection">
+                        <div class="stat-value" id="dash-connections">0</div>
+                        <div class="stat-label">Connections</div>
+                    </div>
+                </div>
+
+                <!-- Alerts & Connections -->
+                <div class="dashboard-panels">
+                    <div class="panel alerts-panel">
+                        <h3>
+                            <span class="panel-icon">&#9888;</span> Alerts
+                            <span id="alert-count" class="badge">0</span>
+                        </h3>
+                        <div id="alerts-list" class="alerts-list">
+                            <p class="empty-hint">Run a health check to scan for risks</p>
+                        </div>
+                    </div>
+                    <div class="panel connections-panel">
+                        <h3>
+                            <span class="panel-icon">&#128279;</span> Cross-Case Connections
+                            <span id="connection-count" class="badge">0</span>
+                        </h3>
+                        <div id="connections-list" class="connections-list">
+                            <p class="empty-hint">Run a health check to find connections</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Priority Actions -->
+                <div id="priority-actions" class="panel priority-panel hidden">
+                    <h3><span class="panel-icon">&#9889;</span> Priority Actions</h3>
+                    <div id="actions-list" class="actions-list"></div>
+                </div>
+            </div>
+
+            <!-- Case Detail View -->
+            <div id="view-case" class="view">
+                <div class="case-header">
+                    <button id="btn-back" class="btn btn-ghost">&larr; Back to Dashboard</button>
+                    <h2 id="case-title"></h2>
+                    <div class="case-actions">
+                        <button id="btn-deep-analysis" class="btn btn-primary">
+                            <span class="btn-icon">&#128300;</span> Deep Analysis
+                        </button>
+                        <button id="btn-adversarial" class="btn btn-secondary">
+                            <span class="btn-icon">&#9876;</span> Adversarial Sim
+                        </button>
+                        <button id="btn-motion" class="btn btn-secondary">
+                            <span class="btn-icon">&#128196;</span> Draft Motion
+                        </button>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <div class="case-info" id="case-info"></div>
+                    <!-- Evidence Section -->
+                    <div id="case-evidence" class="case-evidence hidden">
+                        <h3>&#128247; Evidence Items</h3>
+                        <div id="evidence-grid" class="evidence-grid"></div>
+                    </div>
+                    <div class="case-analysis" id="case-analysis">
+                        <p class="empty-hint">Select an analysis mode above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thinking View (overlay during analysis) -->
+            <div id="view-thinking" class="view">
+                <div class="thinking-header">
+                    <div class="thinking-title">
+                        <span class="thinking-icon pulse">&#9881;</span>
+                        <h2 id="thinking-title-text">Analyzing...</h2>
+                    </div>
+                    <div id="thinking-meta" class="thinking-meta">
+                        <span id="thinking-tokens" class="meta-item">0 tokens</span>
+                        <span id="thinking-elapsed" class="meta-item">0s</span>
+                    </div>
+                </div>
+                <div id="thinking-stream" class="thinking-stream"></div>
+                <div id="thinking-response" class="thinking-response hidden">
+                    <h3>Analysis Output</h3>
+                    <div id="response-content"></div>
+                </div>
+            </div>
+
+            <!-- Adversarial View -->
+            <div id="view-adversarial" class="view adversarial-view">
+                <!-- Phase Progress Bar -->
+                <div class="adversarial-progress">
+                    <div class="phase-step active" id="phase-step-1">
+                        <span class="phase-num">1</span>
+                        <span class="phase-label">Prosecution</span>
+                    </div>
+                    <div class="phase-connector" id="phase-conn-1"></div>
+                    <div class="phase-step" id="phase-step-2">
+                        <span class="phase-num">2</span>
+                        <span class="phase-label">Defense</span>
+                    </div>
+                    <div class="phase-connector" id="phase-conn-2"></div>
+                    <div class="phase-step" id="phase-step-3">
+                        <span class="phase-num">3</span>
+                        <span class="phase-label">Judicial Analysis</span>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="adversarial-header">
+                    <button id="btn-adversarial-back" class="btn btn-ghost">&larr; Back to Case</button>
+                    <h2>Adversarial Simulation</h2>
+                    <span id="adversarial-case" class="case-ref"></span>
+                </div>
+
+                <!-- Split Panels: Prosecution vs Defense -->
+                <div class="adversarial-panels">
+                    <div class="adversarial-side prosecution" id="side-prosecution">
+                        <h3>&#9878; Prosecution</h3>
+                        <details class="thinking-details" id="prosecution-thinking-details" open>
+                            <summary>
+                                <span class="thinking-icon pulse">&#9881;</span>
+                                Thinking
+                                <span id="prosecution-thinking-count" class="thinking-count"></span>
+                            </summary>
+                            <div id="prosecution-thinking" class="side-stream"></div>
+                        </details>
+                        <div class="side-response">
+                            <div class="side-label">Arguments</div>
+                            <div id="prosecution-response" class="side-content markdown-body"></div>
+                        </div>
+                    </div>
+                    <div class="adversarial-divider">
+                        <span>VS</span>
+                    </div>
+                    <div class="adversarial-side defense" id="side-defense">
+                        <h3>&#9881; Defense</h3>
+                        <details class="thinking-details" id="defense-thinking-details">
+                            <summary>
+                                <span class="thinking-icon pulse">&#9881;</span>
+                                Thinking
+                                <span id="defense-thinking-count" class="thinking-count"></span>
+                            </summary>
+                            <div id="defense-thinking" class="side-stream"></div>
+                        </details>
+                        <div class="side-response">
+                            <div class="side-label">Counter-Arguments</div>
+                            <div id="defense-response" class="side-content markdown-body"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Judge Panel (appears during Phase 3) -->
+                <div id="judge-panel" class="judge-panel hidden">
+                    <div class="judge-panel-header">
+                        <h3>&#9878; Judicial Analysis</h3>
+                        <span class="judge-subtitle">Objective assessment by senior judicial analyst</span>
+                    </div>
+                    <details class="thinking-details" id="judge-thinking-details">
+                        <summary>
+                            <span class="thinking-icon pulse">&#9881;</span>
+                            Thinking
+                            <span id="judge-thinking-count" class="thinking-count"></span>
+                        </summary>
+                        <div id="judge-thinking" class="side-stream"></div>
+                    </details>
+                    <div id="judge-response" class="judge-content markdown-body"></div>
+                </div>
+            </div>
+
+            <!-- Motion View -->
+            <div id="view-motion" class="view">
+                <div class="motion-header">
+                    <button id="btn-motion-back" class="btn btn-ghost">&larr; Back to Case</button>
+                    <h2 id="motion-title">Motion</h2>
+                    <div class="motion-meta">
+                        <span id="motion-length" class="meta-item"></span>
+                        <span id="citation-status" class="meta-item citation-status hidden"></span>
+                        <button id="btn-motion-print" class="btn btn-secondary btn-print">&#128424; Print</button>
+                        <button id="btn-motion-copy" class="btn btn-secondary">&#128203; Copy</button>
+                    </div>
+                </div>
+                <div id="motion-case-banner" class="motion-case-banner hidden">
+                    <span id="motion-case-ref" class="motion-case-ref"></span>
+                    <span id="motion-defendant" class="motion-defendant"></span>
+                </div>
+                <div id="motion-content" class="motion-content markdown-body"></div>
+                <!-- Citation Verification Panel -->
+                <div id="citation-panel" class="citation-panel hidden">
+                    <div class="citation-panel-header">
+                        <h3>&#9878; Citation Verification</h3>
+                        <span id="citation-summary" class="citation-summary"></span>
+                    </div>
+                    <div id="citation-list" class="citation-list"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel: AI Thinking Stream (visible during analysis) -->
+        <aside id="right-panel" class="right-panel hidden">
+            <div class="right-panel-header">
+                <h3><span class="thinking-icon pulse">&#9881;</span> AI Reasoning</h3>
+                <span id="right-thinking-tokens" class="meta-item">0 tokens</span>
+            </div>
+            <div id="right-thinking-stream" class="thinking-stream"></div>
+        </aside>
+    </div>
+
+    <!-- Motion Type Modal -->
+    <div id="motion-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Select Motion Type</h3>
+            <div class="motion-options">
+                <button class="btn btn-motion-option" data-type="Motion to Suppress Evidence">Motion to Suppress Evidence</button>
+                <button class="btn btn-motion-option" data-type="Motion to Dismiss">Motion to Dismiss</button>
+                <button class="btn btn-motion-option" data-type="Brady Motion (Disclosure of Exculpatory Evidence)">Brady / Giglio Motion</button>
+                <button class="btn btn-motion-option" data-type="Motion to Compel Discovery">Motion to Compel Discovery</button>
+                <button class="btn btn-motion-option" data-type="Motion for Speedy Trial">Motion for Speedy Trial</button>
+                <button class="btn btn-motion-option" data-type="Motion to Reduce Bond">Motion to Reduce Bond</button>
+            </div>
+            <button id="btn-modal-close" class="btn btn-ghost">Cancel</button>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
