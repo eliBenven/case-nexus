@@ -4,7 +4,7 @@
 
 Built for the *Built with Opus 4.6: a Claude Code Hackathon*
 
-Case Nexus transforms how public defenders manage crushing caseloads. It loads an entire 187-case caseload into Claude Opus 4.6's 1M context window and provides real-time AI analysis — from identifying speedy trial risks across all cases simultaneously, to generating court-ready motions, to simulating adversarial prosecution vs. defense debates.
+Case Nexus transforms how public defenders manage crushing caseloads. It loads an entire 280-case caseload into Claude Opus 4.6's 1M context window and provides real-time AI analysis — from identifying speedy trial risks across all cases simultaneously, to generating court-ready motions, to simulating adversarial prosecution vs. defense debates.
 
 ## What It Does
 
@@ -14,7 +14,7 @@ Public defenders in Georgia carry 400-700 cases. They walk into court with minut
 
 | Mode | What It Does | Opus 4.6 Feature |
 |------|-------------|-------------------|
-| **Caseload Health Check** | Scans ALL 187 cases for risks, cross-case connections, plea disparities | 1M context window (250K+ tokens loaded) |
+| **Caseload Health Check** | Scans ALL 280 cases for risks, cross-case connections, plea disparities | 1M context window (250K+ tokens loaded) |
 | **Deep Case Analysis** | Defense strategy with strength meter, evidence gaps, constitutional issues | Extended thinking (40K tokens) |
 | **Adversarial Simulation** | Prosecution builds case -> Defense dismantles it -> Judge provides synthesis | 80K+ thinking tokens across 3 phases |
 | **Motion Generation** | Court-ready legal motions with Georgia formatting and citation verification | 128K output (64K response tokens) |
@@ -57,13 +57,13 @@ echo "ANTHROPIC_API_KEY=your-key-here" > .env
 python app.py
 ```
 
-Open `http://localhost:5001` and click **Sync Caseload** to load 187 demo cases.
+Open `http://localhost:5001` and click **Sync Caseload** to load 280 demo cases.
 
 ## How Opus 4.6 Is Used
 
 This project is a thesis on what Claude Opus 4.6 can do:
 
-1. **1M Context Window** — The entire 187-case caseload (250K+ tokens) is loaded into a single prompt for the health check and chat features
+1. **1M Context Window** — The entire 280-case caseload (250K+ tokens) is loaded into a single prompt for the health check and chat features
 2. **Extended Thinking** — Every analysis mode uses thinking budgets from 10K to 60K tokens, all streamed to the UI in real-time
 3. **128K Output** — Motion generation uses up to 64K response tokens for comprehensive legal documents
 4. **Multimodal Vision** — Evidence images (surveillance, injury photos, dashcam stills) are analyzed with Opus 4.6's vision capabilities
@@ -72,7 +72,7 @@ This project is a thesis on what Claude Opus 4.6 can do:
 
 ## Demo Data
 
-The 187 cases include 15 hand-crafted cases with planted cross-connections:
+The 280 cases include 15 hand-crafted cases with planted cross-connections:
 - **Officer Rodriguez pattern**: 4 cases with the same officer, contested vehicle searches
 - **Speedy trial risks**: Cases approaching 180-day and 90-day limits
 - **Plea disparities**: Similar assault cases with dramatically different plea offers

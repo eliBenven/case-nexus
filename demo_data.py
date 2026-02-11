@@ -1518,22 +1518,24 @@ def _generate_random_case(case_num: int) -> dict:
 # Public API
 # ---------------------------------------------------------------------------
 
-def generate_demo_caseload() -> list[dict]:
-    """Generate the full demo caseload of 187 cases.
+CASELOAD_SIZE = 280  # ~1.5x standard PD caseload — pushes context window
 
-    Returns a list of 187 case dictionaries: 15 hand-crafted key cases with
-    specific cross-connections for the AI to discover, plus 172 randomly
-    generated cases with realistic but less detailed data.
+
+def generate_demo_caseload() -> list[dict]:
+    """Generate the full demo caseload.
+
+    Returns case dictionaries: 15 hand-crafted key cases with specific
+    cross-connections for the AI to discover, plus randomly generated
+    cases with realistic but less detailed data.
     """
     random.seed(42)
 
     key_cases = _build_key_cases()
     key_case_numbers = {c["case_number"] for c in key_cases}
-    num_random = 187 - len(key_cases)
+    num_random = CASELOAD_SIZE - len(key_cases)
 
     # Generate random cases, skipping case numbers reserved for key cases
     random_cases = []
-    # We'll iterate through case numbers and skip those used by key cases
     candidate_num = 1
     while len(random_cases) < num_random:
         case_number_str = f"CR-2025-{candidate_num:04d}"
@@ -1546,7 +1548,7 @@ def generate_demo_caseload() -> list[dict]:
     all_cases = key_cases + random_cases
     random.shuffle(all_cases)
 
-    assert len(all_cases) == 187, f"Expected 187 cases, got {len(all_cases)}"
+    assert len(all_cases) == CASELOAD_SIZE, f"Expected {CASELOAD_SIZE} cases, got {len(all_cases)}"
     return all_cases
 
 

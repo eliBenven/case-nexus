@@ -236,7 +236,7 @@ function renderCaseList(cases) {
                 socket.emit('load_demo_caseload');
                 setStatus('Loading...', 'loading');
             }}, 'Load Demo Caseload'),
-            el('p', { className: 'hint' }, '187 synthetic criminal defense cases')
+            el('p', { className: 'hint' }, '280 criminal defense cases')
         );
         list.appendChild(empty);
         return;

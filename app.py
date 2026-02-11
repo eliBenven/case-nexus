@@ -110,7 +110,7 @@ def handle_connect():
 
 @socketio.on("load_demo_caseload")
 def handle_load_demo():
-    """Load the demo caseload of 187 cases into SQLite."""
+    """Load the demo caseload into SQLite."""
     emit("status", {"message": "Generating caseload...", "phase": "loading"})
 
     db.clear_cases()

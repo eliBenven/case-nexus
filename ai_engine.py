@@ -2,7 +2,7 @@
 
 Five analysis modes, each showcasing different Opus 4.6 capabilities:
 
-1. CASELOAD HEALTH CHECK: Load ALL 187 cases into the 1M context window.
+1. CASELOAD HEALTH CHECK: Load ALL 280 cases into the 1M context window.
    Extended thinking systematically scans for deadline risks, cross-case
    connections, and strategic opportunities. This is the hero feature.
 
