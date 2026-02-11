@@ -1,6 +1,6 @@
 """Demo caseload data for Case Nexus.
 
-Generates a realistic caseload of 187 criminal cases for a public defender's
+Generates a realistic caseload of 500 criminal cases for a public defender's
 office in the Atlanta/Fulton County, Georgia area. Includes 15 hand-crafted
 "key" cases with cross-connections that an AI assistant should discover.
 
@@ -399,6 +399,191 @@ BOND_STATUSES = [
     "$10,000 cash bond",
     "Pretrial release with GPS monitoring",
     "Signature bond",
+]
+
+# -- Enrichment pools for in-depth cases --
+
+ADDRESSES = [
+    "1247 Peachtree St NE, Apt 4B, Atlanta, GA 30309",
+    "455 Boulevard SE, Atlanta, GA 30312",
+    "2801 MLK Jr Dr SW, Atlanta, GA 30311",
+    "189 Edgewood Ave NE, Atlanta, GA 30303",
+    "3421 Camp Creek Pkwy, East Point, GA 30344",
+    "772 Cascade Rd SW, Apt 12, Atlanta, GA 30311",
+    "1090 Northside Dr NW, Atlanta, GA 30318",
+    "508 Flat Shoals Ave SE, Atlanta, GA 30316",
+    "2200 Candler Rd, Decatur, GA 30034",
+    "945 Joseph E Boone Blvd, Atlanta, GA 30314",
+    "1533 Memorial Dr SE, Atlanta, GA 30317",
+    "4100 S Cobb Dr, Smyrna, GA 30080",
+    "2710 Buford Hwy NE, Apt 208, Atlanta, GA 30324",
+    "615 Holcomb Bridge Rd, Roswell, GA 30076",
+    "830 Jonesboro Rd, Forest Park, GA 30297",
+    "1422 Fulton Industrial Blvd, Atlanta, GA 30336",
+    "No fixed address — currently staying at Atlanta Mission shelter",
+    "No fixed address — staying with family in Bankhead",
+    "3008 Glenwood Rd SE, Decatur, GA 30032",
+    "175 Luckie St NW, Apt 1109, Atlanta, GA 30303",
+]
+
+EMPLOYMENTS = [
+    "Employed — warehouse worker at Amazon fulfillment center, Lithia Springs",
+    "Employed — line cook at Waffle House, Peachtree St",
+    "Employed — delivery driver for DoorDash (gig work)",
+    "Employed — construction laborer, Turner Construction",
+    "Employed — security guard at Atlantic Station mall",
+    "Employed — Lyft driver (part-time)",
+    "Employed — cashier at QuikTrip gas station",
+    "Employed — auto mechanic at Pep Boys, Decatur",
+    "Employed — home health aide, Comfort Keepers",
+    "Employed — barber at Fresh Cuts, Bankhead",
+    "Unemployed — laid off from manufacturing job 3 months ago",
+    "Unemployed — seeking employment",
+    "Unemployed — disability pending (back injury from prior job)",
+    "Unemployed — recently released from prior incarceration",
+    "Student — Atlanta Technical College (welding program)",
+    "Student — Georgia State University (part-time)",
+    "Self-employed — mobile car detailing business",
+    "Employed — MARTA bus operator",
+    "Employed part-time — Goodwill retail associate",
+    "Unemployed — primary caregiver for elderly parent",
+]
+
+INCIDENT_NARRATIVES = [
+    "On {date} at approximately {time}, officers responded to a {call_type} call at {location}. Upon arrival, {detail}. Defendant was {action}. {outcome}.",
+    "Defendant was stopped by {officer} at {location} on {date} at {time} for {reason}. During the stop, {detail}. {outcome}.",
+    "On {date}, {officer} responded to {location} following a 911 call reporting {call_type}. {detail}. Defendant {action}. {outcome}.",
+    "According to the incident report dated {date}, defendant was involved in {call_type} at {location} at approximately {time}. {detail}. {action}. {outcome}.",
+    "On {date} at {time}, a {call_type} was reported at {location}. When officers arrived, {detail}. Defendant was {action}. {outcome}.",
+]
+
+INCIDENT_CALL_TYPES = [
+    "a domestic disturbance", "a robbery in progress", "a suspicious person",
+    "a noise complaint", "an assault", "a shoplifting incident",
+    "a vehicle break-in", "a drug transaction", "a DUI checkpoint stop",
+    "a traffic accident", "a weapons complaint", "a trespassing complaint",
+    "a burglary alarm", "an altercation between two parties",
+]
+
+INCIDENT_TIMES = [
+    "10:15 PM", "2:30 AM", "11:45 PM", "3:15 AM", "8:30 PM",
+    "12:45 AM", "9:20 PM", "1:10 AM", "7:30 PM", "4:45 AM",
+    "6:15 PM", "11:00 PM", "2:00 PM", "10:30 AM", "5:45 PM",
+]
+
+INCIDENT_DETAILS = [
+    "officers observed defendant standing outside the establishment arguing loudly with another individual",
+    "the victim was found with visible injuries and identified defendant as the assailant",
+    "defendant was found in possession of a clear plastic bag containing a white powdery substance",
+    "defendant was seated in the driver's seat of a parked vehicle with the engine running and appeared intoxicated",
+    "a quantity of suspected marijuana (approximately 2.3 grams) was found in defendant's jacket pocket during a pat-down",
+    "defendant was observed placing unpaid merchandise into a backpack and exiting through the store entrance",
+    "a handgun was recovered from the center console of defendant's vehicle during a consent search",
+    "defendant's BAC was measured at 0.14 following a portable breath test at the scene",
+    "the store manager identified defendant from surveillance footage as the individual who took items valued at $387",
+    "defendant initially gave a false name to officers and was later identified through fingerprint comparison",
+    "officers recovered 47 individually packaged bags of a substance that field-tested positive for crack cocaine",
+    "the victim's vehicle was located in defendant's possession approximately 4 hours after the reported theft",
+    "a K-9 unit alerted to the trunk of defendant's vehicle, where officers recovered a duffel bag containing 1.2 kg of methamphetamine",
+    "defendant was found inside the residence with a broken rear window and was carrying a pillowcase containing jewelry and electronics",
+    "the victim reported that defendant struck them in the face with a closed fist, resulting in a fractured orbital bone",
+]
+
+INCIDENT_ACTIONS = [
+    "taken into custody without incident",
+    "placed under arrest after Miranda warnings were administered",
+    "initially uncooperative but complied after backup arrived",
+    "apprehended after a brief foot pursuit through the parking lot",
+    "found hiding in a nearby dumpster enclosure",
+    "identified by the victim at the scene",
+    "cooperative and provided a statement to detectives",
+    "invoked right to counsel and declined to answer questions",
+    "transported to Grady Memorial Hospital for treatment of minor injuries before booking",
+    "taken into custody after a traffic stop approximately 2 miles from the scene",
+]
+
+INCIDENT_OUTCOMES = [
+    "Defendant was transported to Fulton County Jail and booked without incident",
+    "Evidence was collected and submitted to the GBI crime lab for analysis",
+    "Defendant was released on bond the following day",
+    "A search warrant was obtained for defendant's residence, yielding additional evidence",
+    "The victim was transported to Grady Memorial with non-life-threatening injuries",
+    "Defendant's vehicle was impounded and processed for evidence",
+    "Defendant was held without bond pending initial appearance",
+    "Defendant posted bond ($5,000 surety) approximately 48 hours after arrest",
+    "All recovered property was returned to the victim",
+    "Body-worn camera footage from the responding officers has been preserved",
+]
+
+VICTIM_INFO = [
+    "Victim: {vname}, age {vage}, {vrelation}. {vstatus}.",
+    "Alleged victim: {vname} ({vrelation}). {vstatus}.",
+    "Complainant: {vname}, age {vage}. {vstatus}.",
+]
+
+VICTIM_NAMES = [
+    "Maria Gonzalez", "David Thompson", "Lisa Washington", "Marcus Johnson",
+    "Stephanie Brown", "Robert Miller", "Angela Davis", "James Wilson",
+    "Patricia Harris", "Kenneth Moore", "Sandra Taylor", "Willie Jackson",
+    "Dorothy White", "Charles Martin", "Betty Robinson", "Frank Anderson",
+    "Brenda Thomas", "Raymond Lee", "Gloria Martinez", "Eugene Clark",
+]
+
+VICTIM_RELATIONS = [
+    "girlfriend of defendant", "neighbor", "store owner", "ex-spouse of defendant",
+    "co-worker", "stranger — no prior relationship", "roommate",
+    "family member (cousin)", "current spouse of defendant",
+    "business partner", "landlord", "acquaintance through mutual friends",
+]
+
+VICTIM_STATUSES = [
+    "Victim was treated at Grady Memorial and released",
+    "Victim sustained minor bruising, declined medical treatment",
+    "Victim was hospitalized for 3 days with fractures",
+    "Victim is cooperating with the prosecution",
+    "Victim has expressed desire not to prosecute",
+    "Victim has requested a temporary protective order",
+    "Victim suffered property loss estimated at $2,400",
+    "Victim suffered property loss estimated at $850",
+    "Victim has not responded to DA's attempts to contact",
+    "Victim has filed a civil lawsuit separately",
+]
+
+TIMELINE_EVENTS = [
+    "Arrest: {arrest_date}",
+    "Initial appearance: {init_date}",
+    "Bond set at {bond} on {bond_date}",
+    "Grand jury indictment returned {indict_date}",
+    "Arraignment held {arraign_date} — plea of not guilty entered",
+    "Discovery served on {disc_date}",
+    "Preliminary hearing held {prelim_date}",
+    "State filed notice of intent to seek enhanced sentencing on {notice_date}",
+    "Defense filed motion to suppress on {motion_date}",
+    "Status conference held {status_date} — trial date set",
+]
+
+CO_DEFENDANT_NAMES = [
+    "Marcus Thompson", "Anthony Jackson", "Tyrone Davis", "Derrick Wilson",
+    "Xavier Johnson", "Crystal Williams", "Latasha Brown", "Devon Harris",
+    "Jasmine Moore", "Terrence Adams", "Keshia Robinson", "Darius Martin",
+]
+
+MITIGATING_FACTORS = [
+    "Defendant has been consistently employed for the past 2 years.",
+    "Defendant is the sole provider for 3 minor children (ages 2, 5, 8).",
+    "Defendant completed a GED program while previously incarcerated.",
+    "Defendant has strong family support — mother and sister attend every hearing.",
+    "Defendant has been sober for 14 months and attends NA meetings weekly.",
+    "Defendant was honorably discharged from the U.S. Army in 2019.",
+    "Defendant is actively enrolled in vocational training (HVAC certification).",
+    "Defendant has no history of violence — all prior offenses are property crimes.",
+    "Defendant is the primary caregiver for a disabled family member.",
+    "Defendant has been compliant with all pretrial conditions since release.",
+    "Defendant is 19 years old with no prior record — youthful offender consideration may apply.",
+    "Defendant has significant mental health history (bipolar disorder, PTSD) and is engaged in treatment.",
+    "Defendant was a victim of domestic violence in a prior relationship.",
+    "Defendant voluntarily entered a drug treatment program before arrest.",
+    "Defendant's employer has agreed to hold their position during proceedings.",
 ]
 
 
@@ -1370,7 +1555,44 @@ def _generate_random_case(case_num: int) -> dict:
     officer = random.choice(OFFICERS)
     precinct = random.choice(PRECINCTS)
 
-    # Evidence summary (2-4 sentences)
+    # Defendant demographics
+    age = random.randint(18, 62)
+    dob_year = 2026 - age
+    dob = datetime(dob_year, random.randint(1, 12), random.randint(1, 28))
+    address = random.choice(ADDRESSES)
+    employment = random.choice(EMPLOYMENTS)
+
+    # Incident narrative (detailed paragraph)
+    narrative_template = random.choice(INCIDENT_NARRATIVES)
+    incident_narrative = narrative_template.format(
+        date=arrest_date.strftime("%B %d, %Y"),
+        time=random.choice(INCIDENT_TIMES),
+        call_type=random.choice(INCIDENT_CALL_TYPES),
+        location=random.choice(LOCATIONS),
+        officer=officer,
+        detail=random.choice(INCIDENT_DETAILS),
+        action=random.choice(INCIDENT_ACTIONS),
+        outcome=random.choice(INCIDENT_OUTCOMES),
+        reason=random.choice([
+            "a broken taillight", "erratic lane changes", "expired registration",
+            "failure to signal", "running a red light", "speeding (52 in a 35 zone)",
+            "matching the description of a suspect from a nearby incident",
+        ]),
+    )
+
+    # Victim information (for ~60% of cases)
+    victim_info = ""
+    if random.random() < 0.60:
+        vname = random.choice(VICTIM_NAMES)
+        vage = random.randint(19, 70)
+        vrelation = random.choice(VICTIM_RELATIONS)
+        vstatus = random.choice(VICTIM_STATUSES)
+        victim_template = random.choice(VICTIM_INFO)
+        victim_info = victim_template.format(
+            vname=vname, vage=vage, vrelation=vrelation, vstatus=vstatus,
+        )
+
+    # Evidence summary (richer: narrative + physical items + chain of custody)
     template = random.choice(EVIDENCE_TEMPLATES)
     evidence_summary = template.format(
         detail=random.choice(EVIDENCE_DETAILS),
@@ -1378,24 +1600,26 @@ def _generate_random_case(case_num: int) -> dict:
         physical_evidence=random.choice(PHYSICAL_EVIDENCE),
         location=random.choice(LOCATIONS),
     )
-    # Add an extra sentence sometimes
-    if random.random() < 0.5:
-        evidence_summary += " " + random.choice([
-            "Case is pending lab results.",
-            "All evidence has been processed and cataloged.",
-            "Additional forensic analysis has been requested.",
-            "Evidence was collected following standard department protocols.",
-            "Chain of custody documentation is complete.",
-            "Video evidence has been reviewed by the defense.",
-            "Defendant was read Miranda rights at the scene.",
-            "Defendant invoked right to counsel upon arrest.",
-        ])
+    # Add extra evidence details
+    evidence_summary += " " + random.choice([
+        "Case is pending lab results.",
+        "All evidence has been processed and cataloged.",
+        "Additional forensic analysis has been requested.",
+        "Evidence was collected following standard department protocols.",
+        "Chain of custody documentation is complete.",
+        "Video evidence has been reviewed by the defense.",
+        "Defendant was read Miranda rights at the scene.",
+        "Defendant invoked right to counsel upon arrest.",
+    ])
+    # 50% chance of a second physical evidence item
+    if random.random() < 0.50:
+        evidence_summary += " Additionally, " + random.choice(PHYSICAL_EVIDENCE).lower() + "."
 
-    # Notes (1-3 sentences)
+    # Notes (richer — demographics + incident + victim + case notes)
     notes_template = random.choice(NOTES_TEMPLATES)
     disc_date_obj = filing_date + timedelta(days=random.randint(10, 30))
     contact_date_obj = datetime(2026, 1, random.randint(5, 31))
-    notes = notes_template.format(
+    case_notes = notes_template.format(
         extra=random.choice(NOTES_EXTRAS),
         task=random.choice(NOTES_TASKS),
         situation=random.choice(NOTES_SITUATIONS),
@@ -1403,7 +1627,23 @@ def _generate_random_case(case_num: int) -> dict:
         contact_date=contact_date_obj.strftime("%B %d, %Y"),
     )
 
-    # Attorney notes
+    # Build comprehensive notes with demographics, incident, victim info
+    notes_parts = []
+    notes_parts.append(f"DOB: {dob.strftime('%m/%d/%Y')} (age {age}). Address: {address}. {employment}.")
+    notes_parts.append(f"Incident: {incident_narrative}")
+    if victim_info:
+        notes_parts.append(victim_info)
+    notes_parts.append(case_notes)
+    # Add mitigating factor for ~40% of cases
+    if random.random() < 0.40:
+        notes_parts.append(f"Mitigating: {random.choice(MITIGATING_FACTORS)}")
+    # Co-defendant for ~15% of cases
+    if random.random() < 0.15:
+        codef = random.choice(CO_DEFENDANT_NAMES)
+        notes_parts.append(f"Co-defendant: {codef} (case pending separately). Severance may be requested.")
+    notes = " ".join(notes_parts)
+
+    # Attorney notes (richer — strategic analysis)
     atty_template = random.choice(ATTORNEY_NOTES_TEMPLATES)
     atty_date_obj = datetime(2026, 1, random.randint(5, 28))
     attorney_notes = atty_template.format(
@@ -1411,6 +1651,9 @@ def _generate_random_case(case_num: int) -> dict:
         strategy=random.choice(ATTORNEY_STRATEGIES),
         date=atty_date_obj.strftime("%B %d, %Y"),
     )
+    # Add a second observation ~50% of the time
+    if random.random() < 0.50:
+        attorney_notes += f" Also noted: {random.choice(ATTORNEY_OBSERVATIONS).lower()}."
 
     # Plea offer (~40% of non-closed cases)
     plea_offer = None
@@ -1518,15 +1761,16 @@ def _generate_random_case(case_num: int) -> dict:
 # Public API
 # ---------------------------------------------------------------------------
 
-CASELOAD_SIZE = 280  # ~1.5x standard PD caseload — pushes context window
+CASELOAD_SIZE = 500  # Realistic PD caseload (400-700 in Georgia)
 
 
 def generate_demo_caseload() -> list[dict]:
-    """Generate the full demo caseload.
+    """Generate the full demo caseload (500 cases).
 
     Returns case dictionaries: 15 hand-crafted key cases with specific
-    cross-connections for the AI to discover, plus randomly generated
-    cases with realistic but less detailed data.
+    cross-connections for the AI to discover, plus 485 randomly generated
+    cases with detailed demographics, incident narratives, victim info,
+    evidence items, and attorney strategy notes.
     """
     random.seed(42)
 
