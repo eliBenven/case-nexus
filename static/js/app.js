@@ -1978,6 +1978,330 @@ socket.on('client_letter_results', (data) => {
 });
 
 // ============================================================
+//  CASCADE INTELLIGENCE (Agentic Loop)
+// ============================================================
+
+let cascadeSummaryText = '';
+
+$('#btn-cascade').addEventListener('click', () => {
+    if (state.analysisActive) return;
+    state.analysisActive = true;
+    cascadeSummaryText = '';
+    setStatus('Cascade...', 'analyzing');
+
+    // Show cascade progress
+    const progress = document.getElementById('cascade-progress');
+    progress.classList.remove('hidden');
+    // Reset all steps
+    for (let i = 1; i <= 4; i++) {
+        const step = document.getElementById('cascade-step-' + i);
+        if (step) step.className = 'cascade-step';
+    }
+    document.getElementById('cascade-step-1').classList.add('active');
+    document.getElementById('cascade-status').textContent = 'Scanning full caseload...';
+
+    // Open right panel for thinking
+    showRightPanel(true);
+    $('#right-thinking-stream').textContent = '';
+    state.thinkingTokenCount = 0;
+    state.thinkingStartTime = Date.now();
+    state.thinkingInterval = setInterval(updateThinkingMeta, 1000);
+
+    socket.emit('run_cascade');
+});
+
+socket.on('cascade_phase', (data) => {
+    // Update pipeline
+    for (let i = 1; i <= 4; i++) {
+        const step = document.getElementById('cascade-step-' + i);
+        if (!step) continue;
+        step.className = 'cascade-step';
+        if (i < data.phase) step.classList.add('complete');
+        else if (i === data.phase) step.classList.add('active');
+    }
+    document.getElementById('cascade-status').textContent = data.description || data.title;
+});
+
+socket.on('cascade_deep_dive_start', (data) => {
+    const status = document.getElementById('cascade-status');
+    status.textContent = `Deep-diving ${data.case_number} (${data.step}/${data.total}): ${data.reason}`;
+});
+
+socket.on('cascade_deep_dive_done', (data) => {
+    const status = document.getElementById('cascade-status');
+    status.textContent = `Completed ${data.case_number} (${data.step}/${data.total})`;
+});
+
+// Cascade uses health_check, deep_analysis, cascade_summary, and smart_actions prefixes
+// The thinking deltas are already caught by onAny for the token viz.
+// Route cascade thinking to the right panel:
+socket.on('health_check_thinking_delta', (data) => {
+    if (state.analysisActive) appendThinking(data.text, 'right');
+});
+socket.on('deep_analysis_thinking_delta', (data) => {
+    if (state.analysisActive) appendThinking(data.text, 'right');
+});
+socket.on('cascade_summary_thinking_started', () => {
+    appendThinking('\n\n--- Strategic Synthesis ---\n\n', 'right');
+});
+socket.on('cascade_summary_thinking_delta', (data) => appendThinking(data.text, 'right'));
+socket.on('cascade_summary_response_started', () => {
+    cascadeSummaryText = '';
+});
+socket.on('cascade_summary_response_delta', (data) => {
+    cascadeSummaryText += data.text;
+});
+
+socket.on('cascade_health_check_done', (data) => {
+    // Update dashboard with health check results
+    renderAlerts(data.alerts || []);
+    renderConnections(data.connections || []);
+    renderPriorityActions(data.priority_actions || []);
+    appendThinking('\n\n--- Health check complete, starting deep dives ---\n\n', 'right');
+});
+
+socket.on('cascade_complete', (data) => {
+    stopThinking();
+    document.getElementById('cascade-status').textContent = 'Cascade complete — 4 phases finished';
+
+    // Render strategic summary as a new dashboard section
+    if (cascadeSummaryText || data.summary) {
+        const text = cascadeSummaryText || data.summary;
+        const container = document.getElementById('custom-widgets');
+        const widget = el('div', { className: 'custom-widget cascade-summary-widget' });
+        const header = el('div', { className: 'widget-header' },
+            el('span', { className: 'widget-icon' }, '\u{1F9E0}'),
+            el('h3', {}, 'Strategic Intelligence Brief'),
+            el('span', { className: 'widget-badge cascade-badge' }, 'Cascade AI')
+        );
+        widget.appendChild(header);
+        const body = el('div', { className: 'markdown-body widget-body' });
+        safeRenderMarkdown(body, text);
+        widget.appendChild(body);
+        container.prepend(widget);
+    }
+
+    // Render smart actions
+    if (data.actions && Array.isArray(data.actions) && data.actions.length) {
+        renderSmartActions(data.actions);
+    }
+
+    // Refresh dashboard data
+    refreshDashboard();
+});
+
+socket.on('cascade_error', (data) => {
+    stopThinking();
+    document.getElementById('cascade-status').textContent = 'Error: ' + (data.error || 'Cascade failed');
+});
+
+// ============================================================
+//  SMART ACTIONS
+// ============================================================
+
+function renderSmartActions(actions) {
+    const bar = document.getElementById('smart-actions-bar');
+    const list = document.getElementById('smart-actions-list');
+    if (!bar || !list || !actions.length) return;
+
+    bar.classList.remove('hidden');
+    list.textContent = '';
+
+    actions.forEach(action => {
+        const urgencyClass = action.urgency === 'critical' ? 'action-critical'
+            : action.urgency === 'high' ? 'action-high' : 'action-medium';
+
+        const btn = el('button', { className: `btn smart-action-btn ${urgencyClass}` },
+            el('span', { className: 'action-label' }, action.label),
+            el('span', { className: 'action-reason' }, action.reason || '')
+        );
+
+        btn.addEventListener('click', () => {
+            executeSmartAction(action);
+        });
+
+        list.appendChild(btn);
+    });
+}
+
+function executeSmartAction(action) {
+    const type = action.action_type;
+    const cn = action.case_number;
+
+    if (type === 'deep_analysis' && cn) {
+        // Navigate to case and trigger deep analysis
+        openCase(cn);
+        setTimeout(() => {
+            const btn = document.getElementById('btn-deep-analysis');
+            if (btn) btn.click();
+        }, 500);
+    } else if (type === 'adversarial' && cn) {
+        openCase(cn);
+        setTimeout(() => {
+            const btn = document.getElementById('btn-adversarial');
+            if (btn) btn.click();
+        }, 500);
+    } else if (type === 'motion' && cn) {
+        openCase(cn);
+        // Auto-select motion type if provided
+        setTimeout(() => {
+            if (action.motion_type) {
+                state.analysisActive = false; // reset so motion handler works
+                socket.emit('generate_motion', {
+                    case_number: cn,
+                    motion_type: action.motion_type,
+                });
+                state.analysisActive = true;
+                setStatus('Drafting motion...', 'analyzing');
+                showView('motion');
+                showRightPanel(true);
+            } else {
+                const btn = document.getElementById('btn-motion');
+                if (btn) btn.click();
+            }
+        }, 500);
+    } else if (type === 'hearing_prep' && cn) {
+        openCase(cn);
+        setTimeout(() => {
+            const btn = document.getElementById('btn-hearing-prep');
+            if (btn) btn.click();
+        }, 500);
+    } else if (type === 'client_letter' && cn) {
+        openCase(cn);
+        setTimeout(() => {
+            const btn = document.getElementById('btn-client-letter');
+            if (btn) btn.click();
+        }, 500);
+    }
+}
+
+function openCase(caseNumber) {
+    const c = state.cases.find(c => c.case_number === caseNumber);
+    if (c) {
+        state.currentCase = c;
+        renderCaseInfo(c);
+        showView('case');
+    }
+}
+
+// Memory indicator
+socket.on('memory_loaded', (data) => {
+    if (data.insight_count > 0) {
+        const analysisEl = document.getElementById('case-analysis');
+        if (analysisEl) {
+            const memBadge = el('div', { className: 'memory-badge' },
+                el('span', { className: 'memory-icon' }, '\u{1F9E0}'),
+                el('span', {}, `Building on ${data.insight_count} prior ${data.insight_count === 1 ? 'analysis' : 'analyses'}`)
+            );
+            analysisEl.prepend(memBadge);
+        }
+    }
+});
+
+// ============================================================
+//  CUSTOM DASHBOARD WIDGETS
+// ============================================================
+
+let widgetResponseText = '';
+
+$('#btn-add-widget').addEventListener('click', () => {
+    document.getElementById('widget-modal').classList.remove('hidden');
+    document.getElementById('widget-request').focus();
+});
+
+$('#btn-widget-cancel').addEventListener('click', () => {
+    document.getElementById('widget-modal').classList.add('hidden');
+});
+
+document.querySelectorAll('.widget-suggestion').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('widget-request').value = btn.dataset.req;
+    });
+});
+
+$('#btn-widget-create').addEventListener('click', () => {
+    const input = document.getElementById('widget-request');
+    const request = input.value.trim();
+    if (!request) return;
+
+    document.getElementById('widget-modal').classList.add('hidden');
+    setStatus('Building widget...', 'analyzing');
+
+    widgetResponseText = '';
+
+    // Show right panel for thinking
+    showRightPanel(true);
+    $('#right-thinking-stream').textContent = '';
+    state.thinkingTokenCount = 0;
+    state.thinkingStartTime = Date.now();
+    state.thinkingInterval = setInterval(updateThinkingMeta, 1000);
+
+    socket.emit('create_widget', { request });
+});
+
+// Widget request input — enter key triggers create
+document.getElementById('widget-request').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        document.getElementById('btn-widget-create').click();
+    }
+});
+
+socket.on('widget_thinking_started', () => {
+    appendThinking('Building custom widget...\n\n', 'right');
+});
+socket.on('widget_thinking_delta', (data) => appendThinking(data.text, 'right'));
+socket.on('widget_thinking_complete', () => {
+    appendThinking('\n\n--- Generating widget ---\n', 'right');
+});
+
+socket.on('widget_response_started', () => {
+    widgetResponseText = '';
+});
+socket.on('widget_response_delta', (data) => {
+    widgetResponseText += data.text;
+});
+
+socket.on('widget_results', (data) => {
+    stopThinking();
+    const text = widgetResponseText || data.content;
+    if (!text) return;
+
+    const container = document.getElementById('custom-widgets');
+    const widget = el('div', { className: 'custom-widget' });
+    const header = el('div', { className: 'widget-header' },
+        el('span', { className: 'widget-icon' }, '\u{1F4CA}'),
+        el('h3', {}, data.request || 'Custom Widget'),
+        el('button', {
+            className: 'btn btn-ghost btn-sm widget-close',
+            onclick: () => widget.remove(),
+        }, '\u00D7')
+    );
+    widget.appendChild(header);
+    const body = el('div', { className: 'markdown-body widget-body' });
+    safeRenderMarkdown(body, text);
+    widget.appendChild(body);
+    container.prepend(widget);
+});
+
+socket.on('widget_error', (data) => {
+    stopThinking();
+});
+
+async function refreshDashboard() {
+    const resp = await fetch('/api/stats');
+    const stats = await resp.json();
+    updateDashboardStats(stats.cases || stats);
+    if (stats.alert_count > 0) {
+        const alertResp = await fetch('/api/alerts');
+        renderAlerts(await alertResp.json());
+    }
+    if (stats.connection_count > 0) {
+        const connResp = await fetch('/api/connections');
+        renderConnections(await connResp.json());
+    }
+}
+
+// ============================================================
 //  INIT
 // ============================================================
 

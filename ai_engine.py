@@ -63,6 +63,15 @@ HEARING_PREP_MAX_TOKENS = HEARING_PREP_THINKING + 4096
 CLIENT_LETTER_THINKING = 10000
 CLIENT_LETTER_MAX_TOKENS = CLIENT_LETTER_THINKING + 8192
 
+CASCADE_SUMMARY_THINKING = 30000
+CASCADE_SUMMARY_MAX_TOKENS = CASCADE_SUMMARY_THINKING + 16384
+
+SMART_ACTIONS_THINKING = 5000  # Fast — just suggest next steps
+SMART_ACTIONS_MAX_TOKENS = SMART_ACTIONS_THINKING + 4096
+
+WIDGET_THINKING = 20000
+WIDGET_MAX_TOKENS = WIDGET_THINKING + 8192
+
 
 # ============================================================
 #  SYSTEM PROMPTS
@@ -566,6 +575,71 @@ Be thorough, precise, and think like a defense attorney examining evidence for a
 Today is {today}."""
 
 
+CASCADE_SUMMARY_PROMPT = """You are Case Nexus, a senior strategic analyst for a public defender's office. You have just completed a multi-phase intelligence cascade:
+
+1. A full caseload health check that scanned ALL cases
+2. Deep-dive analyses on the most critical cases identified by the health check
+
+Your job: synthesize everything into a UNIFIED DEFENSE STRATEGY that connects the dots across cases.
+
+Write a strategic brief in markdown with these sections:
+
+## Executive Strategic Summary
+2-3 paragraphs connecting the most important findings across all analyses.
+
+## Cross-Case Patterns Discovered
+Patterns that ONLY become visible when you analyze multiple cases together. This is the intelligence that a human couldn't see carrying 280 cases.
+
+## Recommended Strategic Priorities
+Numbered list of the 5 most impactful actions, ordered by urgency. For each:
+- What to do
+- Which cases it affects
+- Why it matters NOW
+
+## Risk Matrix
+A markdown table: | Case | Risk Level | Key Issue | Deadline | Recommended Action |
+
+## What Changed
+What does the attorney now know that they didn't know before this cascade? Be specific.
+
+Today is {today}."""
+
+SMART_ACTIONS_PROMPT = """You are Case Nexus. Based on the analysis just completed, suggest 3-5 specific next actions the attorney should take.
+
+Return ONLY valid JSON — an array of action objects:
+```json
+[
+  {{
+    "label": "Short button label (max 6 words)",
+    "action_type": "deep_analysis|adversarial|motion|hearing_prep|client_letter|investigate",
+    "case_number": "CR-2025-XXXX or null",
+    "motion_type": "Motion to Suppress Evidence (only if action_type is motion)",
+    "reason": "One sentence explaining why this action matters now",
+    "urgency": "critical|high|medium"
+  }}
+]
+```
+
+Rules:
+- Actions must be SPECIFIC to the analysis findings, not generic
+- Include the case_number when the action targets a specific case
+- Order by urgency (critical first)
+- At least one action should reference a cross-case pattern if one was found
+- motion_type must be one of: Motion to Suppress Evidence, Motion to Dismiss, Brady Motion, Motion to Compel Discovery, Motion for Speedy Trial, Motion to Reduce Bond"""
+
+WIDGET_PROMPT = """You are Case Nexus, an AI analyst for a public defender's office. The attorney has requested a custom dashboard widget. Using the full caseload data provided, generate the requested analysis.
+
+Format your response in clear markdown. If the request involves data that can be tabulated, USE TABLES. If it involves comparisons, use structured sections. Be comprehensive but focused on what was asked.
+
+Important:
+- Reference specific case numbers (CR-2025-XXXX)
+- Include concrete data points, not vague summaries
+- If you identify something concerning, flag it clearly
+- Optimize for at-a-glance readability — the attorney is busy
+
+Today is {today}."""
+
+
 # ============================================================
 #  ANALYSIS FUNCTIONS
 # ============================================================
@@ -827,6 +901,112 @@ def run_client_letter(case_context: str, emit_callback=None) -> dict:
         thinking_budget=CLIENT_LETTER_THINKING,
         emit_callback=emit_callback,
         event_prefix="client_letter",
+    )
+
+
+def run_cascade_summary(caseload_context: str, health_check_result: dict,
+                        deep_dive_results: list, memory_context: str = "",
+                        emit_callback=None) -> dict:
+    """Synthesize health check + deep dives into unified strategy.
+
+    This is the final step of the agentic cascade: the AI has already
+    scanned all cases and deep-dived the critical ones. Now it connects
+    the dots into actionable intelligence.
+    """
+    from datetime import date
+    today = date.today().isoformat()
+
+    # Build the cascade context
+    parts = [caseload_context]
+
+    if memory_context:
+        parts.append(memory_context)
+
+    # Health check findings
+    hc = health_check_result
+    if hc:
+        parts.append("\n# HEALTH CHECK FINDINGS\n")
+        if isinstance(hc, dict):
+            for alert in hc.get("alerts", [])[:10]:
+                parts.append(f"- [{alert.get('severity', 'info').upper()}] {alert.get('title', '')}: {alert.get('message', '')}")
+            for conn in hc.get("connections", [])[:5]:
+                parts.append(f"- CONNECTION: {conn.get('title', '')} — {conn.get('description', '')}")
+
+    # Deep dive results
+    for i, dd in enumerate(deep_dive_results):
+        case_num = dd.get("case_number", f"Case {i+1}")
+        analysis = dd.get("analysis", "")
+        parts.append(f"\n# DEEP DIVE: {case_num}\n")
+        if isinstance(analysis, dict):
+            if analysis.get("executive_summary"):
+                parts.append(str(analysis["executive_summary"])[:500])
+            if analysis.get("prosecution_strength_score"):
+                parts.append(f"Prosecution strength: {analysis['prosecution_strength_score']}/100")
+        elif isinstance(analysis, str):
+            parts.append(analysis[:500])
+
+    full_context = "\n\n".join(parts)
+
+    if emit_callback:
+        emit_callback("cascade_summary_started", {"status": "Synthesizing strategic brief..."})
+
+    return _run_streaming_analysis(
+        system_prompt=CASCADE_SUMMARY_PROMPT.replace("{today}", today),
+        user_content=full_context + "\n\nSynthesize all findings into a unified defense strategy. Connect the dots. What does the attorney need to know RIGHT NOW?",
+        max_tokens=CASCADE_SUMMARY_MAX_TOKENS,
+        thinking_budget=CASCADE_SUMMARY_THINKING,
+        emit_callback=emit_callback,
+        event_prefix="cascade_summary",
+    )
+
+
+def run_smart_actions(analysis_context: str, analysis_type: str,
+                      emit_callback=None) -> dict:
+    """Suggest context-aware next actions based on analysis findings.
+
+    Returns structured JSON array of suggested actions with labels,
+    types, case numbers, and urgency levels.
+    """
+    prompt = (
+        f"The following {analysis_type} analysis was just completed:\n\n"
+        f"{analysis_context[:3000]}\n\n"
+        "Based on these findings, suggest 3-5 specific next actions."
+    )
+
+    return _run_streaming_analysis(
+        system_prompt=SMART_ACTIONS_PROMPT,
+        user_content=prompt,
+        max_tokens=SMART_ACTIONS_MAX_TOKENS,
+        thinking_budget=SMART_ACTIONS_THINKING,
+        emit_callback=emit_callback,
+        event_prefix="smart_actions",
+    )
+
+
+def run_custom_widget(caseload_context: str, request: str,
+                      memory_context: str = "", emit_callback=None) -> dict:
+    """Generate a custom dashboard widget from natural language request.
+
+    The attorney describes what they want to see, and the AI builds it
+    from the full caseload data.
+    """
+    from datetime import date
+    today = date.today().isoformat()
+
+    full_context = caseload_context
+    if memory_context:
+        full_context += "\n\n" + memory_context
+
+    if emit_callback:
+        emit_callback("widget_started", {"status": "Building custom widget..."})
+
+    return _run_streaming_analysis(
+        system_prompt=WIDGET_PROMPT.replace("{today}", today),
+        user_content=full_context + f"\n\n---\n\nThe attorney requests: {request}",
+        max_tokens=WIDGET_MAX_TOKENS,
+        thinking_budget=WIDGET_THINKING,
+        emit_callback=emit_callback,
+        event_prefix="widget",
     )
 
 

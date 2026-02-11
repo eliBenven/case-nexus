@@ -126,10 +126,56 @@
             <div id="view-dashboard" class="view">
                 <div class="dashboard-header">
                     <h2>Caseload Dashboard</h2>
-                    <button id="btn-health-check" class="btn btn-primary">
-                        <span class="btn-icon">&#9889;</span> Run Health Check
-                    </button>
+                    <div class="dashboard-actions">
+                        <button id="btn-cascade" class="btn btn-gold">
+                            <span class="btn-icon">&#9889;</span> Cascade Intelligence
+                        </button>
+                        <button id="btn-health-check" class="btn btn-secondary">
+                            <span class="btn-icon">&#128269;</span> Health Check Only
+                        </button>
+                        <button id="btn-add-widget" class="btn btn-secondary">
+                            <span class="btn-icon">&#10010;</span> Add Widget
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Cascade Progress -->
+                <div id="cascade-progress" class="cascade-progress hidden">
+                    <div class="cascade-pipeline">
+                        <div class="cascade-step" id="cascade-step-1" data-label="Caseload Scan">
+                            <span class="cascade-step-num">1</span>
+                            <span class="cascade-step-label">Scan 280 Cases</span>
+                        </div>
+                        <div class="cascade-connector"></div>
+                        <div class="cascade-step" id="cascade-step-2" data-label="Deep Dives">
+                            <span class="cascade-step-num">2</span>
+                            <span class="cascade-step-label">Deep Dive Critical</span>
+                        </div>
+                        <div class="cascade-connector"></div>
+                        <div class="cascade-step" id="cascade-step-3" data-label="Synthesis">
+                            <span class="cascade-step-num">3</span>
+                            <span class="cascade-step-label">Strategic Synthesis</span>
+                        </div>
+                        <div class="cascade-connector"></div>
+                        <div class="cascade-step" id="cascade-step-4" data-label="Actions">
+                            <span class="cascade-step-num">4</span>
+                            <span class="cascade-step-label">Smart Actions</span>
+                        </div>
+                    </div>
+                    <div id="cascade-status" class="cascade-status"></div>
+                </div>
+
+                <!-- Smart Actions Bar -->
+                <div id="smart-actions-bar" class="smart-actions-bar hidden">
+                    <div class="smart-actions-header">
+                        <span class="smart-actions-icon">&#9889;</span>
+                        <span>AI Recommended Actions</span>
+                    </div>
+                    <div id="smart-actions-list" class="smart-actions-list"></div>
+                </div>
+
+                <!-- Custom Widgets Container -->
+                <div id="custom-widgets" class="custom-widgets"></div>
 
                 <!-- Stats Row -->
                 <div id="dashboard-stats" class="dashboard-stats">
@@ -406,6 +452,25 @@
         <div class="chat-input-area">
             <input type="text" id="chat-input" class="chat-input" placeholder="Ask about your caseload..." autocomplete="off">
             <button id="btn-chat-send" class="btn btn-primary btn-chat-send">Send</button>
+        </div>
+    </div>
+
+    <!-- Widget Creator Modal -->
+    <div id="widget-modal" class="modal hidden">
+        <div class="modal-content widget-modal-content">
+            <h3>&#10010; Create Dashboard Widget</h3>
+            <p class="modal-hint">Tell Opus 4.6 what you want to see. It will analyze all 280 cases and build it.</p>
+            <input type="text" id="widget-request" class="widget-request-input" placeholder="e.g., Show me all cases where bond exceeds $10K and defendant is still detained..." autocomplete="off">
+            <div class="widget-suggestions">
+                <button class="btn btn-ghost widget-suggestion" data-req="Show me a calendar view of all hearings in the next 30 days with case severity">&#128197; Hearing Calendar</button>
+                <button class="btn btn-ghost widget-suggestion" data-req="Which prosecutors am I dealing with most, and what are their plea offer patterns?">&#128101; Prosecutor Analysis</button>
+                <button class="btn btn-ghost widget-suggestion" data-req="Rank my cases by likelihood of dismissal and explain why for each">&#128200; Dismissal Odds</button>
+                <button class="btn btn-ghost widget-suggestion" data-req="Which of my clients have been in custody longest relative to the severity of their charges?">&#9878; Custody Review</button>
+            </div>
+            <div class="modal-actions">
+                <button id="btn-widget-create" class="btn btn-primary">Build Widget</button>
+                <button id="btn-widget-cancel" class="btn btn-ghost">Cancel</button>
+            </div>
         </div>
     </div>
 

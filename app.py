@@ -250,7 +250,17 @@ def handle_deep_analysis(data):
     def run():
         case_context = db.build_single_case_context(case_number)
         caseload_context = db.build_caseload_context()
+        memory_context = db.build_memory_context(case_number)
         emit_input_estimate(len(case_context) + len(caseload_context), sid)
+
+        # Feed prior insights into the analysis (AI memory)
+        full_caseload = caseload_context
+        if memory_context:
+            full_caseload += "\n\n" + memory_context
+            socketio.emit("memory_loaded", {
+                "case_number": case_number,
+                "insight_count": memory_context.count("Prior Analysis #"),
+            }, to=sid)
 
         def emit_cb(event, payload):
             payload["case_number"] = case_number
@@ -258,12 +268,18 @@ def handle_deep_analysis(data):
 
         result = ai_engine.run_deep_analysis(
             case_context=case_context,
-            caseload_context=caseload_context,
+            caseload_context=full_caseload,
             emit_callback=emit_cb,
         )
 
         if result.get("success"):
             track_tokens(result, sid)
+            # Log for memory
+            analysis = result.get("parsed") or result.get("response", "")
+            db.log_analysis("deep_analysis", case_number,
+                            result.get("thinking", ""),
+                            analysis if isinstance(analysis, dict) else {},
+                            0, datetime.now().isoformat())
             socketio.emit("deep_analysis_results", {
                 "case_number": case_number,
                 "analysis": result.get("parsed") or result.get("response", ""),
@@ -703,6 +719,292 @@ def handle_search_case_law(data):
             "court": court,
             "results": results,
         }, to=sid)
+
+    thread = threading.Thread(target=run, daemon=True)
+    thread.start()
+
+
+# --- Cascade Intelligence (Agentic Loop) ---
+
+@socketio.on("run_cascade")
+def handle_cascade():
+    """Agentic cascade: health check → auto deep-dive critical cases → strategic synthesis.
+
+    This is the flagship agentic feature. The AI autonomously:
+    1. Scans all 280 cases (health check)
+    2. Identifies the most critical cases from the alerts
+    3. Deep-dives each critical case automatically
+    4. Synthesizes everything into a unified strategic brief
+    5. Suggests specific next actions
+
+    Each step's output feeds into the next — true agentic intelligence.
+    """
+    sid = request.sid
+
+    def run():
+        # Phase 1: Health Check
+        socketio.emit("cascade_phase", {
+            "phase": 1, "total": 4,
+            "title": "Scanning full caseload",
+            "description": "Loading 280 cases into 1M context window...",
+        }, to=sid)
+
+        caseload_context = db.build_caseload_context()
+        emit_input_estimate(len(caseload_context), sid)
+        memory_context = db.build_memory_context()
+
+        def hc_emit(event, payload):
+            socketio.emit(event, payload, to=sid)
+
+        hc_result = ai_engine.run_health_check(
+            caseload_context=caseload_context,
+            emit_callback=hc_emit,
+        )
+
+        if not hc_result.get("success"):
+            socketio.emit("cascade_error", {"error": "Health check failed"}, to=sid)
+            return
+
+        track_tokens(hc_result, sid)
+        parsed = hc_result.get("parsed", {})
+
+        # Store health check results in DB
+        now = datetime.now().isoformat()
+        db.clear_alerts()
+        alert_records = []
+        for a in parsed.get("alerts", []):
+            alert_records.append({
+                "case_id": None,
+                "case_number": a.get("case_number", ""),
+                "alert_type": a.get("alert_type", "strategy"),
+                "severity": a.get("severity", "info"),
+                "title": a.get("title", ""),
+                "message": a.get("message", ""),
+                "details": a.get("details", ""),
+                "created_at": now,
+            })
+        if alert_records:
+            db.insert_alerts(alert_records)
+
+        db.clear_connections()
+        conn_records = []
+        for c in parsed.get("connections", []):
+            conn_records.append({
+                "case_numbers": json.dumps(c.get("case_numbers", [])),
+                "connection_type": c.get("connection_type", ""),
+                "title": c.get("title", ""),
+                "description": c.get("description", ""),
+                "confidence": c.get("confidence", 0.0),
+                "actionable": c.get("actionable", ""),
+                "created_at": now,
+            })
+        if conn_records:
+            db.insert_connections(conn_records)
+
+        db.log_analysis("health_check", "full_caseload",
+                        hc_result.get("thinking", ""), parsed,
+                        len(caseload_context) // 4, now)
+
+        socketio.emit("cascade_health_check_done", {
+            "alerts": parsed.get("alerts", []),
+            "connections": parsed.get("connections", []),
+            "priority_actions": parsed.get("priority_actions", []),
+            "caseload_insights": parsed.get("caseload_insights", {}),
+        }, to=sid)
+
+        # Phase 2: Identify critical cases for auto deep-dive
+        critical_alerts = [a for a in parsed.get("alerts", [])
+                          if a.get("severity") == "critical" and a.get("case_number")]
+        # Deduplicate case numbers, max 3
+        seen = set()
+        target_cases = []
+        for a in critical_alerts:
+            cn = a["case_number"]
+            if cn not in seen:
+                seen.add(cn)
+                target_cases.append({"case_number": cn, "reason": a.get("title", "Critical alert")})
+            if len(target_cases) >= 3:
+                break
+
+        if not target_cases:
+            # Fall back to priority actions
+            for pa in parsed.get("priority_actions", [])[:3]:
+                cn = pa.get("case_number", "")
+                if cn and cn not in seen:
+                    seen.add(cn)
+                    target_cases.append({"case_number": cn, "reason": pa.get("action", pa.get("title", ""))})
+
+        socketio.emit("cascade_phase", {
+            "phase": 2, "total": 4,
+            "title": f"Deep-diving {len(target_cases)} critical cases",
+            "description": "AI autonomously selected: " + ", ".join(t["case_number"] for t in target_cases),
+            "target_cases": target_cases,
+        }, to=sid)
+
+        # Phase 2 execution: deep-dive each critical case
+        deep_results = []
+        for i, target in enumerate(target_cases):
+            cn = target["case_number"]
+            socketio.emit("cascade_deep_dive_start", {
+                "case_number": cn,
+                "reason": target["reason"],
+                "step": i + 1,
+                "total": len(target_cases),
+            }, to=sid)
+
+            case_context = db.build_single_case_context(cn)
+            memory = db.build_memory_context(cn)
+            emit_input_estimate(len(case_context) + len(caseload_context), sid)
+
+            def dd_emit(event, payload):
+                payload["case_number"] = cn
+                payload["cascade_step"] = i + 1
+                socketio.emit(event, payload, to=sid)
+
+            dd_result = ai_engine.run_deep_analysis(
+                case_context=case_context,
+                caseload_context=caseload_context + ("\n\n" + memory if memory else ""),
+                emit_callback=dd_emit,
+            )
+
+            if dd_result.get("success"):
+                track_tokens(dd_result, sid)
+                analysis = dd_result.get("parsed") or dd_result.get("response", "")
+                deep_results.append({"case_number": cn, "analysis": analysis})
+                db.log_analysis("deep_analysis", cn,
+                                dd_result.get("thinking", ""), analysis if isinstance(analysis, dict) else {},
+                                0, datetime.now().isoformat())
+
+            socketio.emit("cascade_deep_dive_done", {
+                "case_number": cn,
+                "step": i + 1,
+                "total": len(target_cases),
+                "analysis": dd_result.get("parsed") or dd_result.get("response", ""),
+            }, to=sid)
+
+        # Phase 3: Strategic synthesis
+        socketio.emit("cascade_phase", {
+            "phase": 3, "total": 4,
+            "title": "Synthesizing strategic brief",
+            "description": "Connecting dots across all analyses...",
+        }, to=sid)
+
+        updated_memory = db.build_memory_context()
+
+        def cs_emit(event, payload):
+            socketio.emit(event, payload, to=sid)
+
+        summary_result = ai_engine.run_cascade_summary(
+            caseload_context=caseload_context,
+            health_check_result=parsed,
+            deep_dive_results=deep_results,
+            memory_context=updated_memory,
+            emit_callback=cs_emit,
+        )
+
+        if summary_result.get("success"):
+            track_tokens(summary_result, sid)
+
+        # Phase 4: Generate smart actions
+        socketio.emit("cascade_phase", {
+            "phase": 4, "total": 4,
+            "title": "Recommending next actions",
+            "description": "AI generating context-aware action plan...",
+        }, to=sid)
+
+        action_context = summary_result.get("response", "")
+        actions_result = ai_engine.run_smart_actions(
+            analysis_context=action_context,
+            analysis_type="cascade intelligence",
+            emit_callback=cs_emit,
+        )
+
+        actions = []
+        if actions_result.get("success"):
+            track_tokens(actions_result, sid)
+            actions = actions_result.get("parsed") or []
+
+        # Cascade complete
+        socketio.emit("cascade_complete", {
+            "summary": summary_result.get("response", ""),
+            "deep_dives": deep_results,
+            "actions": actions,
+            "phases_completed": 4,
+            "target_cases": target_cases,
+        }, to=sid)
+
+    thread = threading.Thread(target=run, daemon=True)
+    thread.start()
+
+
+# --- Smart Actions (post-analysis suggestions) ---
+
+@socketio.on("request_smart_actions")
+def handle_smart_actions(data):
+    """Generate context-aware next actions after any analysis."""
+    context = data.get("context", "")
+    analysis_type = data.get("analysis_type", "analysis")
+    sid = request.sid
+
+    def run():
+        def emit_cb(event, payload):
+            socketio.emit(event, payload, to=sid)
+
+        result = ai_engine.run_smart_actions(
+            analysis_context=context,
+            analysis_type=analysis_type,
+            emit_callback=emit_cb,
+        )
+
+        if result.get("success"):
+            track_tokens(result, sid)
+            socketio.emit("smart_actions_results", {
+                "actions": result.get("parsed") or [],
+            }, to=sid)
+
+    thread = threading.Thread(target=run, daemon=True)
+    thread.start()
+
+
+# --- Custom Dashboard Widget ---
+
+@socketio.on("create_widget")
+def handle_create_widget(data):
+    """Generate a custom dashboard widget from natural language."""
+    request_text = data.get("request", "").strip()
+    if not request_text:
+        emit("widget_error", {"error": "Empty request"})
+        return
+
+    sid = request.sid
+    emit("status", {"message": "Building widget...", "phase": "widget"})
+
+    def run():
+        caseload_context = db.build_caseload_context()
+        emit_input_estimate(len(caseload_context), sid)
+        memory_context = db.build_memory_context()
+
+        def emit_cb(event, payload):
+            socketio.emit(event, payload, to=sid)
+
+        result = ai_engine.run_custom_widget(
+            caseload_context=caseload_context,
+            request=request_text,
+            memory_context=memory_context,
+            emit_callback=emit_cb,
+        )
+
+        if result.get("success"):
+            track_tokens(result, sid)
+            socketio.emit("widget_results", {
+                "request": request_text,
+                "content": result.get("response", ""),
+                "thinking_length": len(result.get("thinking", "")),
+            }, to=sid)
+        else:
+            socketio.emit("widget_error", {
+                "error": result.get("error", "Widget generation failed"),
+            }, to=sid)
 
     thread = threading.Thread(target=run, daemon=True)
     thread.start()

@@ -299,6 +299,75 @@ def log_analysis(analysis_type: str, scope: str, thinking: str,
         """, (analysis_type, scope, thinking, json.dumps(result), tokens, created_at))
 
 
+def get_prior_insights(case_number: str = None, limit: int = 10) -> list[dict]:
+    """Retrieve prior analysis insights to feed into new analyses.
+
+    If case_number is provided, returns analyses relevant to that case.
+    Otherwise returns all recent analyses.
+    """
+    with get_db() as conn:
+        if case_number:
+            rows = conn.execute("""
+                SELECT analysis_type, scope, result_json, created_at
+                FROM analysis_log
+                WHERE scope LIKE ? OR scope = 'full_caseload'
+                ORDER BY created_at DESC LIMIT ?
+            """, (f"%{case_number}%", limit)).fetchall()
+        else:
+            rows = conn.execute("""
+                SELECT analysis_type, scope, result_json, created_at
+                FROM analysis_log
+                ORDER BY created_at DESC LIMIT ?
+            """, (limit,)).fetchall()
+        return [dict(r) for r in rows]
+
+
+def build_memory_context(case_number: str = None) -> str:
+    """Build a context string from prior analyses for AI memory.
+
+    Returns a summary of previous findings that the AI can reference.
+    """
+    insights = get_prior_insights(case_number, limit=5)
+    if not insights:
+        return ""
+
+    parts = ["\n# PRIOR ANALYSIS MEMORY — Findings from earlier in this session\n"]
+    for i, ins in enumerate(insights, 1):
+        result = json.loads(ins.get("result_json", "{}"))
+        analysis_type = ins["analysis_type"].replace("_", " ").title()
+        scope = ins.get("scope", "unknown")
+
+        summary_lines = [f"## Prior Analysis #{i}: {analysis_type} ({scope})"]
+
+        # Extract key findings based on analysis type
+        if isinstance(result, dict):
+            if "alerts" in result:
+                alerts = result["alerts"]
+                critical = [a for a in alerts if a.get("severity") == "critical"]
+                if critical:
+                    summary_lines.append(f"- Found {len(critical)} CRITICAL alerts")
+                    for a in critical[:3]:
+                        summary_lines.append(f"  - {a.get('title', '')}: {a.get('message', '')[:150]}")
+            if "connections" in result:
+                for c in result.get("connections", [])[:3]:
+                    summary_lines.append(f"- Connection: {c.get('title', '')} (confidence: {c.get('confidence', 0):.0%})")
+            if "executive_summary" in result:
+                summary_lines.append(f"- Summary: {str(result['executive_summary'])[:200]}")
+            if "prosecution_strength_score" in result:
+                summary_lines.append(f"- Prosecution strength: {result['prosecution_strength_score']}/100")
+            if "plea_recommendation" in result:
+                plea = result["plea_recommendation"]
+                if isinstance(plea, dict):
+                    summary_lines.append(f"- Plea recommendation: {plea.get('recommendation', 'unknown')}")
+            if "priority_actions" in result:
+                for pa in result.get("priority_actions", [])[:3]:
+                    summary_lines.append(f"- Priority: {pa.get('action', pa.get('title', ''))}")
+
+        parts.append("\n".join(summary_lines))
+
+    return "\n\n".join(parts) + "\n"
+
+
 # --- Caseload Summary for AI Context ---
 
 def build_caseload_context() -> str:
