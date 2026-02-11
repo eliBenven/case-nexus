@@ -20,9 +20,24 @@
             <span class="tagline">AI-Powered Legal Caseload Intelligence</span>
         </div>
         <div class="header-center">
-            <div id="context-indicator" class="context-indicator hidden">
-                <span class="context-dot"></span>
-                <span id="context-text">0 tokens in context</span>
+            <div id="token-viz" class="token-viz">
+                <div class="token-viz-label">
+                    <span class="token-viz-icon">&#9881;</span>
+                    <span>Opus 4.6 Tokens</span>
+                </div>
+                <div class="token-viz-bar-wrap">
+                    <div id="token-viz-bar" class="token-viz-bar" style="width: 0%"></div>
+                </div>
+                <div class="token-viz-stats">
+                    <span id="token-viz-total" class="token-viz-total">0</span>
+                    <span class="token-viz-cap">/ 1M context</span>
+                </div>
+                <div class="token-viz-breakdown">
+                    <span class="token-chip input-chip"><span class="chip-dot"></span>In: <strong id="tv-input">0</strong></span>
+                    <span class="token-chip thinking-chip"><span class="chip-dot"></span>Think: <strong id="tv-thinking">0</strong></span>
+                    <span class="token-chip output-chip"><span class="chip-dot"></span>Out: <strong id="tv-output">0</strong></span>
+                    <span class="token-chip calls-chip">&#9889; <strong id="tv-calls">0</strong> calls</span>
+                </div>
             </div>
         </div>
         <div class="header-right">
@@ -59,10 +74,14 @@
                 </select>
             </div>
             <div id="case-list" class="case-list">
-                <div class="empty-state">
-                    <p>No cases loaded</p>
-                    <button id="btn-load-demo" class="btn btn-primary btn-load">Load Demo Caseload</button>
-                    <p class="hint">187 synthetic criminal defense cases</p>
+                <div class="empty-state" id="cms-connect-state">
+                    <div class="cms-badge">
+                        <span class="cms-dot"></span>
+                        Fulton County Superior Court
+                    </div>
+                    <p class="cms-status">Case Management System</p>
+                    <button id="btn-load-demo" class="btn btn-primary btn-load">Sync Caseload</button>
+                    <p class="hint">Pull assigned cases from court CMS</p>
                 </div>
             </div>
         </aside>
@@ -73,7 +92,7 @@
             <div id="view-welcome" class="view active">
                 <div class="welcome-hero">
                     <h1>Case Nexus</h1>
-                    <p class="welcome-subtitle">Load your caseload to begin AI-powered analysis</p>
+                    <p class="welcome-subtitle">AI-powered intelligence for public defenders</p>
                     <div class="welcome-features">
                         <div class="feature-card">
                             <div class="feature-icon">&#128269;</div>

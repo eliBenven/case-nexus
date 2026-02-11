@@ -10,6 +10,15 @@
 
 const socket = io();
 
+// Configure marked.js for proper table rendering and GFM
+if (typeof marked !== 'undefined') {
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+        tables: true,
+    });
+}
+
 // ============================================================
 //  STATE
 // ============================================================
@@ -132,15 +141,45 @@ function setStatus(text, className = '') {
 }
 
 function setContextIndicator(tokens) {
-    const indicator = $('#context-indicator');
-    const text = $('#context-text');
-    if (tokens > 0) {
-        indicator.classList.remove('hidden');
-        text.textContent = tokens.toLocaleString() + ' tokens in context';
-    } else {
-        indicator.classList.add('hidden');
+    // Legacy — now handled by token viz
+}
+
+// ============================================================
+//  LIVE TOKEN VISUALIZATION
+// ============================================================
+
+function updateTokenViz(data) {
+    const total = (data.total_input || 0) + (data.total_output || 0) + (data.total_thinking || 0);
+    const pct = Math.min((total / 1000000) * 100, 100);
+    const bar = document.getElementById('token-viz-bar');
+    if (bar) bar.style.width = pct + '%';
+
+    const fmt = (n) => n >= 1000000 ? (n / 1000000).toFixed(2) + 'M'
+        : n >= 1000 ? (n / 1000).toFixed(1) + 'K' : String(n);
+
+    const totalEl = document.getElementById('token-viz-total');
+    if (totalEl) totalEl.textContent = fmt(total);
+
+    const inputEl = document.getElementById('tv-input');
+    if (inputEl) inputEl.textContent = fmt(data.total_input || 0);
+
+    const thinkingEl = document.getElementById('tv-thinking');
+    if (thinkingEl) thinkingEl.textContent = fmt(data.total_thinking || 0);
+
+    const outputEl = document.getElementById('tv-output');
+    if (outputEl) outputEl.textContent = fmt(data.total_output || 0);
+
+    const callsEl = document.getElementById('tv-calls');
+    if (callsEl) callsEl.textContent = String(data.call_count || 0);
+
+    // Color the bar based on usage level
+    if (bar) {
+        if (pct > 70) bar.style.background = 'linear-gradient(90deg, var(--gold), var(--orange))';
+        else if (pct > 40) bar.style.background = 'linear-gradient(90deg, var(--gold-dim), var(--gold))';
     }
 }
+
+socket.on('token_update', updateTokenViz);
 
 // ============================================================
 //  CASELOAD LOADING
@@ -149,9 +188,9 @@ function setContextIndicator(tokens) {
 $('#btn-load-demo').addEventListener('click', () => {
     const btn = $('#btn-load-demo');
     btn.disabled = true;
-    btn.textContent = '\u2699 Generating 187 cases...';
+    btn.textContent = '\u2699 Syncing from court CMS...';
     btn.classList.add('loading-pulse');
-    setStatus('Loading caseload...', 'loading');
+    setStatus('Syncing caseload...', 'loading');
     socket.emit('load_demo_caseload');
 });
 
@@ -164,6 +203,20 @@ socket.on('caseload_loaded', (data) => {
     $('#case-filter').disabled = false;
     // Show chat button now that cases are loaded
     $('#btn-chat-toggle').classList.remove('hidden');
+
+    // Show sync status in sidebar header
+    const sidebarHeader = document.querySelector('.sidebar-header');
+    let syncEl = document.getElementById('cms-sync-status');
+    if (!syncEl) {
+        syncEl = el('div', { id: 'cms-sync-status', className: 'cms-sync-status' });
+        sidebarHeader.parentNode.insertBefore(syncEl, sidebarHeader.nextSibling);
+    }
+    const now = new Date();
+    syncEl.innerHTML = '';
+    syncEl.appendChild(el('span', { className: 'cms-sync-dot' }));
+    syncEl.appendChild(document.createTextNode(
+        'Synced from Fulton County CMS \u2014 ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    ));
 });
 
 async function loadCaseList() {
@@ -1419,8 +1472,20 @@ async function loadEvidence(caseNumber) {
             const card = el('div', { className: 'evidence-card' },
                 el('div', { className: 'evidence-thumb' },
                     item.file_path
-                        ? (() => { const img = el('img', { src: item.file_path, alt: item.title }); return img; })()
-                        : el('div', { className: 'evidence-placeholder' }, item.evidence_type[0].toUpperCase())
+                        ? (() => {
+                            const img = el('img', { src: item.file_path, alt: item.title });
+                            img.onerror = () => {
+                                img.replaceWith(el('div', { className: 'evidence-placeholder' },
+                                    el('span', { className: 'evidence-placeholder-icon' }, '\u{1F4F7}'),
+                                    el('span', { className: 'evidence-placeholder-label' }, item.evidence_type)
+                                ));
+                            };
+                            return img;
+                        })()
+                        : el('div', { className: 'evidence-placeholder' },
+                            el('span', { className: 'evidence-placeholder-icon' }, '\u{1F4F7}'),
+                            el('span', { className: 'evidence-placeholder-label' }, item.evidence_type)
+                        )
                 ),
                 el('div', { className: 'evidence-info' },
                     el('div', { className: 'evidence-type-badge' }, item.evidence_type),

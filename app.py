@@ -10,6 +10,7 @@ Four analysis modes:
 4. Motion Generation (128K output)
 """
 
+import os
 import threading
 import json
 from datetime import datetime
@@ -24,6 +25,25 @@ from demo_data import generate_demo_caseload, generate_demo_evidence
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "case-nexus-legal-intelligence"
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+
+# Global token usage tracker — cumulative across ALL Opus 4.6 calls
+token_usage = {
+    "total_input": 0,
+    "total_output": 0,
+    "total_thinking": 0,
+    "call_count": 0,
+}
+
+
+def track_tokens(result, sid):
+    """Update global token counter and emit to client."""
+    usage = result.get("usage", {})
+    if usage:
+        token_usage["total_input"] += usage.get("input_tokens", 0)
+        token_usage["total_output"] += usage.get("output_tokens", 0)
+    token_usage["total_thinking"] += len(result.get("thinking", "")) // 4
+    token_usage["call_count"] += 1
+    socketio.emit("token_update", token_usage, to=sid)
 
 
 # --- Routes ---
@@ -181,6 +201,7 @@ def handle_health_check():
                 parsed, context_tokens, now
             )
 
+            track_tokens(result, sid)
             socketio.emit("health_check_results", {
                 "alerts": parsed.get("alerts", []),
                 "connections": parsed.get("connections", []),
@@ -229,6 +250,7 @@ def handle_deep_analysis(data):
         )
 
         if result.get("success"):
+            track_tokens(result, sid)
             socketio.emit("deep_analysis_results", {
                 "case_number": case_number,
                 "analysis": result.get("parsed") or result.get("response", ""),
@@ -272,6 +294,10 @@ def handle_adversarial(data):
         )
 
         if result.get("success"):
+            for phase in ("prosecution", "defense", "judge"):
+                phase_data = result.get(phase, {})
+                if phase_data:
+                    track_tokens(phase_data, sid)
             socketio.emit("adversarial_results", {
                 "case_number": case_number,
                 "prosecution": result.get("prosecution", {}).get("response", ""),
@@ -321,6 +347,7 @@ def handle_generate_motion(data):
         )
 
         if result.get("success"):
+            track_tokens(result, sid)
             motion_text = result.get("response", "")
             socketio.emit("motion_results", {
                 "case_number": case_number,
@@ -444,6 +471,7 @@ def handle_analyze_evidence(data):
         )
 
         if result.get("success"):
+            track_tokens(result, sid)
             socketio.emit("evidence_analysis_results", {
                 "case_number": case_number,
                 "evidence_id": evidence_id,
@@ -495,6 +523,7 @@ def handle_chat_message(data):
         )
 
         if result.get("success"):
+            track_tokens(result, sid)
             # Store in chat history
             if sid not in chat_histories:
                 chat_histories[sid] = []
@@ -581,6 +610,7 @@ def handle_hearing_prep(data):
         )
 
         if result.get("success"):
+            track_tokens(result, sid)
             socketio.emit("hearing_prep_results", {
                 "case_number": case_number,
                 "brief": result.get("response", ""),
@@ -624,6 +654,7 @@ def handle_client_letter(data):
         )
 
         if result.get("success"):
+            track_tokens(result, sid)
             socketio.emit("client_letter_results", {
                 "case_number": case_number,
                 "letter": result.get("response", ""),
@@ -671,4 +702,6 @@ if __name__ == "__main__":
     print("\n  Case Nexus — AI-Powered Legal Caseload Intelligence")
     print("  Powered by Claude Opus 4.6 Extended Thinking")
     print("  http://localhost:5001\n")
-    socketio.run(app, host="0.0.0.0", port=5001, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5001)),
+                 debug=os.environ.get("FLASK_DEBUG", "0") == "1",
+                 allow_unsafe_werkzeug=True)

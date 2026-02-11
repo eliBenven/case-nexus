@@ -1035,6 +1035,16 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
                         })
                     current_block_type = None
 
+        # Grab usage from the final streamed message
+        final_message = stream.get_final_message()
+        usage = {}
+        if final_message and hasattr(final_message, "usage"):
+            u = final_message.usage
+            usage = {
+                "input_tokens": getattr(u, "input_tokens", 0),
+                "output_tokens": getattr(u, "output_tokens", 0),
+            }
+
         parsed = _parse_json_response(response_text)
 
         if emit_callback:
@@ -1042,6 +1052,7 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
                 "thinking_length": len(thinking_text),
                 "response_length": len(response_text),
                 "success": True,
+                "usage": usage,
             })
 
         return {
@@ -1049,6 +1060,7 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
             "response": response_text,
             "parsed": parsed,
             "success": True,
+            "usage": usage,
         }
 
     except anthropic.APIError as e:
