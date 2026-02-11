@@ -20,6 +20,7 @@ const state = {
     alerts: [],
     connections: [],
     analysisActive: false,
+    chatActive: false,
     thinkingStartTime: null,
     thinkingTokenCount: 0,
     thinkingInterval: null,
@@ -1606,7 +1607,7 @@ $('#btn-chat-clear').addEventListener('click', () => {
 });
 
 function sendChatMessage(text) {
-    if (!text.trim() || state.analysisActive) return;
+    if (!text.trim() || state.chatActive) return;
     const input = document.getElementById('chat-input');
     input.value = '';
 
@@ -1648,7 +1649,7 @@ function sendChatMessage(text) {
     chatResponseText = '';
     chatThinkingTokens = 0;
 
-    state.analysisActive = true;
+    state.chatActive = true;
     setStatus('Chat...', 'analyzing');
     socket.emit('chat_message', { message: text });
 }
@@ -1718,7 +1719,7 @@ socket.on('chat_complete', () => {
 });
 
 socket.on('chat_results', () => {
-    state.analysisActive = false;
+    state.chatActive = false;
     setStatus('Ready', 'ready');
     // Safety net: render markdown if not already done
     if (chatResponseText && state.chatResponseEl && !state.chatResponseEl.querySelector('h1, h2, h3, table, ul, ol')) {
@@ -1729,7 +1730,7 @@ socket.on('chat_results', () => {
 });
 
 socket.on('chat_error', (data) => {
-    state.analysisActive = false;
+    state.chatActive = false;
     setStatus('Ready', 'ready');
     if (state.chatResponseEl) {
         state.chatResponseEl.textContent = '';
