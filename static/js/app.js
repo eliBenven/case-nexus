@@ -1760,13 +1760,23 @@ $('#btn-hearing-prep').addEventListener('click', () => {
         el('span', {}, 'Generating hearing brief — 30 seconds...')
     ));
 
-    showRightPanel(false);
+    // Open right panel for thinking stream
+    showRightPanel(true);
+    $('#right-thinking-stream').textContent = '';
+    state.thinkingTokenCount = 0;
+    state.thinkingStartTime = Date.now();
+    state.thinkingInterval = setInterval(updateThinkingMeta, 1000);
+
     socket.emit('run_hearing_prep', { case_number: state.currentCase.case_number });
 });
 
-socket.on('hearing_prep_thinking_started', () => {});
-socket.on('hearing_prep_thinking_delta', () => {});
-socket.on('hearing_prep_thinking_complete', () => {});
+socket.on('hearing_prep_thinking_started', () => {
+    appendThinking('Preparing hearing brief...\n\n', 'right');
+});
+socket.on('hearing_prep_thinking_delta', (data) => appendThinking(data.text, 'right'));
+socket.on('hearing_prep_thinking_complete', () => {
+    appendThinking('\n\n--- Generating brief ---\n', 'right');
+});
 
 socket.on('hearing_prep_response_started', () => {
     hearingPrepText = '';
@@ -1820,13 +1830,23 @@ $('#btn-client-letter').addEventListener('click', () => {
         el('span', {}, 'Writing client letter in plain English...')
     ));
 
-    showRightPanel(false);
+    // Open right panel for thinking stream
+    showRightPanel(true);
+    $('#right-thinking-stream').textContent = '';
+    state.thinkingTokenCount = 0;
+    state.thinkingStartTime = Date.now();
+    state.thinkingInterval = setInterval(updateThinkingMeta, 1000);
+
     socket.emit('run_client_letter', { case_number: state.currentCase.case_number });
 });
 
-socket.on('client_letter_thinking_started', () => {});
-socket.on('client_letter_thinking_delta', () => {});
-socket.on('client_letter_thinking_complete', () => {});
+socket.on('client_letter_thinking_started', () => {
+    appendThinking('Drafting client letter...\n\n', 'right');
+});
+socket.on('client_letter_thinking_delta', (data) => appendThinking(data.text, 'right'));
+socket.on('client_letter_thinking_complete', () => {
+    appendThinking('\n\n--- Writing letter ---\n', 'right');
+});
 
 socket.on('client_letter_response_started', () => {
     clientLetterText = '';
