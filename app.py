@@ -46,6 +46,18 @@ def track_tokens(result, sid):
     socketio.emit("token_update", token_usage, to=sid)
 
 
+def emit_input_estimate(text_length, sid):
+    """Emit an estimated input token count so the viz ticks up immediately.
+
+    This adds a rough estimate to total_input. When track_tokens fires
+    later with the real API usage, it adds the actual input_tokens on top.
+    The slight over-count is fine — it makes the viz feel more dramatic.
+    """
+    est = text_length // 4
+    token_usage["total_input"] += est
+    socketio.emit("token_update", token_usage, to=sid)
+
+
 # --- Routes ---
 
 @app.route("/")
@@ -142,6 +154,7 @@ def handle_health_check():
     def run():
         caseload_context = db.build_caseload_context()
         context_tokens = len(caseload_context) // 4  # rough estimate
+        emit_input_estimate(len(caseload_context), sid)
 
         socketio.emit("status", {
             "message": f"Loading {context_tokens:,} tokens into Opus 4.6 context window...",
@@ -236,8 +249,8 @@ def handle_deep_analysis(data):
 
     def run():
         case_context = db.build_single_case_context(case_number)
-        # Also include full caseload for cross-referencing
         caseload_context = db.build_caseload_context()
+        emit_input_estimate(len(case_context) + len(caseload_context), sid)
 
         def emit_cb(event, payload):
             payload["case_number"] = case_number
@@ -510,6 +523,7 @@ def handle_chat_message(data):
 
     def run():
         caseload_context = db.build_caseload_context()
+        emit_input_estimate(len(caseload_context), sid)
         history = chat_histories.get(sid, [])
 
         def emit_cb(event, payload):

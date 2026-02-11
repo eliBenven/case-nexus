@@ -148,38 +148,68 @@ function setContextIndicator(tokens) {
 //  LIVE TOKEN VISUALIZATION
 // ============================================================
 
-function updateTokenViz(data) {
-    const total = (data.total_input || 0) + (data.total_output || 0) + (data.total_thinking || 0);
+// Cumulative live counters — ticks up during streaming, snaps to
+// accurate server values when each API call completes.
+const tokenVizState = {
+    total_input: 0,
+    total_output: 0,
+    total_thinking: 0,
+    call_count: 0,
+    // Live deltas (estimated from streaming chunks, reset on server snap)
+    live_thinking: 0,
+    live_output: 0,
+};
+
+const fmtTokens = (n) => n >= 1000000 ? (n / 1000000).toFixed(2) + 'M'
+    : n >= 1000 ? (n / 1000).toFixed(1) + 'K' : String(n);
+
+function renderTokenViz() {
+    const s = tokenVizState;
+    const thinking = s.total_thinking + s.live_thinking;
+    const output = s.total_output + s.live_output;
+    const total = s.total_input + thinking + output;
     const pct = Math.min((total / 1000000) * 100, 100);
+
     const bar = document.getElementById('token-viz-bar');
-    if (bar) bar.style.width = pct + '%';
-
-    const fmt = (n) => n >= 1000000 ? (n / 1000000).toFixed(2) + 'M'
-        : n >= 1000 ? (n / 1000).toFixed(1) + 'K' : String(n);
-
-    const totalEl = document.getElementById('token-viz-total');
-    if (totalEl) totalEl.textContent = fmt(total);
-
-    const inputEl = document.getElementById('tv-input');
-    if (inputEl) inputEl.textContent = fmt(data.total_input || 0);
-
-    const thinkingEl = document.getElementById('tv-thinking');
-    if (thinkingEl) thinkingEl.textContent = fmt(data.total_thinking || 0);
-
-    const outputEl = document.getElementById('tv-output');
-    if (outputEl) outputEl.textContent = fmt(data.total_output || 0);
-
-    const callsEl = document.getElementById('tv-calls');
-    if (callsEl) callsEl.textContent = String(data.call_count || 0);
-
-    // Color the bar based on usage level
     if (bar) {
+        bar.style.width = pct + '%';
         if (pct > 70) bar.style.background = 'linear-gradient(90deg, var(--gold), var(--orange))';
         else if (pct > 40) bar.style.background = 'linear-gradient(90deg, var(--gold-dim), var(--gold))';
     }
+
+    const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    set('token-viz-total', fmtTokens(total));
+    set('tv-input', fmtTokens(s.total_input));
+    set('tv-thinking', fmtTokens(thinking));
+    set('tv-output', fmtTokens(output));
+    set('tv-calls', String(s.call_count));
 }
 
-socket.on('token_update', updateTokenViz);
+// Server sends accurate totals after each API call completes — snap to them
+socket.on('token_update', (data) => {
+    tokenVizState.total_input = data.total_input || 0;
+    tokenVizState.total_output = data.total_output || 0;
+    tokenVizState.total_thinking = data.total_thinking || 0;
+    tokenVizState.call_count = data.call_count || 0;
+    // Reset live deltas — server numbers are authoritative
+    tokenVizState.live_thinking = 0;
+    tokenVizState.live_output = 0;
+    renderTokenViz();
+});
+
+// Live: catch ALL thinking/response deltas and tick the counter in real-time
+socket.onAny((event, data) => {
+    if (!data || typeof data.text !== 'string') return;
+    // Rough token estimate: ~4 chars per token
+    const approxTokens = Math.ceil(data.text.length / 4);
+    if (event.endsWith('_thinking_delta')) {
+        tokenVizState.live_thinking += approxTokens;
+        renderTokenViz();
+    } else if (event.endsWith('_response_delta')) {
+        tokenVizState.live_output += approxTokens;
+        renderTokenViz();
+    }
+});
 
 // ============================================================
 //  CASELOAD LOADING
