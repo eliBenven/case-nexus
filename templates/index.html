@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Case Nexus — AI Legal Caseload Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.6/marked.min.js"></script>
@@ -44,6 +47,9 @@
             <button id="btn-chat-toggle" class="btn btn-chat-toggle hidden" title="Ask your caseload anything">
                 &#128172; Chat
             </button>
+            <span id="legal-corpus-badge" class="legal-corpus-badge hidden" title="Real statutory text loaded from official sources">
+                &#9878; <span id="lc-stats">Legal Corpus</span>
+            </span>
             <span class="model-badge">Claude Opus 4.6</span>
             <span id="status-badge" class="status-badge">Ready</span>
         </div>
@@ -263,6 +269,21 @@
                     <div id="case-evidence" class="case-evidence hidden">
                         <h3>&#128247; Evidence Items</h3>
                         <div id="evidence-grid" class="evidence-grid"></div>
+                    </div>
+                    <!-- Case Law Search -->
+                    <div class="case-law-search">
+                        <h3>&#9878; Case Law Search</h3>
+                        <div class="case-law-input-row">
+                            <input type="text" id="case-law-query" class="case-law-input" placeholder="Search Georgia case law (e.g. 'aggravated assault self-defense')">
+                            <select id="case-law-court" class="case-law-court">
+                                <option value="ga">Georgia</option>
+                                <option value="gaappeals">GA Court of Appeals</option>
+                                <option value="gasuperct">GA Supreme Court</option>
+                                <option value="">All Courts</option>
+                            </select>
+                            <button id="btn-case-law-search" class="btn btn-secondary btn-sm">Search</button>
+                        </div>
+                        <div id="case-law-results" class="case-law-results hidden"></div>
                     </div>
                     <div class="case-analysis" id="case-analysis">
                         <p class="empty-hint">Select an analysis mode above</p>

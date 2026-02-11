@@ -21,5 +21,10 @@ build/
 *.swo
 .DS_Store
 
+# Legal corpus raw data (too large for git — regenerate with data/parse_usc.py)
+data/usc/*.xml
+data/usc/*.zip
+data/usc_index.json
+
 # Claude Code
 .claude/

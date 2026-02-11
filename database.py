@@ -490,6 +490,25 @@ def build_single_case_context(case_number: str) -> str:
     return "\n".join(parts)
 
 
+def build_legal_context(case_number: str = None) -> str:
+    """Build legal authority context for AI analysis.
+
+    case_number: returns law relevant to that case's charges
+    None: returns full corpus for caseload-wide analysis
+    """
+    import legal_corpus
+
+    if case_number:
+        case = get_case(case_number)
+        if not case:
+            return ""
+        charges_raw = case.get("charges", "[]")
+        charges = json.loads(charges_raw) if isinstance(charges_raw, str) else charges_raw
+        return legal_corpus.get_relevant_law(charges, case)
+    else:
+        return legal_corpus.get_full_legal_corpus()
+
+
 def _row_to_dict(row) -> dict:
     if row is None:
         return {}

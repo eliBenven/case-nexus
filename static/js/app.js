@@ -102,7 +102,7 @@ function setAdversarialPhase(phaseNum) {
             step.classList.add('active');
         }
         if (conn) {
-            conn.classList.toggle('complete', i <= phaseNum);
+            conn.classList.toggle('complete', i < phaseNum);
         }
     }
 }
@@ -208,6 +208,23 @@ socket.onAny((event, data) => {
     } else if (event.endsWith('_response_delta')) {
         tokenVizState.live_output += approxTokens;
         renderTokenViz();
+    }
+});
+
+// ============================================================
+//  LEGAL CORPUS INDICATOR
+// ============================================================
+
+socket.on('legal_corpus_loaded', (data) => {
+    const badge = $('#legal-corpus-badge');
+    const stats = $('#lc-stats');
+    if (badge && stats) {
+        const ga = data.ga_statutes || 0;
+        const fed = data.federal_sections || 0;
+        const amend = data.amendments || 0;
+        const cases = data.landmark_cases || 0;
+        stats.textContent = `${ga} GA | ${fed.toLocaleString()} USC | ${amend} Amendments | ${cases} Cases`;
+        badge.classList.remove('hidden');
     }
 });
 
@@ -612,6 +629,19 @@ $('#btn-motion').addEventListener('click', () => {
 
 $('#btn-modal-close').addEventListener('click', () => {
     $('#motion-modal').classList.add('hidden');
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const motionModal = $('#motion-modal');
+        const widgetModal = document.getElementById('widget-modal');
+        if (motionModal && !motionModal.classList.contains('hidden')) {
+            motionModal.classList.add('hidden');
+        }
+        if (widgetModal && !widgetModal.classList.contains('hidden')) {
+            widgetModal.classList.add('hidden');
+        }
+    }
 });
 
 $$('.btn-motion-option').forEach(btn => {
@@ -1975,6 +2005,67 @@ socket.on('client_letter_results', (data) => {
         safeRenderMarkdown(wrapper, data.letter);
         analysisEl.appendChild(wrapper);
     }
+});
+
+// ============================================================
+//  CASE LAW SEARCH
+// ============================================================
+
+$('#btn-case-law-search').addEventListener('click', () => {
+    const query = $('#case-law-query').value.trim();
+    if (!query) return;
+    const court = $('#case-law-court').value;
+    const resultsEl = $('#case-law-results');
+    resultsEl.classList.remove('hidden');
+    resultsEl.textContent = '';
+    const hint = el('p', { className: 'searching-hint' });
+    hint.textContent = 'Searching CourtListener...';
+    resultsEl.appendChild(hint);
+    socket.emit('search_case_law', { query, court });
+});
+
+$('#case-law-query').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('#btn-case-law-search').click();
+});
+
+socket.on('case_law_results', (data) => {
+    const resultsEl = $('#case-law-results');
+    resultsEl.classList.remove('hidden');
+    resultsEl.textContent = '';
+
+    if (data.error) {
+        const errP = el('p', { className: 'error-text' });
+        errP.textContent = data.error;
+        resultsEl.appendChild(errP);
+        return;
+    }
+
+    const results = data.results || [];
+    if (results.length === 0) {
+        const emptyP = el('p', { className: 'empty-hint' });
+        emptyP.textContent = 'No results found. Try a different search.';
+        resultsEl.appendChild(emptyP);
+        return;
+    }
+
+    const header = el('div', { className: 'case-law-header' });
+    header.textContent = `${results.length} results for "${data.query}"`;
+    resultsEl.appendChild(header);
+
+    results.forEach(r => {
+        const card = el('div', { className: 'case-law-card' });
+        const title = el('a', { className: 'case-law-title', href: r.url, target: '_blank' });
+        title.textContent = r.case_name || 'Untitled';
+        const meta = el('div', { className: 'case-law-meta' });
+        const cite = Array.isArray(r.citation) ? r.citation.join(', ') : (r.citation || '');
+        meta.textContent = [cite, r.court, r.date_filed].filter(Boolean).join(' \u00b7 ');
+        const snippet = el('div', { className: 'case-law-snippet' });
+        safeRenderMarkdown(snippet, r.snippet || '');
+        card.appendChild(title);
+        card.appendChild(meta);
+        card.appendChild(snippet);
+        resultsEl.appendChild(card);
+    });
 });
 
 // ============================================================

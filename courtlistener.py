@@ -218,6 +218,40 @@ CITATION_PATTERN = re.compile(
 )
 
 
+_case_law_cache = {}  # session cache: charge_key -> results
+
+
+def search_relevant_precedents(charges: list[str], jurisdiction: str = "ga",
+                                max_per_charge: int = 3) -> str:
+    """Search CourtListener for relevant precedents based on charges.
+
+    Results are cached per-session to avoid redundant API calls.
+    Returns formatted text suitable for injection into AI context.
+    """
+    parts = []
+    for charge in charges:
+        cache_key = f"{charge}:{jurisdiction}"
+        if cache_key in _case_law_cache:
+            results = _case_law_cache[cache_key]
+        else:
+            results = search_opinions(charge, court=jurisdiction, max_results=max_per_charge)
+            _case_law_cache[cache_key] = results
+
+        if results:
+            parts.append(f"### Precedents for: {charge}")
+            for r in results:
+                cite = r.get("citation", [""])[0] if isinstance(r.get("citation"), list) else r.get("citation", "")
+                parts.append(
+                    f"- **{r.get('case_name', 'Unknown')}** ({cite}, {r.get('date_filed', '')}): "
+                    f"{r.get('snippet', 'No excerpt available.')}"
+                )
+
+    if not parts:
+        return ""
+
+    return "## RELEVANT CASE LAW (from CourtListener API)\n\n" + "\n".join(parts)
+
+
 def extract_citations_local(text: str) -> list[str]:
     """Extract legal citations from text using regex (no API call).
 

@@ -20,6 +20,7 @@ from flask_socketio import SocketIO, emit
 import ai_engine
 import courtlistener
 import database as db
+import legal_corpus
 from demo_data import generate_demo_caseload, generate_demo_evidence
 
 app = Flask(__name__)
@@ -153,8 +154,13 @@ def handle_health_check():
 
     def run():
         caseload_context = db.build_caseload_context()
-        context_tokens = len(caseload_context) // 4  # rough estimate
-        emit_input_estimate(len(caseload_context), sid)
+        legal_context = db.build_legal_context()
+        full_context = caseload_context + "\n\n" + legal_context
+        context_tokens = len(full_context) // 4
+        emit_input_estimate(len(full_context), sid)
+
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
 
         socketio.emit("status", {
             "message": f"Loading {context_tokens:,} tokens into Opus 4.6 context window...",
@@ -166,7 +172,7 @@ def handle_health_check():
             socketio.emit(event, payload, to=sid)
 
         result = ai_engine.run_health_check(
-            caseload_context=caseload_context,
+            caseload_context=full_context,
             emit_callback=emit_cb,
         )
 
@@ -250,11 +256,15 @@ def handle_deep_analysis(data):
     def run():
         case_context = db.build_single_case_context(case_number)
         caseload_context = db.build_caseload_context()
+        legal_context = db.build_legal_context(case_number)
         memory_context = db.build_memory_context(case_number)
-        emit_input_estimate(len(case_context) + len(caseload_context), sid)
+        emit_input_estimate(len(case_context) + len(caseload_context) + len(legal_context), sid)
 
-        # Feed prior insights into the analysis (AI memory)
-        full_caseload = caseload_context
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
+
+        # Feed legal authority and prior insights into the analysis
+        full_caseload = caseload_context + "\n\n" + legal_context
         if memory_context:
             full_caseload += "\n\n" + memory_context
             socketio.emit("memory_loaded", {
@@ -312,13 +322,18 @@ def handle_adversarial(data):
 
     def run():
         case_context = db.build_single_case_context(case_number)
+        legal_context = db.build_legal_context(case_number)
+        full_context = case_context + "\n\n" + legal_context
+
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
 
         def emit_cb(event, payload):
             payload["case_number"] = case_number
             socketio.emit(event, payload, to=sid)
 
         result = ai_engine.run_adversarial_simulation(
-            case_context=case_context,
+            case_context=full_context,
             emit_callback=emit_cb,
         )
 
@@ -364,13 +379,18 @@ def handle_generate_motion(data):
 
     def run():
         case_context = db.build_single_case_context(case_number)
+        legal_context = db.build_legal_context(case_number)
+        full_context = case_context + "\n\n" + legal_context
+
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
 
         def emit_cb(event, payload):
             payload["case_number"] = case_number
             socketio.emit(event, payload, to=sid)
 
         result = ai_engine.generate_motion(
-            case_context=case_context,
+            case_context=full_context,
             motion_type=motion_type,
             emit_callback=emit_cb,
         )
@@ -539,7 +559,13 @@ def handle_chat_message(data):
 
     def run():
         caseload_context = db.build_caseload_context()
+        legal_context = db.build_legal_context()
+        caseload_context = caseload_context + "\n\n" + legal_context
         emit_input_estimate(len(caseload_context), sid)
+
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
+
         history = chat_histories.get(sid, [])
 
         def emit_cb(event, payload):
@@ -611,6 +637,8 @@ def handle_hearing_prep(data):
 
     def run():
         case_context = db.build_single_case_context(case_number)
+        legal_context = db.build_legal_context(case_number)
+        case_context = case_context + "\n\n" + legal_context
         # Get cases with the same judge for tendency analysis
         case = db.get_case(case_number)
         judge_context = ""
@@ -750,8 +778,13 @@ def handle_cascade():
         }, to=sid)
 
         caseload_context = db.build_caseload_context()
+        legal_context = db.build_legal_context()
+        caseload_context = caseload_context + "\n\n" + legal_context
         emit_input_estimate(len(caseload_context), sid)
         memory_context = db.build_memory_context()
+
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
 
         def hc_emit(event, payload):
             socketio.emit(event, payload, to=sid)
@@ -853,6 +886,8 @@ def handle_cascade():
             }, to=sid)
 
             case_context = db.build_single_case_context(cn)
+            case_legal = db.build_legal_context(cn)
+            case_context = case_context + "\n\n" + case_legal
             memory = db.build_memory_context(cn)
             emit_input_estimate(len(case_context) + len(caseload_context), sid)
 

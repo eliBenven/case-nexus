@@ -29,7 +29,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+_api_key = os.getenv("ANTHROPIC_API_KEY")
+if not _api_key:
+    raise RuntimeError(
+        "ANTHROPIC_API_KEY not set. Create a .env file with:\n"
+        "  ANTHROPIC_API_KEY=your-key-here"
+    )
+client = anthropic.Anthropic(api_key=_api_key)
 
 MODEL = "claude-opus-4-6"
 
@@ -58,7 +64,7 @@ CHAT_THINKING = 30000
 CHAT_MAX_TOKENS = CHAT_THINKING + 8192
 
 HEARING_PREP_THINKING = 10000  # Fast — PD needs this in 30 seconds
-HEARING_PREP_MAX_TOKENS = HEARING_PREP_THINKING + 4096
+HEARING_PREP_MAX_TOKENS = HEARING_PREP_THINKING + 8192
 
 CLIENT_LETTER_THINKING = 10000
 CLIENT_LETTER_MAX_TOKENS = CLIENT_LETTER_THINKING + 8192
@@ -139,13 +145,21 @@ Respond with JSON:
   }
 }
 
+## LEGAL AUTHORITY IN CONTEXT
+You have been provided with actual statutory text from:
+- Official Code of Georgia Annotated (O.C.G.A.) — from public domain government sources
+- United States Code (USC) — parsed from uscode.house.gov XML
+- US Constitutional Amendments with key SCOTUS holdings
+CITE THESE DIRECTLY — quote specific statutory language when analyzing charges, deadlines, or constitutional issues. Do not rely on memory when the actual text is in your context.
+
 ## CRITICAL RULES
 
 1. Calculate dates precisely. Today is {today}. Count days exactly.
 2. Cite specific case numbers for every alert and connection.
 3. Do NOT hallucinate case details — only reference information provided.
 4. Prioritize by real-world impact: missed deadlines > constitutional issues > strategy opportunities.
-5. Be thorough — scan EVERY case. An overworked defender's client depends on you catching what they miss."""
+5. Be thorough — scan EVERY case. An overworked defender's client depends on you catching what they miss.
+6. When referencing statutes, quote the actual text provided rather than paraphrasing from memory."""
 
 DEEP_ANALYSIS_PROMPT = """You are Case Nexus, a senior public defender's strategic analyst performing a comprehensive case evaluation.
 
@@ -234,11 +248,14 @@ Respond with JSON containing ALL of the following fields:
   "overall_assessment": "Comprehensive markdown summary (2-3 paragraphs) with **bold** emphasis on key conclusions. Include a clear recommendation on trial vs plea."
 }
 
+## LEGAL AUTHORITY IN CONTEXT
+You have been provided with actual statutory text from official government sources — O.C.G.A., USC, and Constitutional amendments with SCOTUS holdings. CITE THESE DIRECTLY. Quote the specific statutory elements for each charge rather than paraphrasing from memory.
+
 ## ANALYSIS INSTRUCTIONS
 
 1. Think like a veteran defense attorney with 20+ years of trial experience.
 2. Calculate speedy trial deadlines precisely. Today is {today}.
-3. Cite specific Georgia statutes (O.C.G.A. §) and landmark case law.
+3. Cite the actual Georgia statutes (O.C.G.A. §) provided in your context — quote statutory elements verbatim.
 4. Consider cross-case patterns if other cases share officers, judges, or witnesses.
 5. Be honest about weaknesses — a good attorney knows both sides.
 6. prosecution_strength_score: 0 = no case at all, 50 = coin flip, 100 = guaranteed conviction.
@@ -279,7 +296,7 @@ Specific recommendation with statutory basis, conditions (probation, fines, comm
 ## VIII. IMMEDIATE PRE-TRIAL ACTION ITEMS
 Numbered checklist of urgent actions needed before trial.
 
-Be aggressive but intellectually honest. Cite legal authority where appropriate. Think like a prosecutor who wants to win but respects the system. The brief should read as if prepared by an experienced ADA.
+Be aggressive but intellectually honest. You have been provided with actual statutory text (O.C.G.A., USC) — cite and quote these directly when mapping elements to evidence. Think like a prosecutor who wants to win but respects the system. The brief should read as if prepared by an experienced ADA.
 
 Today is {today}."""
 
@@ -328,7 +345,7 @@ Pre-trial motions to file, trial theme, cross-examination priorities, and plea n
 ## XII. CONCLUSION
 A powerful closing paragraph. Why this case fails to meet the burden of proof beyond a reasonable doubt.
 
-Be aggressive, thorough, and creative. Cite legal authority. Your client's freedom depends on catching what others miss. The brief should read as if written by a senior defense attorney with decades of trial experience.
+Be aggressive, thorough, and creative. You have been provided with actual statutory text and constitutional provisions — cite and quote these directly. Your client's freedom depends on catching what others miss. The brief should read as if written by a senior defense attorney with decades of trial experience.
 
 Today is {today}."""
 
@@ -380,6 +397,9 @@ Specific, prioritized, actionable guidance:
 4. **Trial Preparation** — if going to trial, what to focus on
 5. **Key Decision Point** — the single most important strategic choice facing the defense
 
+## LEGAL AUTHORITY IN CONTEXT
+You have been provided with actual statutory text from O.C.G.A., USC, and Constitutional amendments with SCOTUS holdings. Reference the specific statutory elements when evaluating whether prosecution has proven each charge. Cite the real law in your analysis.
+
 Be objective, analytical, and precise. Reference specific arguments from both briefs. Your role is to help the public defender make the best possible decisions for their client.
 
 Today is {today}."""
@@ -426,7 +446,11 @@ Standard Georgia certificate of service format.
 ### 7. SIGNATURE BLOCK
 Attorney signature block with placeholder.
 
+## LEGAL AUTHORITY IN CONTEXT
+You have been provided with actual statutory text from O.C.G.A., USC, and Constitutional amendments. CITE THESE DIRECTLY — quote the exact statutory language in your legal arguments. This ensures every citation references real law.
+
 ## CITATION RULES
+- Quote the actual Georgia statutes provided in your context (O.C.G.A. §)
 - Use well-known Georgia appellate decisions and U.S. Supreme Court precedents
 - Proper Bluebook citation format
 - Include pinpoint citations where possible
@@ -464,6 +488,8 @@ You have the COMPLETE caseload loaded — every active case with full details. T
 - Pattern finding ("Do any of my cases share witnesses?")
 - Quick legal research ("What's the speedy trial deadline for CR-2025-0089?")
 
+You also have actual statutory text (O.C.G.A., USC, Constitutional amendments) in your context. When answering legal questions, cite the real statutes provided rather than relying on memory.
+
 Today is {today}. Calculate all deadlines precisely from this date."""
 
 HEARING_PREP_PROMPT = """You are Case Nexus, preparing a rapid hearing brief for a public defender who is walking into court in 10 minutes.
@@ -491,6 +517,8 @@ Based on the other cases with this judge in the caseload, note any patterns (len
 
 ## ONE THING TO REMEMBER
 The single most important thing the attorney must not forget.
+
+You have actual statutory text in your context — cite the specific O.C.G.A. section for each charge and reference the legal standard in "YOUR ARGUMENTS TODAY."
 
 Keep the ENTIRE brief under 500 words. Speed over completeness. Today is {today}."""
 
@@ -601,6 +629,9 @@ A markdown table: | Case | Risk Level | Key Issue | Deadline | Recommended Actio
 
 ## What Changed
 What does the attorney now know that they didn't know before this cascade? Be specific.
+
+## LEGAL AUTHORITY IN CONTEXT
+You have actual statutory text (O.C.G.A., USC, Constitutional amendments) in your context. When identifying patterns or recommending actions, cite the specific statutes and legal standards that apply.
 
 Today is {today}."""
 
@@ -1080,7 +1111,7 @@ def analyze_evidence(case_context: str, evidence_item: dict,
             model=MODEL,
             max_tokens=EVIDENCE_MAX_TOKENS,
             thinking={
-                "type": "enabled",
+                "type": "adaptive",
                 "budget_tokens": EVIDENCE_THINKING,
             },
             system=EVIDENCE_ANALYSIS_PROMPT.replace("{today}", today),
@@ -1170,7 +1201,7 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
             model=MODEL,
             max_tokens=max_tokens,
             thinking={
-                "type": "enabled",
+                "type": "adaptive",
                 "budget_tokens": thinking_budget,
             },
             system=system_prompt,
