@@ -490,6 +490,11 @@ body {
     gap: 20px;
 }
 
+/* Analysis area spans full width when it has content */
+.case-analysis:not(:empty) {
+    grid-column: 1 / -1;
+}
+
 .info-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -610,6 +615,31 @@ body {
 .witness-chip {
     font-size: 12px; padding: 4px 12px; background: var(--bg-tertiary);
     border: 1px solid var(--border); border-radius: 20px; color: var(--text-secondary);
+}
+
+/* Deep Analysis Inline Panel */
+.deep-analysis-panel {
+    grid-column: 1 / -1;
+    margin-bottom: 16px;
+}
+.deep-analysis-panel.hidden { display: none; }
+.deep-thinking-stream {
+    max-height: 300px;
+    font-size: 12px;
+}
+.deep-response-status {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; background: var(--gold-glow);
+    border: 1px solid var(--gold-dim); border-radius: var(--radius-sm);
+    margin-top: 8px; font-size: 13px; color: var(--gold); font-weight: 600;
+}
+.deep-response-status.hidden { display: none; }
+
+.analysis-loading {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px; color: var(--gold); font-size: 14px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius);
 }
 
 /* Analysis Results */

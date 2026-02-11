@@ -194,6 +194,21 @@
                         <p class="empty-hint">Select an analysis mode above</p>
                     </div>
                 </div>
+                <!-- Deep Analysis Thinking Panel (inline, below case body) -->
+                <div id="deep-analysis-panel" class="deep-analysis-panel hidden">
+                    <details class="thinking-details" id="deep-thinking-details" open>
+                        <summary>
+                            <span class="thinking-icon pulse">&#9881;</span>
+                            AI Reasoning
+                            <span id="deep-thinking-count" class="thinking-count"></span>
+                        </summary>
+                        <div id="deep-thinking-stream" class="side-stream deep-thinking-stream"></div>
+                    </details>
+                    <div id="deep-response-status" class="deep-response-status hidden">
+                        <span class="thinking-icon pulse">&#9881;</span>
+                        <span id="deep-response-status-text">Generating structured analysis...</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Thinking View (overlay during analysis) -->

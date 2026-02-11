@@ -439,8 +439,31 @@ $('#btn-deep-analysis').addEventListener('click', () => {
     if (!state.currentCase || state.analysisActive) return;
     state.analysisActive = true;
     setStatus('Deep Analysis...', 'analyzing');
-    startThinkingView('Analyzing ' + state.currentCase.case_number + '...');
-    showRightPanel(true);
+    state.deepAnalysisResponseText = '';
+    state.deepThinkingTokens = 0;
+
+    // Stay on case view — show inline thinking panel
+    const panel = document.getElementById('deep-analysis-panel');
+    panel.classList.remove('hidden');
+    const thinkingStream = document.getElementById('deep-thinking-stream');
+    thinkingStream.textContent = '';
+    const details = document.getElementById('deep-thinking-details');
+    if (details) details.open = true;
+    document.getElementById('deep-thinking-count').textContent = '';
+    document.getElementById('deep-response-status').classList.add('hidden');
+
+    // Clear previous analysis
+    const analysisEl = $('#case-analysis');
+    analysisEl.textContent = '';
+    analysisEl.appendChild(el('div', { className: 'analysis-loading' },
+        el('span', { className: 'thinking-icon pulse' }, '\u2699'),
+        el('span', {}, 'AI is analyzing this case with extended thinking...')
+    ));
+
+    // Scroll to thinking panel
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    showRightPanel(false);
     socket.emit('run_deep_analysis', { case_number: state.currentCase.case_number });
 });
 
@@ -725,18 +748,96 @@ function renderPriorityActions(actions) {
 //  DEEP ANALYSIS EVENTS
 // ============================================================
 
+// Deep analysis thinking — stream into inline panel on case view
 socket.on('deep_analysis_thinking_started', () => {
-    appendThinking('Analyzing case in depth...\n\n', 'both');
+    const stream = document.getElementById('deep-thinking-stream');
+    if (stream) stream.textContent = '';
 });
-socket.on('deep_analysis_thinking_delta', (data) => appendThinking(data.text, 'both'));
-socket.on('deep_analysis_thinking_complete', () => appendThinking('\n\n--- Analysis complete ---\n', 'both'));
-socket.on('deep_analysis_response_started', () => {});
-socket.on('deep_analysis_response_delta', () => {});
+
+socket.on('deep_analysis_thinking_delta', (data) => {
+    const stream = document.getElementById('deep-thinking-stream');
+    if (stream) {
+        stream.appendChild(document.createTextNode(data.text));
+        stream.scrollTop = stream.scrollHeight;
+    }
+    state.deepThinkingTokens = (state.deepThinkingTokens || 0) + data.text.split(/\s+/).length;
+    const counter = document.getElementById('deep-thinking-count');
+    if (counter) counter.textContent = state.deepThinkingTokens.toLocaleString() + ' tokens';
+});
+
+socket.on('deep_analysis_thinking_complete', () => {
+    // Collapse thinking, show "generating" status
+    const details = document.getElementById('deep-thinking-details');
+    if (details) details.open = false;
+    document.getElementById('deep-response-status').classList.remove('hidden');
+});
+
+// Stream the response text live into the analysis area
+socket.on('deep_analysis_response_started', () => {
+    state.deepAnalysisResponseText = '';
+    const analysisEl = $('#case-analysis');
+    analysisEl.textContent = '';
+    document.getElementById('deep-response-status').classList.add('hidden');
+});
+
+socket.on('deep_analysis_response_delta', (data) => {
+    state.deepAnalysisResponseText += data.text;
+    const analysisEl = $('#case-analysis');
+    analysisEl.appendChild(document.createTextNode(data.text));
+    analysisEl.scrollTop = analysisEl.scrollHeight;
+});
+
+socket.on('deep_analysis_complete', () => {
+    // Re-render the streamed text as formatted output
+    if (state.deepAnalysisResponseText) {
+        const analysisEl = $('#case-analysis');
+        // Try to parse as JSON for structured rendering
+        let parsed = null;
+        try {
+            let text = state.deepAnalysisResponseText.trim();
+            if (text.startsWith('```')) {
+                text = text.replace(/^```\w*\n?/, '').replace(/\n?```$/, '').trim();
+            }
+            const start = text.indexOf('{');
+            const end = text.lastIndexOf('}') + 1;
+            if (start >= 0 && end > start) {
+                parsed = JSON.parse(text.substring(start, end));
+            }
+        } catch (e) { /* not JSON, render as markdown */ }
+
+        if (parsed && typeof parsed === 'object' && (parsed.prosecution_strength || parsed.executive_summary || parsed.defense_strategies)) {
+            renderDeepAnalysis(parsed);
+        } else {
+            // Render as markdown
+            analysisEl.textContent = '';
+            const wrapper = el('div', { className: 'markdown-body' });
+            safeRenderMarkdown(wrapper, state.deepAnalysisResponseText);
+            analysisEl.appendChild(wrapper);
+        }
+    }
+});
 
 socket.on('deep_analysis_results', (data) => {
     stopThinking();
-    renderDeepAnalysis(data.analysis);
-    showView('case');
+    const panel = document.getElementById('deep-analysis-panel');
+
+    // If we already rendered via deep_analysis_complete, check if structured data is better
+    if (data.analysis && typeof data.analysis === 'object') {
+        renderDeepAnalysis(data.analysis);
+    } else if (!state.deepAnalysisResponseText && data.analysis) {
+        // Fallback: render whatever we got
+        const analysisEl = $('#case-analysis');
+        analysisEl.textContent = '';
+        const wrapper = el('div', { className: 'markdown-body' });
+        safeRenderMarkdown(wrapper, typeof data.analysis === 'string' ? data.analysis : JSON.stringify(data.analysis, null, 2));
+        analysisEl.appendChild(wrapper);
+    }
+
+    // Scroll analysis into view
+    const analysisEl = $('#case-analysis');
+    if (analysisEl.firstChild) {
+        analysisEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 });
 
 function renderDeepAnalysis(analysis) {
