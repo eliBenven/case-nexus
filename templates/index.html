@@ -6,7 +6,7 @@
     <title>Case Nexus — AI Legal Caseload Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.6/marked.min.js"></script>
@@ -33,7 +33,7 @@
                 </div>
                 <div class="token-viz-stats">
                     <span id="token-viz-total" class="token-viz-total">0</span>
-                    <span class="token-viz-cap">/ 1M context</span>
+                    <span id="token-viz-cap" class="token-viz-cap">/ 1M context</span>
                 </div>
                 <div class="token-viz-breakdown">
                     <span class="token-chip input-chip"><span class="chip-dot"></span>In: <strong id="tv-input">0</strong></span>
@@ -103,7 +103,7 @@
                         <div class="feature-card">
                             <div class="feature-icon">&#128269;</div>
                             <h3>Health Check</h3>
-                            <p>Scan all 280 cases for deadline risks, cross-case connections, and strategic opportunities</p>
+                            <p>Scan all 500 cases for deadline risks, cross-case connections, and strategic opportunities</p>
                             <span class="feature-tag">1M Context Window</span>
                         </div>
                         <div class="feature-card">
@@ -130,17 +130,26 @@
 
             <!-- Dashboard View -->
             <div id="view-dashboard" class="view">
-                <div class="dashboard-header">
-                    <h2>Caseload Dashboard</h2>
-                    <div class="dashboard-actions">
-                        <button id="btn-cascade" class="btn btn-gold">
+                <!-- Command Center: Stats + Actions -->
+                <div class="command-center">
+                    <div class="command-stats">
+                        <div class="stat-pill"><span class="stat-pill-value" id="dash-total">0</span> Cases</div>
+                        <div class="stat-pill felony"><span class="stat-pill-value" id="dash-felonies">0</span> Felonies</div>
+                        <div class="stat-pill misdemeanor"><span class="stat-pill-value" id="dash-misdemeanors">0</span> Misdemeanors</div>
+                        <div class="stat-pill"><span class="stat-pill-value" id="dash-active">0</span> Active</div>
+                        <div class="stat-pill alert" id="stat-pill-alerts" style="display:none"><span class="stat-pill-value" id="dash-alerts">0</span> Alerts</div>
+                        <div class="stat-pill connection" id="stat-pill-connections" style="display:none"><span class="stat-pill-value" id="dash-connections">0</span> Connections</div>
+                    </div>
+                    <div class="command-actions">
+                        <button id="btn-cascade" class="btn btn-gold btn-lg">
                             <span class="btn-icon">&#9889;</span> Cascade Intelligence
+                            <span class="btn-sub">Autonomous 50+ tool investigation</span>
                         </button>
                         <button id="btn-health-check" class="btn btn-secondary">
-                            <span class="btn-icon">&#128269;</span> Health Check Only
+                            <span class="btn-icon">&#128269;</span> Health Check
                         </button>
-                        <button id="btn-add-widget" class="btn btn-secondary">
-                            <span class="btn-icon">&#10010;</span> Add Widget
+                        <button id="btn-add-widget" class="btn btn-ghost btn-sm">
+                            <span class="btn-icon">&#10010;</span> Widget
                         </button>
                     </div>
                 </div>
@@ -148,27 +157,14 @@
                 <!-- Cascade Progress -->
                 <div id="cascade-progress" class="cascade-progress hidden">
                     <div class="cascade-pipeline">
-                        <div class="cascade-step" id="cascade-step-1" data-label="Caseload Scan">
-                            <span class="cascade-step-num">1</span>
-                            <span class="cascade-step-label">Scan 280 Cases</span>
-                        </div>
-                        <div class="cascade-connector"></div>
-                        <div class="cascade-step" id="cascade-step-2" data-label="Deep Dives">
-                            <span class="cascade-step-num">2</span>
-                            <span class="cascade-step-label">Deep Dive Critical</span>
-                        </div>
-                        <div class="cascade-connector"></div>
-                        <div class="cascade-step" id="cascade-step-3" data-label="Synthesis">
-                            <span class="cascade-step-num">3</span>
-                            <span class="cascade-step-label">Strategic Synthesis</span>
-                        </div>
-                        <div class="cascade-connector"></div>
-                        <div class="cascade-step" id="cascade-step-4" data-label="Actions">
-                            <span class="cascade-step-num">4</span>
-                            <span class="cascade-step-label">Smart Actions</span>
+                        <div class="cascade-step active" id="cascade-step-1" data-label="Autonomous Investigation">
+                            <span class="cascade-step-num">&#129302;</span>
+                            <span class="cascade-step-label">Autonomous Investigation</span>
+                            <span class="cascade-agentic-badge">Tool-Use Agent</span>
                         </div>
                     </div>
                     <div id="cascade-status" class="cascade-status"></div>
+                    <div id="cascade-tool-log" class="cascade-tool-log"></div>
                 </div>
 
                 <!-- Smart Actions Bar -->
@@ -183,60 +179,52 @@
                 <!-- Custom Widgets Container -->
                 <div id="custom-widgets" class="custom-widgets"></div>
 
-                <!-- Stats Row -->
-                <div id="dashboard-stats" class="dashboard-stats">
-                    <div class="stat-card">
-                        <div class="stat-value" id="dash-total">0</div>
-                        <div class="stat-label">Total Cases</div>
-                    </div>
-                    <div class="stat-card felony">
-                        <div class="stat-value" id="dash-felonies">0</div>
-                        <div class="stat-label">Felonies</div>
-                    </div>
-                    <div class="stat-card misdemeanor">
-                        <div class="stat-value" id="dash-misdemeanors">0</div>
-                        <div class="stat-label">Misdemeanors</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="dash-active">0</div>
-                        <div class="stat-label">Active</div>
-                    </div>
-                    <div class="stat-card alert">
-                        <div class="stat-value" id="dash-alerts">0</div>
-                        <div class="stat-label">Alerts</div>
-                    </div>
-                    <div class="stat-card connection">
-                        <div class="stat-value" id="dash-connections">0</div>
-                        <div class="stat-label">Connections</div>
-                    </div>
-                </div>
+                <!-- Two-column dashboard grid -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-col-primary">
+                        <!-- Risk Heatmap -->
+                        <div id="risk-heatmap" class="panel risk-heatmap hidden">
+                            <h3><span class="panel-icon">&#128293;</span> Caseload Risk Heatmap <span id="heatmap-case-count" class="badge">0</span></h3>
+                            <div id="risk-heatmap-grid" class="risk-heatmap-grid"></div>
+                            <div class="risk-legend">
+                                <span class="risk-legend-label">Low</span>
+                                <div class="risk-legend-bar"></div>
+                                <span class="risk-legend-label">Critical</span>
+                            </div>
+                            <div id="risk-tooltip" class="risk-tooltip hidden"></div>
+                        </div>
 
-                <!-- Alerts & Connections -->
-                <div class="dashboard-panels">
-                    <div class="panel alerts-panel">
-                        <h3>
-                            <span class="panel-icon">&#9888;</span> Alerts
-                            <span id="alert-count" class="badge">0</span>
-                        </h3>
-                        <div id="alerts-list" class="alerts-list">
-                            <p class="empty-hint">Run a health check to scan for risks</p>
+                        <!-- Priority Actions -->
+                        <div id="priority-actions" class="panel priority-panel hidden">
+                            <h3><span class="panel-icon">&#9889;</span> Priority Actions</h3>
+                            <div id="actions-list" class="actions-list"></div>
                         </div>
                     </div>
-                    <div class="panel connections-panel">
-                        <h3>
-                            <span class="panel-icon">&#128279;</span> Cross-Case Connections
-                            <span id="connection-count" class="badge">0</span>
-                        </h3>
-                        <div id="connections-list" class="connections-list">
-                            <p class="empty-hint">Run a health check to find connections</p>
+                    <div class="dashboard-col-secondary">
+                        <!-- Alerts & Connections -->
+                        <div class="dashboard-panels" id="dashboard-panels" style="display:none">
+                            <div class="panel alerts-panel">
+                                <h3>
+                                    <span class="panel-icon">&#9888;</span> Alerts
+                                    <span id="alert-count" class="badge">0</span>
+                                </h3>
+                                <div id="alerts-list" class="alerts-list"></div>
+                            </div>
+                            <div class="panel connections-panel">
+                                <h3>
+                                    <span class="panel-icon">&#128279;</span> Cross-Case Connections
+                                    <span id="connection-count" class="badge">0</span>
+                                </h3>
+                                <div id="connections-list" class="connections-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Memory / Prior Insights Panel -->
+                        <div id="memory-panel" class="panel memory-panel hidden">
+                            <h3><span class="panel-icon">&#129504;</span> Analysis Memory <span id="memory-count" class="badge">0</span></h3>
+                            <div id="memory-list" class="memory-list"></div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Priority Actions -->
-                <div id="priority-actions" class="panel priority-panel hidden">
-                    <h3><span class="panel-icon">&#9889;</span> Priority Actions</h3>
-                    <div id="actions-list" class="actions-list"></div>
                 </div>
             </div>
 
@@ -264,26 +252,42 @@
                     </div>
                 </div>
                 <div class="case-body">
-                    <div class="case-info" id="case-info"></div>
-                    <!-- Evidence Section -->
-                    <div id="case-evidence" class="case-evidence hidden">
-                        <h3>&#128247; Evidence Items</h3>
-                        <div id="evidence-grid" class="evidence-grid"></div>
+                    <div id="case-hero-zone"></div>
+                    <!-- Tab Bar -->
+                    <div class="case-tab-bar" id="case-tab-bar">
+                        <button class="case-tab active" data-tab="overview">Overview</button>
+                        <button class="case-tab" data-tab="evidence">Evidence</button>
+                        <button class="case-tab" data-tab="notes">Notes</button>
                     </div>
-                    <!-- Case Law Search -->
-                    <div class="case-law-search">
-                        <h3>&#9878; Case Law Search</h3>
-                        <div class="case-law-input-row">
-                            <input type="text" id="case-law-query" class="case-law-input" placeholder="Search Georgia case law (e.g. 'aggravated assault self-defense')">
-                            <select id="case-law-court" class="case-law-court">
-                                <option value="ga">Georgia</option>
-                                <option value="gaappeals">GA Court of Appeals</option>
-                                <option value="gasuperct">GA Supreme Court</option>
-                                <option value="">All Courts</option>
-                            </select>
-                            <button id="btn-case-law-search" class="btn btn-secondary btn-sm">Search</button>
+                    <!-- Tab Panels -->
+                    <div class="case-tab-content">
+                        <div class="case-tab-panel active" id="tab-overview">
+                            <div class="case-info" id="case-info"></div>
                         </div>
-                        <div id="case-law-results" class="case-law-results hidden"></div>
+                        <div class="case-tab-panel" id="tab-evidence">
+                            <div id="case-evidence-summary"></div>
+                            <div class="case-law-search">
+                                <h3>&#9878; Case Law Search</h3>
+                                <div class="case-law-input-row">
+                                    <input type="text" id="case-law-query" class="case-law-input" placeholder="Search Georgia case law (e.g. 'aggravated assault self-defense')">
+                                    <select id="case-law-court" class="case-law-court">
+                                        <option value="ga">Georgia</option>
+                                        <option value="gaappeals">GA Court of Appeals</option>
+                                        <option value="gasuperct">GA Supreme Court</option>
+                                        <option value="">All Courts</option>
+                                    </select>
+                                    <button id="btn-case-law-search" class="btn btn-secondary btn-sm">Search</button>
+                                </div>
+                                <div id="case-law-results" class="case-law-results hidden"></div>
+                            </div>
+                            <div id="case-evidence" class="case-evidence hidden">
+                                <h3>&#128247; Evidence Items</h3>
+                                <div id="evidence-grid" class="evidence-grid"></div>
+                            </div>
+                        </div>
+                        <div class="case-tab-panel" id="tab-notes">
+                            <div id="case-notes-content"></div>
+                        </div>
                     </div>
                     <div class="case-analysis" id="case-analysis">
                         <p class="empty-hint">Select an analysis mode above</p>
@@ -417,6 +421,7 @@
                         <span id="citation-status" class="meta-item citation-status hidden"></span>
                         <button id="btn-motion-print" class="btn btn-secondary btn-print">&#128424; Print</button>
                         <button id="btn-motion-copy" class="btn btn-secondary">&#128203; Copy</button>
+                        <button id="btn-motion-download" class="btn btn-secondary btn-export">&#11015; Download</button>
                     </div>
                 </div>
                 <div id="motion-case-banner" class="motion-case-banner hidden">
@@ -451,7 +456,7 @@
             <div class="chat-header-left">
                 <span class="chat-icon">&#128172;</span>
                 <h3>Caseload Chat</h3>
-                <span class="chat-subtitle">Ask anything about your 280 cases</span>
+                <span class="chat-subtitle">Ask anything about your 500 cases</span>
             </div>
             <div class="chat-header-right">
                 <button id="btn-chat-clear" class="btn btn-ghost btn-sm" title="Clear history">Clear</button>
@@ -480,7 +485,7 @@
     <div id="widget-modal" class="modal hidden">
         <div class="modal-content widget-modal-content">
             <h3>&#10010; Create Dashboard Widget</h3>
-            <p class="modal-hint">Tell Opus 4.6 what you want to see. It will analyze all 280 cases and build it.</p>
+            <p class="modal-hint">Tell Opus 4.6 what you want to see. It will analyze all 500 cases and build it.</p>
             <input type="text" id="widget-request" class="widget-request-input" placeholder="e.g., Show me all cases where bond exceeds $10K and defendant is still detained..." autocomplete="off">
             <div class="widget-suggestions">
                 <button class="btn btn-ghost widget-suggestion" data-req="Show me a calendar view of all hearings in the next 30 days with case severity">&#128197; Hearing Calendar</button>
@@ -509,6 +514,13 @@
             </div>
             <button id="btn-modal-close" class="btn btn-ghost">Cancel</button>
         </div>
+    </div>
+
+    <!-- Evidence Lightbox -->
+    <div id="evidence-lightbox" class="evidence-lightbox hidden" onclick="closeEvidenceLightbox(event)">
+        <button class="lightbox-close" onclick="closeEvidenceLightbox()">&times;</button>
+        <div class="lightbox-title" id="lightbox-title"></div>
+        <div class="lightbox-body" id="lightbox-body"></div>
     </div>
 
     <script src="/static/js/app.js"></script>

@@ -1796,12 +1796,13 @@ def generate_demo_caseload() -> list[dict]:
     return all_cases
 
 
-def generate_demo_evidence() -> list[dict]:
-    """Generate evidence items for key cases with image files."""
+def generate_demo_evidence(cases: list[dict] | None = None) -> list[dict]:
+    """Generate evidence items for key cases with image/video files,
+    plus bulk evidence metadata for ~40% of all other cases."""
     from datetime import datetime
     now = datetime.now().isoformat()
 
-    return [
+    key_evidence = [
         # CR-2025-0047 — Marcus Thompson (Aggravated Assault)
         {
             "case_number": "CR-2025-0047",
@@ -1813,7 +1814,8 @@ def generate_demo_evidence() -> list[dict]:
                 "Image quality is poor due to low lighting. Faces are not clearly "
                 "identifiable. One figure appears to be in an aggressive posture."
             ),
-            "file_path": "/static/evidence/CR-2025-0047_surveillance_bar.png",
+            "file_path": "/static/evidence/CR-2025-0047_surveillance_bar.mp4",
+            "poster_path": "/static/evidence/CR-2025-0047_surveillance_bar.png",
             "source": "Edgewood Bar security system",
             "date_collected": "2025-09-18",
             "created_at": now,
@@ -1848,7 +1850,8 @@ def generate_demo_evidence() -> list[dict]:
                 "Critical question: does footage show the alleged lane change "
                 "violation that justified the stop?"
             ),
-            "file_path": "/static/evidence/CR-2025-0012_dashcam_stop.png",
+            "file_path": "/static/evidence/CR-2025-0012_dashcam_stop.mp4",
+            "poster_path": "/static/evidence/CR-2025-0012_dashcam_stop.png",
             "source": "APD Unit 1447 dashcam system",
             "date_collected": "2025-06-12",
             "created_at": now,
@@ -1906,7 +1909,8 @@ def generate_demo_evidence() -> list[dict]:
                 "impeachment material for other Harris cases (CR-2025-0015, "
                 "CR-2025-0067)."
             ),
-            "file_path": "/static/evidence/CR-2025-0118_bystander_video.png",
+            "file_path": "/static/evidence/CR-2025-0118_bystander_video.mp4",
+            "poster_path": "/static/evidence/CR-2025-0118_bystander_video.png",
             "source": "Bystander recording - Lamar Greene (iPhone)",
             "date_collected": "2025-07-15",
             "created_at": now,
@@ -1953,6 +1957,150 @@ def generate_demo_evidence() -> list[dict]:
             "created_at": now,
         },
     ]
+
+    # Add bulk evidence for generated cases
+    if cases:
+        bulk = _generate_bulk_evidence(cases)
+        return key_evidence + bulk
+    return key_evidence
+
+
+def _generate_bulk_evidence(cases: list[dict]) -> list[dict]:
+    """Generate evidence items for generated cases (not just key cases).
+
+    Creates 1-4 evidence records per case for ~40% of cases,
+    giving the caseload ~200+ evidence items total.
+    Evidence records are metadata-only (no file_path) — they represent
+    items logged in the case management system.
+    """
+    random.seed(99)
+    from datetime import datetime
+    now = datetime.now().isoformat()
+
+    key_case_numbers = {
+        "CR-2025-0047", "CR-2025-0012", "CR-2025-0089", "CR-2025-0142",
+        "CR-2025-0023", "CR-2025-0056", "CR-2025-0078", "CR-2025-0101",
+        "CR-2025-0033", "CR-2025-0015", "CR-2025-0067", "CR-2025-0134",
+        "CR-2025-0155", "CR-2025-0163", "CR-2025-0118",
+    }
+
+    EVIDENCE_CATALOG = {
+        "DUI": [
+            ("dashcam", "Dashcam - Traffic Stop", "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration"),
+            ("document", "BAC Test Results", "Blood alcohol content test results from Intoxilyzer 9000 at the precinct"),
+            ("body_cam", "Body Camera - Field Sobriety", "Officer body camera recording of field sobriety test and arrest"),
+            ("document", "Incident Report", "Responding officer's incident report with timeline and observations"),
+        ],
+        "Drug Possession": [
+            ("physical", "Seized Substance - Evidence Photo", "Evidence photograph of controlled substance recovered during search"),
+            ("document", "Lab Analysis Report", "GBI Crime Lab analysis of seized substance with weight and composition"),
+            ("body_cam", "Body Camera - Search", "Officer body camera recording during vehicle/person search"),
+            ("document", "Chain of Custody Log", "Evidence chain of custody documentation from seizure to lab"),
+        ],
+        "Assault": [
+            ("medical", "Victim Injury Documentation", "Medical photographs documenting victim injuries taken at hospital"),
+            ("document", "Victim Statement", "Written statement provided by the victim to responding officers"),
+            ("surveillance", "Nearby Business Surveillance", "Security camera footage from nearby business showing the area at time of incident"),
+            ("document", "911 Call Transcript", "Transcript of the 911 call reporting the incident"),
+        ],
+        "Battery": [
+            ("medical", "Victim Medical Records", "Emergency room records documenting injuries sustained by the victim"),
+            ("body_cam", "Body Camera - Arrest", "Responding officer body camera recording of arrest and initial statements"),
+            ("document", "Witness Statement", "Written statement from civilian witness to the altercation"),
+        ],
+        "Theft": [
+            ("surveillance", "Store Surveillance Footage", "Loss prevention camera footage showing the alleged theft"),
+            ("document", "Store Incident Report", "Loss prevention officer's written report of the incident"),
+            ("physical", "Recovered Merchandise", "Evidence photograph of recovered stolen merchandise with price tags"),
+        ],
+        "Burglary": [
+            ("crime_scene", "Point of Entry Photo", "Crime scene photograph of the point of entry showing damage"),
+            ("physical", "Fingerprint Lift Card", "Latent fingerprint recovered from point of entry — submitted to AFIS"),
+            ("document", "Property Owner Statement", "Written statement from the property owner detailing missing/damaged items"),
+            ("surveillance", "Exterior Camera Footage", "Security camera footage from the building exterior showing activity at time of incident"),
+        ],
+        "Robbery": [
+            ("surveillance", "Store Camera Footage", "Interior surveillance camera footage from the store during the robbery"),
+            ("document", "Victim Statement", "Victim's written account of the robbery including suspect description"),
+            ("document", "Photo Lineup Results", "Detective's report on photo lineup identification procedure and results"),
+            ("physical", "Weapon Recovery Photo", "Evidence photograph of weapon recovered at/near the scene"),
+        ],
+        "Domestic Violence": [
+            ("medical", "Victim Injury Photos", "Medical documentation of injuries photographed at the hospital"),
+            ("document", "Victim Statement", "Written statement from the victim describing the incident"),
+            ("body_cam", "Body Camera - Response", "Responding officer body camera recording of the domestic call"),
+            ("document", "Prior Incident History", "Records of prior domestic calls to the same address"),
+        ],
+        "Weapons": [
+            ("physical", "Seized Firearm Photo", "Evidence photograph of recovered firearm with serial number visible"),
+            ("document", "ATF Trace Results", "ATF firearm trace results showing ownership and purchase history"),
+            ("body_cam", "Body Camera - Recovery", "Officer body camera recording of weapon recovery"),
+        ],
+        "Trespass": [
+            ("document", "Property Owner Complaint", "Written complaint from property owner regarding unauthorized entry"),
+            ("body_cam", "Body Camera - Arrest", "Officer body camera recording of arrest at the location"),
+        ],
+        "Shoplifting": [
+            ("surveillance", "Store Camera Footage", "Loss prevention camera footage of the alleged shoplifting"),
+            ("document", "LP Officer Report", "Loss prevention officer's incident report with item list and values"),
+        ],
+        "default": [
+            ("document", "Police Incident Report", "Responding officer's written incident report"),
+            ("body_cam", "Body Camera Footage", "Officer body camera recording from the incident"),
+            ("document", "Witness Statement", "Written statement from a witness to the incident"),
+        ],
+    }
+
+    SOURCES = [
+        "APD Evidence Unit", "APD Crime Scene Unit", "APD Body Camera Division",
+        "Fulton County DA's Office", "GBI Crime Lab", "Atlanta Municipal PD",
+        "DeKalb County PD", "Store Loss Prevention", "Hospital Medical Records",
+        "Responding Officer", "Detective Division",
+    ]
+
+    evidence_items = []
+
+    for case in cases:
+        cn = case["case_number"]
+        if cn in key_case_numbers:
+            continue
+        if random.random() > 0.40:
+            continue
+
+        charges_raw = case.get("charges", "[]")
+        try:
+            charges = json.loads(charges_raw) if isinstance(charges_raw, str) else charges_raw
+        except (json.JSONDecodeError, TypeError):
+            charges = []
+
+        charge_text = " ".join(charges).lower() if charges else ""
+
+        # Match to evidence catalog
+        catalog_key = "default"
+        for key in EVIDENCE_CATALOG:
+            if key.lower() in charge_text:
+                catalog_key = key
+                break
+
+        templates = EVIDENCE_CATALOG[catalog_key]
+        num_items = random.randint(1, min(len(templates), 3))
+        selected = random.sample(templates, num_items)
+
+        filing = case.get("filing_date", "2025-06-01")
+
+        for ev_type, title, desc in selected:
+            evidence_items.append({
+                "case_number": cn,
+                "evidence_type": ev_type,
+                "title": title,
+                "description": desc,
+                "file_path": "",
+                "source": random.choice(SOURCES),
+                "date_collected": filing,
+                "created_at": now,
+            })
+
+    return evidence_items
 
 
 def get_caseload_stats(cases: list[dict]) -> dict:

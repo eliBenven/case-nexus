@@ -12,6 +12,7 @@ Four analysis modes:
 
 import os
 import threading
+import traceback
 import json
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify
@@ -28,6 +29,7 @@ app.config["SECRET_KEY"] = "case-nexus-legal-intelligence"
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 # Global token usage tracker — cumulative across ALL Opus 4.6 calls
+_token_lock = threading.Lock()
 token_usage = {
     "total_input": 0,
     "total_output": 0,
@@ -38,12 +40,13 @@ token_usage = {
 
 def track_tokens(result, sid):
     """Update global token counter and emit to client."""
-    usage = result.get("usage", {})
-    if usage:
-        token_usage["total_input"] += usage.get("input_tokens", 0)
-        token_usage["total_output"] += usage.get("output_tokens", 0)
-    token_usage["total_thinking"] += len(result.get("thinking", "")) // 4
-    token_usage["call_count"] += 1
+    with _token_lock:
+        usage = result.get("usage", {})
+        if usage:
+            token_usage["total_input"] += usage.get("input_tokens", 0)
+            token_usage["total_output"] += usage.get("output_tokens", 0)
+        token_usage["total_thinking"] += len(result.get("thinking", "")) // 4
+        token_usage["call_count"] += 1
     socketio.emit("token_update", token_usage, to=sid)
 
 
@@ -55,8 +58,28 @@ def emit_input_estimate(text_length, sid):
     The slight over-count is fine — it makes the viz feel more dramatic.
     """
     est = text_length // 4
-    token_usage["total_input"] += est
+    with _token_lock:
+        token_usage["total_input"] += est
     socketio.emit("token_update", token_usage, to=sid)
+
+
+def _start_safe_thread(run_fn, phase, sid):
+    """Start a daemon thread with top-level exception handling.
+
+    If run_fn raises, emit analysis_error so the frontend can recover
+    instead of leaving the UI frozen with a permanent spinner.
+    """
+    def wrapper():
+        try:
+            run_fn()
+        except Exception as exc:
+            traceback.print_exc()
+            socketio.emit("analysis_error", {
+                "error": f"Internal error: {exc}",
+                "phase": phase,
+            }, to=sid)
+
+    threading.Thread(target=wrapper, daemon=True).start()
 
 
 # --- Routes ---
@@ -114,11 +137,84 @@ def api_evidence(case_number):
     return jsonify(db.get_evidence(case_number))
 
 
+@app.route("/api/upload-evidence/<case_number>", methods=["POST"])
+def api_upload_evidence(case_number):
+    """Upload an evidence photo for a case."""
+    if "file" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files["file"]
+    if not file.filename:
+        return jsonify({"error": "Empty filename"}), 400
+
+    # Validate file type
+    allowed = {"png", "jpg", "jpeg", "mp4", "mov", "webm"}
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
+    if ext not in allowed:
+        return jsonify({"error": "Supported: PNG, JPG, MP4, MOV, WebM"}), 400
+
+    # Save to static/evidence/
+    evidence_dir = os.path.join(app.static_folder, "evidence")
+    os.makedirs(evidence_dir, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_case = case_number.replace("/", "_").replace("\\", "_")
+    filename = f"{safe_case}_{timestamp}.{ext}"
+    filepath = os.path.join(evidence_dir, filename)
+    file.save(filepath)
+
+    # Insert into database
+    video_exts = {"mp4", "mov", "webm"}
+    ev_type = "video" if ext in video_exts else "photograph"
+    evidence_record = {
+        "case_number": case_number,
+        "evidence_type": ev_type,
+        "title": file.filename,
+        "description": f"Uploaded evidence {ev_type}",
+        "file_path": f"/static/evidence/{filename}",
+        "source": "User upload",
+        "date_collected": datetime.now().isoformat(),
+        "created_at": datetime.now().isoformat(),
+    }
+    db.insert_evidence([evidence_record])
+
+    # Get the inserted ID
+    evidence_items = db.get_evidence(case_number)
+    new_id = evidence_items[-1]["id"] if evidence_items else None
+
+    return jsonify({
+        "success": True,
+        "evidence_id": new_id,
+        "file_path": f"/static/evidence/{filename}",
+    })
+
+
+@app.route("/api/analysis-log")
+def api_analysis_log():
+    """Get recent analysis history."""
+    limit = request.args.get("limit", 20, type=int)
+    return jsonify(db.get_prior_insights(limit=limit))
+
+
+@app.route("/api/analysis-log/<case_number>")
+def api_analysis_log_case(case_number):
+    """Get analysis history for a specific case."""
+    limit = request.args.get("limit", 10, type=int)
+    return jsonify(db.get_prior_insights(case_number=case_number, limit=limit))
+
+
 # --- SocketIO Events ---
 
 @socketio.on("connect")
 def handle_connect():
     print(f"[Case Nexus] Client connected: {request.sid}")
+
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    sid = request.sid
+    chat_histories.pop(sid, None)
+    print(f"[Case Nexus] Client disconnected: {sid}")
 
 
 @socketio.on("load_demo_caseload")
@@ -129,8 +225,11 @@ def handle_load_demo():
     db.clear_cases()
     cases = generate_demo_caseload()
     db.insert_cases(cases)
-    evidence = generate_demo_evidence()
+    evidence = generate_demo_evidence(cases)
     db.insert_evidence(evidence)
+
+    # Match generated evidence images/videos on disk to DB records
+    db.link_evidence_files(os.path.join(os.path.dirname(__file__), "static", "evidence"))
 
     counts = db.get_case_count()
     emit("caseload_loaded", {
@@ -154,12 +253,25 @@ def handle_health_check():
 
     def run():
         caseload_context = db.build_caseload_context()
-        legal_context = db.build_legal_context()
-        full_context = caseload_context + "\n\n" + legal_context
+        # Include key legal reference (constitutional provisions + landmark cases)
+        # but skip full statute text — AI can cite statutes by section number
+        corpus_stats = legal_corpus.get_corpus_stats()
+        legal_summary = (
+            "\n\n# LEGAL REFERENCE\n"
+            "## Constitutional Provisions & Key Holdings\n"
+        )
+        for amend_key, prov in legal_corpus.CONSTITUTIONAL_PROVISIONS.items():
+            legal_summary += f"\n### {amend_key} Amendment\n\"{prov['text']}\"\n"
+            for holding in prov["key_holdings"]:
+                legal_summary += f"- {holding}\n"
+        legal_summary += "\n## Landmark Cases\n"
+        for name, summary in legal_corpus.LANDMARK_CASES.items():
+            legal_summary += f"- **{name}**, {summary}\n"
+
+        full_context = caseload_context + legal_summary
         context_tokens = len(full_context) // 4
         emit_input_estimate(len(full_context), sid)
 
-        corpus_stats = legal_corpus.get_corpus_stats()
         socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
 
         socketio.emit("status", {
@@ -235,8 +347,7 @@ def handle_health_check():
                 "phase": "health_check",
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("run_deep_analysis")
@@ -255,18 +366,17 @@ def handle_deep_analysis(data):
 
     def run():
         case_context = db.build_single_case_context(case_number)
-        caseload_context = db.build_caseload_context()
         legal_context = db.build_legal_context(case_number)
         memory_context = db.build_memory_context(case_number)
-        emit_input_estimate(len(case_context) + len(caseload_context) + len(legal_context), sid)
+        emit_input_estimate(len(case_context) + len(legal_context), sid)
 
         corpus_stats = legal_corpus.get_corpus_stats()
         socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
 
-        # Feed legal authority and prior insights into the analysis
-        full_caseload = caseload_context + "\n\n" + legal_context
+        # Feed legal authority and prior insights (skip full caseload — single case focus)
+        supplemental = legal_context
         if memory_context:
-            full_caseload += "\n\n" + memory_context
+            supplemental += "\n\n" + memory_context
             socketio.emit("memory_loaded", {
                 "case_number": case_number,
                 "insight_count": memory_context.count("Prior Analysis #"),
@@ -278,17 +388,22 @@ def handle_deep_analysis(data):
 
         result = ai_engine.run_deep_analysis(
             case_context=case_context,
-            caseload_context=full_caseload,
+            caseload_context=supplemental,
             emit_callback=emit_cb,
+            agentic=True,
         )
 
         if result.get("success"):
             track_tokens(result, sid)
-            # Log for memory
+            # Log for memory (always store response text for persistence)
             analysis = result.get("parsed") or result.get("response", "")
+            log_data = analysis if isinstance(analysis, dict) else {"response_text": str(analysis)}
+            # Ensure response_text is always present for restore
+            if isinstance(log_data, dict) and "response_text" not in log_data:
+                log_data["response_text"] = result.get("response", "")
             db.log_analysis("deep_analysis", case_number,
                             result.get("thinking", ""),
-                            analysis if isinstance(analysis, dict) else {},
+                            log_data,
                             0, datetime.now().isoformat())
             socketio.emit("deep_analysis_results", {
                 "case_number": case_number,
@@ -302,8 +417,7 @@ def handle_deep_analysis(data):
                 "case_number": case_number,
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("run_adversarial")
@@ -327,6 +441,7 @@ def handle_adversarial(data):
 
         corpus_stats = legal_corpus.get_corpus_stats()
         socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
+        emit_input_estimate(len(full_context), sid)
 
         def emit_cb(event, payload):
             payload["case_number"] = case_number
@@ -335,6 +450,7 @@ def handle_adversarial(data):
         result = ai_engine.run_adversarial_simulation(
             case_context=full_context,
             emit_callback=emit_cb,
+            agentic=True,
         )
 
         if result.get("success"):
@@ -358,8 +474,7 @@ def handle_adversarial(data):
                 "case_number": case_number,
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("generate_motion")
@@ -384,6 +499,7 @@ def handle_generate_motion(data):
 
         corpus_stats = legal_corpus.get_corpus_stats()
         socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
+        emit_input_estimate(len(full_context), sid)
 
         def emit_cb(event, payload):
             payload["case_number"] = case_number
@@ -393,6 +509,7 @@ def handle_generate_motion(data):
             case_context=full_context,
             motion_type=motion_type,
             emit_callback=emit_cb,
+            agentic=True,
         )
 
         if result.get("success"):
@@ -415,8 +532,7 @@ def handle_generate_motion(data):
                 "case_number": case_number,
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("dismiss_alert")
@@ -472,8 +588,7 @@ def handle_verify_citations(data):
     def run():
         _verify_motion_citations(text, case_number, sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("analyze_evidence")
@@ -507,6 +622,7 @@ def handle_analyze_evidence(data):
             return
 
         case_context = db.build_single_case_context(case_number)
+        emit_input_estimate(len(case_context), sid)
 
         def emit_cb(event, payload):
             payload["case_number"] = case_number
@@ -521,10 +637,15 @@ def handle_analyze_evidence(data):
 
         if result.get("success"):
             track_tokens(result, sid)
+            response_text = result.get("response", "")
+            db.log_analysis("evidence_analysis", case_number,
+                            result.get("thinking", ""),
+                            {"response_text": response_text},
+                            result.get("usage"))
             socketio.emit("evidence_analysis_results", {
                 "case_number": case_number,
                 "evidence_id": evidence_id,
-                "analysis": result.get("response", ""),
+                "analysis": response_text,
                 "thinking_length": len(result.get("thinking", "")),
             }, to=sid)
         else:
@@ -534,8 +655,7 @@ def handle_analyze_evidence(data):
                 "evidence_id": evidence_id,
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 # --- Chat History (per-session) ---
@@ -559,8 +679,21 @@ def handle_chat_message(data):
 
     def run():
         caseload_context = db.build_caseload_context()
-        legal_context = db.build_legal_context()
-        caseload_context = caseload_context + "\n\n" + legal_context
+
+        # Use lightweight legal summary (full corpus exceeds 200K token limit)
+        legal_summary = (
+            "\n\n# LEGAL REFERENCE\n"
+            "## Constitutional Provisions & Key Holdings\n"
+        )
+        for amend_key, prov in legal_corpus.CONSTITUTIONAL_PROVISIONS.items():
+            legal_summary += f"\n### {amend_key} Amendment\n\"{prov['text']}\"\n"
+            for holding in prov["key_holdings"]:
+                legal_summary += f"- {holding}\n"
+        legal_summary += "\n## Landmark Cases\n"
+        for name, summary in legal_corpus.LANDMARK_CASES.items():
+            legal_summary += f"- **{name}**, {summary}\n"
+        legal_summary += "\nUse get_statute tool to look up specific statutory text as needed.\n"
+        caseload_context = caseload_context + "\n\n" + legal_summary
         emit_input_estimate(len(caseload_context), sid)
 
         corpus_stats = legal_corpus.get_corpus_stats()
@@ -576,9 +709,17 @@ def handle_chat_message(data):
             message=message,
             chat_history=history if history else None,
             emit_callback=emit_cb,
+            agentic=True,
         )
 
-        if result.get("success"):
+        if result.get("context_reset"):
+            # Context exceeded 1M tokens — wipe chat history and reload
+            chat_histories.pop(sid, None)
+            socketio.emit("chat_error", {
+                "error": "Context window full — chat history cleared. Please resend your message.",
+            }, to=sid)
+            socketio.emit("chat_cleared", {}, to=sid)
+        elif result.get("success"):
             track_tokens(result, sid)
             # Store in chat history
             if sid not in chat_histories:
@@ -609,8 +750,7 @@ def handle_chat_message(data):
                 "error": result.get("error", "Chat failed"),
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("clear_chat")
@@ -639,6 +779,11 @@ def handle_hearing_prep(data):
         case_context = db.build_single_case_context(case_number)
         legal_context = db.build_legal_context(case_number)
         case_context = case_context + "\n\n" + legal_context
+
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
+        emit_input_estimate(len(case_context), sid)
+
         # Get cases with the same judge for tendency analysis
         case = db.get_case(case_number)
         judge_context = ""
@@ -669,9 +814,14 @@ def handle_hearing_prep(data):
 
         if result.get("success"):
             track_tokens(result, sid)
+            response_text = result.get("response", "")
+            db.log_analysis("hearing_prep", case_number,
+                            result.get("thinking", ""),
+                            {"response_text": response_text},
+                            0, datetime.now().isoformat())
             socketio.emit("hearing_prep_results", {
                 "case_number": case_number,
-                "brief": result.get("response", ""),
+                "brief": response_text,
                 "thinking_length": len(result.get("thinking", "")),
             }, to=sid)
         else:
@@ -681,8 +831,7 @@ def handle_hearing_prep(data):
                 "case_number": case_number,
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("run_client_letter")
@@ -702,6 +851,10 @@ def handle_client_letter(data):
     def run():
         case_context = db.build_single_case_context(case_number)
 
+        corpus_stats = legal_corpus.get_corpus_stats()
+        socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
+        emit_input_estimate(len(case_context), sid)
+
         def emit_cb(event, payload):
             payload["case_number"] = case_number
             socketio.emit(event, payload, to=sid)
@@ -713,9 +866,14 @@ def handle_client_letter(data):
 
         if result.get("success"):
             track_tokens(result, sid)
+            response_text = result.get("response", "")
+            db.log_analysis("client_letter", case_number,
+                            result.get("thinking", ""),
+                            {"response_text": response_text},
+                            0, datetime.now().isoformat())
             socketio.emit("client_letter_results", {
                 "case_number": case_number,
-                "letter": result.get("response", ""),
+                "letter": response_text,
                 "thinking_length": len(result.get("thinking", "")),
             }, to=sid)
         else:
@@ -725,8 +883,7 @@ def handle_client_letter(data):
                 "case_number": case_number,
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 @socketio.on("search_case_law")
@@ -748,228 +905,90 @@ def handle_search_case_law(data):
             "results": results,
         }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
-# --- Cascade Intelligence (Agentic Loop) ---
+# --- Cascade Intelligence (Agentic Tool-Use) ---
 
 @socketio.on("run_cascade")
 def handle_cascade():
-    """Agentic cascade: health check → auto deep-dive critical cases → strategic synthesis.
+    """Agentic cascade: Claude autonomously investigates the caseload using tools.
 
-    This is the flagship agentic feature. The AI autonomously:
-    1. Scans all 280 cases (health check)
-    2. Identifies the most critical cases from the alerts
-    3. Deep-dives each critical case automatically
-    4. Synthesizes everything into a unified strategic brief
-    5. Suggests specific next actions
-
-    Each step's output feeds into the next — true agentic intelligence.
+    Instead of a fixed 4-phase pipeline, Claude has tools to pull cases,
+    look up statutes, search case law, and check alerts. It decides
+    autonomously what to investigate and produces a strategic brief.
     """
     sid = request.sid
 
     def run():
-        # Phase 1: Health Check
-        socketio.emit("cascade_phase", {
-            "phase": 1, "total": 4,
-            "title": "Scanning full caseload",
-            "description": "Loading 280 cases into 1M context window...",
-        }, to=sid)
-
         caseload_context = db.build_caseload_context()
-        legal_context = db.build_legal_context()
-        caseload_context = caseload_context + "\n\n" + legal_context
-        emit_input_estimate(len(caseload_context), sid)
-        memory_context = db.build_memory_context()
-
+        # Don't include full legal corpus — AI has tools to look up statutes on demand
         corpus_stats = legal_corpus.get_corpus_stats()
+        corpus_summary = (
+            f"\n\n# LEGAL CORPUS AVAILABLE (use tools to look up specific statutes)\n"
+            f"- {corpus_stats['ga_statutes']} Georgia statutes (O.C.G.A.) loaded\n"
+            f"- {corpus_stats['federal_sections']:,} Federal code sections (USC) indexed\n"
+            f"- {corpus_stats['amendments']} Constitutional amendments with key holdings\n"
+            f"- {corpus_stats['landmark_cases']} Landmark case summaries\n"
+            f"Use get_statute tool to retrieve specific statutory text as needed.\n"
+        )
+        full_context = caseload_context + corpus_summary
+        emit_input_estimate(len(full_context), sid)
+
         socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
 
-        def hc_emit(event, payload):
+        socketio.emit("cascade_phase", {
+            "phase": 1, "total": 1,
+            "title": "Autonomous Investigation",
+            "description": "AI is autonomously investigating your caseload with tools...",
+            "mode": "agentic",
+        }, to=sid)
+
+        def emit_cb(event, payload):
             socketio.emit(event, payload, to=sid)
 
-        hc_result = ai_engine.run_health_check(
-            caseload_context=caseload_context,
-            emit_callback=hc_emit,
+        result = ai_engine.run_agentic_cascade(
+            caseload_context=full_context,
+            emit_callback=emit_cb,
         )
 
-        if not hc_result.get("success"):
-            socketio.emit("cascade_error", {"error": "Health check failed"}, to=sid)
-            return
+        if result.get("success"):
+            track_tokens(result, sid)
 
-        track_tokens(hc_result, sid)
-        parsed = hc_result.get("parsed", {})
-
-        # Store health check results in DB
-        now = datetime.now().isoformat()
-        db.clear_alerts()
-        alert_records = []
-        for a in parsed.get("alerts", []):
-            alert_records.append({
-                "case_id": None,
-                "case_number": a.get("case_number", ""),
-                "alert_type": a.get("alert_type", "strategy"),
-                "severity": a.get("severity", "info"),
-                "title": a.get("title", ""),
-                "message": a.get("message", ""),
-                "details": a.get("details", ""),
-                "created_at": now,
-            })
-        if alert_records:
-            db.insert_alerts(alert_records)
-
-        db.clear_connections()
-        conn_records = []
-        for c in parsed.get("connections", []):
-            conn_records.append({
-                "case_numbers": json.dumps(c.get("case_numbers", [])),
-                "connection_type": c.get("connection_type", ""),
-                "title": c.get("title", ""),
-                "description": c.get("description", ""),
-                "confidence": c.get("confidence", 0.0),
-                "actionable": c.get("actionable", ""),
-                "created_at": now,
-            })
-        if conn_records:
-            db.insert_connections(conn_records)
-
-        db.log_analysis("health_check", "full_caseload",
-                        hc_result.get("thinking", ""), parsed,
-                        len(caseload_context) // 4, now)
-
-        socketio.emit("cascade_health_check_done", {
-            "alerts": parsed.get("alerts", []),
-            "connections": parsed.get("connections", []),
-            "priority_actions": parsed.get("priority_actions", []),
-            "caseload_insights": parsed.get("caseload_insights", {}),
-        }, to=sid)
-
-        # Phase 2: Identify critical cases for auto deep-dive
-        critical_alerts = [a for a in parsed.get("alerts", [])
-                          if a.get("severity") == "critical" and a.get("case_number")]
-        # Deduplicate case numbers, max 3
-        seen = set()
-        target_cases = []
-        for a in critical_alerts:
-            cn = a["case_number"]
-            if cn not in seen:
-                seen.add(cn)
-                target_cases.append({"case_number": cn, "reason": a.get("title", "Critical alert")})
-            if len(target_cases) >= 3:
-                break
-
-        if not target_cases:
-            # Fall back to priority actions
-            for pa in parsed.get("priority_actions", [])[:3]:
-                cn = pa.get("case_number", "")
-                if cn and cn not in seen:
-                    seen.add(cn)
-                    target_cases.append({"case_number": cn, "reason": pa.get("action", pa.get("title", ""))})
-
-        socketio.emit("cascade_phase", {
-            "phase": 2, "total": 4,
-            "title": f"Deep-diving {len(target_cases)} critical cases",
-            "description": "AI autonomously selected: " + ", ".join(t["case_number"] for t in target_cases),
-            "target_cases": target_cases,
-        }, to=sid)
-
-        # Phase 2 execution: deep-dive each critical case
-        deep_results = []
-        for i, target in enumerate(target_cases):
-            cn = target["case_number"]
-            socketio.emit("cascade_deep_dive_start", {
-                "case_number": cn,
-                "reason": target["reason"],
-                "step": i + 1,
-                "total": len(target_cases),
-            }, to=sid)
-
-            case_context = db.build_single_case_context(cn)
-            case_legal = db.build_legal_context(cn)
-            case_context = case_context + "\n\n" + case_legal
-            memory = db.build_memory_context(cn)
-            emit_input_estimate(len(case_context) + len(caseload_context), sid)
-
-            def dd_emit(event, payload):
-                payload["case_number"] = cn
-                payload["cascade_step"] = i + 1
-                socketio.emit(event, payload, to=sid)
-
-            dd_result = ai_engine.run_deep_analysis(
-                case_context=case_context,
-                caseload_context=caseload_context + ("\n\n" + memory if memory else ""),
-                emit_callback=dd_emit,
+            # Log the analysis
+            db.log_analysis(
+                "agentic_cascade", "full_caseload",
+                result.get("thinking", ""),
+                {"response_length": len(result.get("response", ""))},
+                len(full_context) // 4,
+                datetime.now().isoformat(),
             )
 
-            if dd_result.get("success"):
-                track_tokens(dd_result, sid)
-                analysis = dd_result.get("parsed") or dd_result.get("response", "")
-                deep_results.append({"case_number": cn, "analysis": analysis})
-                db.log_analysis("deep_analysis", cn,
-                                dd_result.get("thinking", ""), analysis if isinstance(analysis, dict) else {},
-                                0, datetime.now().isoformat())
+            # Generate smart actions from the cascade output
+            action_context = result.get("response", "")
+            actions_result = ai_engine.run_smart_actions(
+                analysis_context=action_context,
+                analysis_type="cascade intelligence",
+                emit_callback=emit_cb,
+            )
 
-            socketio.emit("cascade_deep_dive_done", {
-                "case_number": cn,
-                "step": i + 1,
-                "total": len(target_cases),
-                "analysis": dd_result.get("parsed") or dd_result.get("response", ""),
+            actions = []
+            if actions_result.get("success"):
+                track_tokens(actions_result, sid)
+                actions = actions_result.get("parsed") or []
+
+            socketio.emit("cascade_complete", {
+                "summary": result.get("response", ""),
+                "tool_calls": result.get("tool_calls", []),
+                "actions": actions,
+                "mode": "agentic",
+            }, to=sid)
+        else:
+            socketio.emit("cascade_error", {
+                "error": result.get("error", "Agentic cascade failed"),
             }, to=sid)
 
-        # Phase 3: Strategic synthesis
-        socketio.emit("cascade_phase", {
-            "phase": 3, "total": 4,
-            "title": "Synthesizing strategic brief",
-            "description": "Connecting dots across all analyses...",
-        }, to=sid)
-
-        updated_memory = db.build_memory_context()
-
-        def cs_emit(event, payload):
-            socketio.emit(event, payload, to=sid)
-
-        summary_result = ai_engine.run_cascade_summary(
-            caseload_context=caseload_context,
-            health_check_result=parsed,
-            deep_dive_results=deep_results,
-            memory_context=updated_memory,
-            emit_callback=cs_emit,
-        )
-
-        if summary_result.get("success"):
-            track_tokens(summary_result, sid)
-
-        # Phase 4: Generate smart actions
-        socketio.emit("cascade_phase", {
-            "phase": 4, "total": 4,
-            "title": "Recommending next actions",
-            "description": "AI generating context-aware action plan...",
-        }, to=sid)
-
-        action_context = summary_result.get("response", "")
-        actions_result = ai_engine.run_smart_actions(
-            analysis_context=action_context,
-            analysis_type="cascade intelligence",
-            emit_callback=cs_emit,
-        )
-
-        actions = []
-        if actions_result.get("success"):
-            track_tokens(actions_result, sid)
-            actions = actions_result.get("parsed") or []
-
-        # Cascade complete
-        socketio.emit("cascade_complete", {
-            "summary": summary_result.get("response", ""),
-            "deep_dives": deep_results,
-            "actions": actions,
-            "phases_completed": 4,
-            "target_cases": target_cases,
-        }, to=sid)
-
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 # --- Smart Actions (post-analysis suggestions) ---
@@ -997,8 +1016,7 @@ def handle_smart_actions(data):
                 "actions": result.get("parsed") or [],
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 # --- Custom Dashboard Widget ---
@@ -1041,8 +1059,7 @@ def handle_create_widget(data):
                 "error": result.get("error", "Widget generation failed"),
             }, to=sid)
 
-    thread = threading.Thread(target=run, daemon=True)
-    thread.start()
+    _start_safe_thread(run, "analysis", sid)
 
 
 # --- Initialize ---

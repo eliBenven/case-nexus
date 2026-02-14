@@ -189,12 +189,27 @@ def search_opinions(query: str, court: str = "ga",
         data = resp.json()
         results = []
         for item in data.get("results", [])[:max_results]:
+            # v4 API nests snippet inside opinions array
+            snippet = ""
+            opinions = item.get("opinions", [])
+            if opinions:
+                raw = opinions[0].get("snippet", "")
+                # Strip HTML tags from snippet
+                snippet = re.sub(r"<[^>]+>", "", raw).strip()
+                # Truncate to reasonable length
+                if len(snippet) > 400:
+                    snippet = snippet[:400] + "..."
+            # Fallback to syllabus or posture if no snippet
+            if not snippet:
+                snippet = item.get("syllabus", "") or item.get("posture", "")
+                if len(snippet) > 400:
+                    snippet = snippet[:400] + "..."
             results.append({
                 "case_name": item.get("caseName", ""),
                 "citation": item.get("citation", [""]),
                 "court": item.get("court", ""),
                 "date_filed": item.get("dateFiled", ""),
-                "snippet": item.get("snippet", ""),
+                "snippet": snippet,
                 "url": f"{COURTLISTENER_BASE}{item.get('absolute_url', '')}",
             })
         return results

@@ -1,0 +1,4182 @@
+[
+  {
+    "id": 1,
+    "case_number": "CR-2025-0047",
+    "type": "surveillance",
+    "title": "Bar Exterior Surveillance - CAM 03",
+    "desc": "Security camera footage from Edgewood Bar exterior camera (CAM 03). Shows two figures near the entrance at 11:42 PM on 09/17/2025. Image quality is poor due to low lighting. Faces are not clearly identifiable. One figure appears to be in an aggressive posture.",
+    "file_path": "/static/evidence/CR-2025-0047_surveillance_bar.mp4",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 2,
+    "case_number": "CR-2025-0047",
+    "type": "medical",
+    "title": "Victim Injury Photo - Jaw Area",
+    "desc": "Medical photography from Grady Memorial Hospital documenting the victim's jaw injury. Shows bruising and swelling consistent with blunt force trauma. Taken day after the incident. Includes measurement scale. Victim subsequently underwent surgical repair for a broken jaw.",
+    "file_path": "/static/evidence/CR-2025-0047_injury_jaw.png",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 3,
+    "case_number": "CR-2025-0012",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop Initiation",
+    "desc": "Dashcam footage from Unit 1447 (Officer J. Rodriguez) showing the traffic stop of defendant's vehicle on 06/12/2025 at 9:23 PM. Camera shows defendant's vehicle ahead with taillights visible. Red/blue lights activated. GPS coordinates place the stop on Fulton Industrial Blvd. Speed reads 0 MPH (vehicle stopped). Critical question: does footage show the alleged lane change violation that justified the stop?",
+    "file_path": "/static/evidence/CR-2025-0012_dashcam_stop.mp4",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 4,
+    "case_number": "CR-2025-0089",
+    "type": "physical",
+    "title": "Seized Substance and Scale - Evidence Photo",
+    "desc": "APD Evidence Unit photograph of items seized from defendant's vehicle. Shows 5 individual baggies containing white crystalline substance (presumptive positive for methamphetamine) and a digital scale reading 4.7g. Items were found in a backpack on the rear seat during a search Officer Rodriguez claims was consensual. Defendant denies consent. Body camera footage is 'unavailable due to equipment malfunction.'",
+    "file_path": "/static/evidence/CR-2025-0089_evidence_drugs.png",
+    "charges": "[\"Felony Drug Possession\", \"Possession of Drug Related Objects\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 5,
+    "case_number": "CR-2025-0101",
+    "type": "document",
+    "title": "Photo Lineup Array - Witness Identification",
+    "desc": "Photo lineup array presented to eyewitness James Patterson on 09/05/2025 by Det. Sarah Chen. Patterson selected position #4 and identified the individual as the robbery suspect. Patterson's stated confidence level was 'pretty sure' \u2014 notably not a high-confidence identification. Array contains 6 photographs. Defense should examine whether the lineup procedure was suggestive and whether position #4 stands out from the fillers.",
+    "file_path": "/static/evidence/CR-2025-0101_photo_lineup.png",
+    "charges": "[\"Armed Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 6,
+    "case_number": "CR-2025-0118",
+    "type": "video",
+    "title": "Bystander Video - Harris Street Encounter",
+    "desc": "Cell phone video recorded by bystander Lamar Greene on 07/15/2025 in the Bankhead neighborhood. Duration: 47 seconds. Video shows Det. Michael Harris grabbing the defendant's arm BEFORE identifying himself as law enforcement. This contradicts Harris's official report. This footage led to the IAB complaint against Harris and the dismissal of charges. Critical impeachment material for other Harris cases (CR-2025-0015, CR-2025-0067).",
+    "file_path": "/static/evidence/CR-2025-0118_bystander_video.mp4",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 7,
+    "case_number": "CR-2025-0134",
+    "type": "crime_scene",
+    "title": "Crime Scene Photo - Broken Window",
+    "desc": "APD Crime Scene Unit photograph of the broken window at the commercial property on Buford Hwy. Evidence marker #1 visible. Photo taken at 3:15 AM on 11/12/2025 when responding officers found the defendant inside. Window shows impact pattern consistent with external force. However, defendant claims the door was unlocked and he entered seeking shelter. The broken window may have been pre-existing. Defense should investigate whether the property owner reported the broken window prior to this incident.",
+    "file_path": "/static/evidence/CR-2025-0134_crime_scene_window.png",
+    "charges": "[\"Burglary - First Degree\", \"Criminal Trespass\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 8,
+    "case_number": "CR-2025-0142",
+    "type": "physical",
+    "title": "Prescription Bottle - Evidence Photo",
+    "desc": "Evidence photograph of prescription pill bottle and 8 loose Alprazolam (Xanax) 0.5mg pills recovered from defendant's purse during an inventory search. Bottle is prescribed to Gloria Johnson (defendant's mother), NOT the defendant. Defendant states she was picking up the prescription from the pharmacy on her mother's behalf. Mother has a valid prescription. The search was conducted incident to arrest for expired registration \u2014 a typically non-arrestable offense.",
+    "file_path": "/static/evidence/CR-2025-0142_prescription_bottle.png",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 9,
+    "case_number": "CR-2025-0360",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 10,
+    "case_number": "CR-2025-0366",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 11,
+    "case_number": "CR-2025-0092",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 12,
+    "case_number": "CR-2025-0092",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 13,
+    "case_number": "CR-2025-0092",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 14,
+    "case_number": "CR-2025-0381",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Simple Assault\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 15,
+    "case_number": "CR-2025-0381",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 16,
+    "case_number": "CR-2025-0168",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Child Cruelty\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 17,
+    "case_number": "CR-2025-0290",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Giving False Information to Police\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 18,
+    "case_number": "CR-2025-0290",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Giving False Information to Police\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 19,
+    "case_number": "CR-2025-0290",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Giving False Information to Police\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 20,
+    "case_number": "CR-2025-0231",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 21,
+    "case_number": "CR-2025-0178",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 22,
+    "case_number": "CR-2025-0178",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 23,
+    "case_number": "CR-2025-0178",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 24,
+    "case_number": "CR-2025-0440",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 25,
+    "case_number": "CR-2025-0440",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 26,
+    "case_number": "CR-2025-0440",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 27,
+    "case_number": "CR-2025-0364",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 28,
+    "case_number": "CR-2025-0119",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 29,
+    "case_number": "CR-2025-0119",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 30,
+    "case_number": "CR-2025-0119",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 31,
+    "case_number": "CR-2025-0133",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 32,
+    "case_number": "CR-2025-0225",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Trafficking Cocaine\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 33,
+    "case_number": "CR-2025-0305",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement from the victim describing the incident",
+    "file_path": "",
+    "charges": "[\"Felony Domestic Violence\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 34,
+    "case_number": "CR-2025-0305",
+    "type": "document",
+    "title": "Prior Incident History",
+    "desc": "Records of prior domestic calls to the same address",
+    "file_path": "",
+    "charges": "[\"Felony Domestic Violence\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 35,
+    "case_number": "CR-2025-0315",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Shoplifting\", \"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 36,
+    "case_number": "CR-2025-0147",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 37,
+    "case_number": "CR-2025-0016",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 38,
+    "case_number": "CR-2025-0016",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 39,
+    "case_number": "CR-2025-0149",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 40,
+    "case_number": "CR-2025-0476",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Vehicular Homicide\", \"Theft by Taking (Felony)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 41,
+    "case_number": "CR-2025-0476",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Vehicular Homicide\", \"Theft by Taking (Felony)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 42,
+    "case_number": "CR-2025-0476",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Vehicular Homicide\", \"Theft by Taking (Felony)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 43,
+    "case_number": "CR-2025-0252",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 44,
+    "case_number": "CR-2025-0252",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 45,
+    "case_number": "CR-2025-0375",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 46,
+    "case_number": "CR-2025-0375",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 47,
+    "case_number": "CR-2025-0182",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 48,
+    "case_number": "CR-2025-0182",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 49,
+    "case_number": "CR-2025-0235",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Felony DUI (Fourth Offense)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 50,
+    "case_number": "CR-2025-0235",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Felony DUI (Fourth Offense)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 51,
+    "case_number": "CR-2025-0008",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 52,
+    "case_number": "CR-2025-0008",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 53,
+    "case_number": "CR-2025-0008",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 54,
+    "case_number": "CR-2025-0196",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Aggravated Battery\", \"Burglary - Second Degree\", \"Vandalism\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 55,
+    "case_number": "CR-2025-0196",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Aggravated Battery\", \"Burglary - Second Degree\", \"Vandalism\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 56,
+    "case_number": "CR-2025-0276",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 57,
+    "case_number": "CR-2025-0276",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 58,
+    "case_number": "CR-2025-0276",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 59,
+    "case_number": "CR-2025-0255",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 60,
+    "case_number": "CR-2025-0255",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 61,
+    "case_number": "CR-2025-0255",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 62,
+    "case_number": "CR-2025-0183",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Theft by Taking (Felony)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 63,
+    "case_number": "CR-2025-0455",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Aggravated Stalking\", \"Possession with Intent to Distribute\", \"Identity Fraud\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 64,
+    "case_number": "CR-2025-0437",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"DUI - Under the Influence\", \"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 65,
+    "case_number": "CR-2025-0437",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"DUI - Under the Influence\", \"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 66,
+    "case_number": "CR-2025-0437",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"DUI - Under the Influence\", \"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 67,
+    "case_number": "CR-2025-0037",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 68,
+    "case_number": "CR-2025-0037",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 69,
+    "case_number": "CR-2025-0459",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement from the victim describing the incident",
+    "file_path": "",
+    "charges": "[\"Felony Domestic Violence\", \"Obstruction of a Law Enforcement Officer\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 70,
+    "case_number": "CR-2025-0459",
+    "type": "document",
+    "title": "Prior Incident History",
+    "desc": "Records of prior domestic calls to the same address",
+    "file_path": "",
+    "charges": "[\"Felony Domestic Violence\", \"Obstruction of a Law Enforcement Officer\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 71,
+    "case_number": "CR-2025-0486",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Driving on Suspended License\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 72,
+    "case_number": "CR-2025-0486",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Driving on Suspended License\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 73,
+    "case_number": "CR-2025-0301",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 74,
+    "case_number": "CR-2025-0301",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 75,
+    "case_number": "CR-2025-0436",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\", \"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 76,
+    "case_number": "CR-2025-0436",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\", \"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 77,
+    "case_number": "CR-2025-0436",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\", \"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 78,
+    "case_number": "CR-2025-0139",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 79,
+    "case_number": "CR-2025-0139",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 80,
+    "case_number": "CR-2025-0250",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 81,
+    "case_number": "CR-2025-0344",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 82,
+    "case_number": "CR-2025-0344",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 83,
+    "case_number": "CR-2025-0278",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 84,
+    "case_number": "CR-2025-0278",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 85,
+    "case_number": "CR-2025-0220",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\", \"DUI\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 86,
+    "case_number": "CR-2025-0095",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Victim's written account of the robbery including suspect description",
+    "file_path": "",
+    "charges": "[\"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 87,
+    "case_number": "CR-2025-0095",
+    "type": "document",
+    "title": "Photo Lineup Results",
+    "desc": "Detective's report on photo lineup identification procedure and results",
+    "file_path": "",
+    "charges": "[\"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 88,
+    "case_number": "CR-2025-0095",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Interior surveillance camera footage from the store during the robbery",
+    "file_path": "",
+    "charges": "[\"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 89,
+    "case_number": "CR-2025-0205",
+    "type": "document",
+    "title": "Property Owner Complaint",
+    "desc": "Written complaint from property owner regarding unauthorized entry",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\", \"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 90,
+    "case_number": "CR-2025-0084",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"Simple Assault\", \"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 91,
+    "case_number": "CR-2025-0084",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"Simple Assault\", \"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 92,
+    "case_number": "CR-2025-0084",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"Simple Assault\", \"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 93,
+    "case_number": "CR-2025-0050",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 94,
+    "case_number": "CR-2025-0050",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 95,
+    "case_number": "CR-2025-0484",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 96,
+    "case_number": "CR-2025-0313",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 97,
+    "case_number": "CR-2025-0171",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 98,
+    "case_number": "CR-2025-0465",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\", \"Shoplifting\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 99,
+    "case_number": "CR-2025-0465",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Loss prevention camera footage of the alleged shoplifting",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\", \"Shoplifting\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 100,
+    "case_number": "CR-2025-0405",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 101,
+    "case_number": "CR-2025-0405",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 102,
+    "case_number": "CR-2025-0060",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Identity Fraud\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 103,
+    "case_number": "CR-2025-0060",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Identity Fraud\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 104,
+    "case_number": "CR-2025-0368",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Vandalism\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 105,
+    "case_number": "CR-2025-0368",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Vandalism\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 106,
+    "case_number": "CR-2025-0368",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Vandalism\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 107,
+    "case_number": "CR-2025-0361",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 108,
+    "case_number": "CR-2025-0492",
+    "type": "document",
+    "title": "Property Owner Complaint",
+    "desc": "Written complaint from property owner regarding unauthorized entry",
+    "file_path": "",
+    "charges": "[\"Criminal Trespass\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 109,
+    "case_number": "CR-2025-0492",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Officer body camera recording of arrest at the location",
+    "file_path": "",
+    "charges": "[\"Criminal Trespass\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 110,
+    "case_number": "CR-2025-0282",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 111,
+    "case_number": "CR-2025-0282",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 112,
+    "case_number": "CR-2025-0282",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 113,
+    "case_number": "CR-2025-0228",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 114,
+    "case_number": "CR-2025-0228",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 115,
+    "case_number": "CR-2025-0228",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 116,
+    "case_number": "CR-2025-0378",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 117,
+    "case_number": "CR-2025-0378",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 118,
+    "case_number": "CR-2025-0086",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 119,
+    "case_number": "CR-2025-0086",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 120,
+    "case_number": "CR-2025-0086",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 121,
+    "case_number": "CR-2025-0274",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 122,
+    "case_number": "CR-2025-0274",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 123,
+    "case_number": "CR-2025-0308",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 124,
+    "case_number": "CR-2025-0308",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 125,
+    "case_number": "CR-2025-0308",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 126,
+    "case_number": "CR-2025-0446",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 127,
+    "case_number": "CR-2025-0446",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 128,
+    "case_number": "CR-2025-0446",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 129,
+    "case_number": "CR-2025-0203",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Loss prevention camera footage of the alleged shoplifting",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 130,
+    "case_number": "CR-2025-0203",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 131,
+    "case_number": "CR-2025-0137",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vehicular Homicide\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 132,
+    "case_number": "CR-2025-0443",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Interior surveillance camera footage from the store during the robbery",
+    "file_path": "",
+    "charges": "[\"Robbery\", \"Armed Robbery\", \"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 133,
+    "case_number": "CR-2025-0443",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Victim's written account of the robbery including suspect description",
+    "file_path": "",
+    "charges": "[\"Robbery\", \"Armed Robbery\", \"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 134,
+    "case_number": "CR-2025-0443",
+    "type": "physical",
+    "title": "Weapon Recovery Photo",
+    "desc": "Evidence photograph of weapon recovered at/near the scene",
+    "file_path": "",
+    "charges": "[\"Robbery\", \"Armed Robbery\", \"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 135,
+    "case_number": "CR-2025-0001",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 136,
+    "case_number": "CR-2025-0357",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 137,
+    "case_number": "CR-2025-0202",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Trafficking Cocaine\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 138,
+    "case_number": "CR-2025-0197",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 139,
+    "case_number": "CR-2025-0197",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 140,
+    "case_number": "CR-2025-0197",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 141,
+    "case_number": "CR-2025-0004",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 142,
+    "case_number": "CR-2025-0004",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 143,
+    "case_number": "CR-2025-0004",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 144,
+    "case_number": "CR-2025-0471",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\", \"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 145,
+    "case_number": "CR-2025-0471",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\", \"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 146,
+    "case_number": "CR-2025-0498",
+    "type": "physical",
+    "title": "Weapon Recovery Photo",
+    "desc": "Evidence photograph of weapon recovered at/near the scene",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\", \"Possession with Intent to Distribute\", \"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 147,
+    "case_number": "CR-2025-0498",
+    "type": "document",
+    "title": "Photo Lineup Results",
+    "desc": "Detective's report on photo lineup identification procedure and results",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\", \"Possession with Intent to Distribute\", \"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 148,
+    "case_number": "CR-2025-0382",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 149,
+    "case_number": "CR-2025-0382",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 150,
+    "case_number": "CR-2025-0003",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 151,
+    "case_number": "CR-2025-0003",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 152,
+    "case_number": "CR-2025-0003",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 153,
+    "case_number": "CR-2025-0488",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 154,
+    "case_number": "CR-2025-0488",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Loss prevention camera footage of the alleged shoplifting",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 155,
+    "case_number": "CR-2025-0414",
+    "type": "document",
+    "title": "Property Owner Complaint",
+    "desc": "Written complaint from property owner regarding unauthorized entry",
+    "file_path": "",
+    "charges": "[\"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 156,
+    "case_number": "CR-2025-0099",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 157,
+    "case_number": "CR-2025-0099",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 158,
+    "case_number": "CR-2025-0099",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 159,
+    "case_number": "CR-2025-0429",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Child Cruelty\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 160,
+    "case_number": "CR-2025-0167",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\", \"Simple Battery\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 161,
+    "case_number": "CR-2025-0167",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\", \"Simple Battery\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 162,
+    "case_number": "CR-2025-0167",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\", \"Simple Battery\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 163,
+    "case_number": "CR-2025-0096",
+    "type": "document",
+    "title": "Property Owner Complaint",
+    "desc": "Written complaint from property owner regarding unauthorized entry",
+    "file_path": "",
+    "charges": "[\"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 164,
+    "case_number": "CR-2025-0096",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Officer body camera recording of arrest at the location",
+    "file_path": "",
+    "charges": "[\"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 165,
+    "case_number": "CR-2025-0412",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 166,
+    "case_number": "CR-2025-0412",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 167,
+    "case_number": "CR-2025-0412",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 168,
+    "case_number": "CR-2025-0453",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 169,
+    "case_number": "CR-2025-0453",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 170,
+    "case_number": "CR-2025-0490",
+    "type": "physical",
+    "title": "Fingerprint Lift Card",
+    "desc": "Latent fingerprint recovered from point of entry \u2014 submitted to AFIS",
+    "file_path": "",
+    "charges": "[\"Aggravated Stalking\", \"Burglary - Second Degree\", \"Vehicular Homicide\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 171,
+    "case_number": "CR-2025-0490",
+    "type": "document",
+    "title": "Property Owner Statement",
+    "desc": "Written statement from the property owner detailing missing/damaged items",
+    "file_path": "",
+    "charges": "[\"Aggravated Stalking\", \"Burglary - Second Degree\", \"Vehicular Homicide\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 172,
+    "case_number": "CR-2025-0490",
+    "type": "surveillance",
+    "title": "Exterior Camera Footage",
+    "desc": "Security camera footage from the building exterior showing activity at time of incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Stalking\", \"Burglary - Second Degree\", \"Vehicular Homicide\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 173,
+    "case_number": "CR-2025-0396",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"Petit Larceny\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 174,
+    "case_number": "CR-2025-0396",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"Petit Larceny\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 175,
+    "case_number": "CR-2025-0294",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 176,
+    "case_number": "CR-2025-0294",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 177,
+    "case_number": "CR-2025-0268",
+    "type": "crime_scene",
+    "title": "Point of Entry Photo",
+    "desc": "Crime scene photograph of the point of entry showing damage",
+    "file_path": "",
+    "charges": "[\"Aggravated Stalking\", \"Vehicular Homicide\", \"Burglary - First Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 178,
+    "case_number": "CR-2025-0238",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 179,
+    "case_number": "CR-2025-0265",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 180,
+    "case_number": "CR-2025-0265",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 181,
+    "case_number": "CR-2025-0265",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 182,
+    "case_number": "CR-2025-0430",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 183,
+    "case_number": "CR-2025-0430",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 184,
+    "case_number": "CR-2025-0140",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 185,
+    "case_number": "CR-2025-0130",
+    "type": "surveillance",
+    "title": "Exterior Camera Footage",
+    "desc": "Security camera footage from the building exterior showing activity at time of incident",
+    "file_path": "",
+    "charges": "[\"Burglary - Second Degree\", \"Reckless Driving\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 186,
+    "case_number": "CR-2025-0035",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 187,
+    "case_number": "CR-2025-0035",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 188,
+    "case_number": "CR-2025-0035",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 189,
+    "case_number": "CR-2025-0208",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 190,
+    "case_number": "CR-2025-0208",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 191,
+    "case_number": "CR-2025-0397",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 192,
+    "case_number": "CR-2025-0397",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 193,
+    "case_number": "CR-2025-0397",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 194,
+    "case_number": "CR-2025-0263",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Interior surveillance camera footage from the store during the robbery",
+    "file_path": "",
+    "charges": "[\"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 195,
+    "case_number": "CR-2025-0222",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 196,
+    "case_number": "CR-2025-0222",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 197,
+    "case_number": "CR-2025-0222",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Identity Fraud\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 198,
+    "case_number": "CR-2025-0427",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 199,
+    "case_number": "CR-2025-0456",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 200,
+    "case_number": "CR-2025-0456",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 201,
+    "case_number": "CR-2025-0456",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 202,
+    "case_number": "CR-2025-0473",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 203,
+    "case_number": "CR-2025-0374",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 204,
+    "case_number": "CR-2025-0352",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 205,
+    "case_number": "CR-2025-0352",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 206,
+    "case_number": "CR-2025-0352",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 207,
+    "case_number": "CR-2025-0259",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 208,
+    "case_number": "CR-2025-0259",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 209,
+    "case_number": "CR-2025-0109",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 210,
+    "case_number": "CR-2025-0109",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 211,
+    "case_number": "CR-2025-0500",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 212,
+    "case_number": "CR-2025-0500",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 213,
+    "case_number": "CR-2025-0500",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 214,
+    "case_number": "CR-2025-0024",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 215,
+    "case_number": "CR-2025-0024",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 216,
+    "case_number": "CR-2025-0024",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 217,
+    "case_number": "CR-2025-0257",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\", \"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 218,
+    "case_number": "CR-2025-0322",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 219,
+    "case_number": "CR-2025-0322",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 220,
+    "case_number": "CR-2025-0322",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 221,
+    "case_number": "CR-2025-0343",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 222,
+    "case_number": "CR-2025-0343",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 223,
+    "case_number": "CR-2025-0343",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 224,
+    "case_number": "CR-2025-0380",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Burglary - First Degree\", \"Simple Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 225,
+    "case_number": "CR-2025-0380",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Burglary - First Degree\", \"Simple Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 226,
+    "case_number": "CR-2025-0219",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 227,
+    "case_number": "CR-2025-0219",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 228,
+    "case_number": "CR-2025-0219",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 229,
+    "case_number": "CR-2025-0048",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"Giving False Information to Police\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 230,
+    "case_number": "CR-2025-0261",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 231,
+    "case_number": "CR-2025-0261",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 232,
+    "case_number": "CR-2025-0261",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 233,
+    "case_number": "CR-2025-0075",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 234,
+    "case_number": "CR-2025-0075",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 235,
+    "case_number": "CR-2025-0105",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 236,
+    "case_number": "CR-2025-0359",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 237,
+    "case_number": "CR-2025-0359",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 238,
+    "case_number": "CR-2025-0359",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 239,
+    "case_number": "CR-2025-0240",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Aggravated Battery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 240,
+    "case_number": "CR-2025-0240",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Aggravated Battery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 241,
+    "case_number": "CR-2025-0240",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Aggravated Battery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 242,
+    "case_number": "CR-2025-0068",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\", \"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 243,
+    "case_number": "CR-2025-0068",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\", \"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 244,
+    "case_number": "CR-2025-0323",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Victim's written account of the robbery including suspect description",
+    "file_path": "",
+    "charges": "[\"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 245,
+    "case_number": "CR-2025-0323",
+    "type": "physical",
+    "title": "Weapon Recovery Photo",
+    "desc": "Evidence photograph of weapon recovered at/near the scene",
+    "file_path": "",
+    "charges": "[\"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 246,
+    "case_number": "CR-2025-0323",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Interior surveillance camera footage from the store during the robbery",
+    "file_path": "",
+    "charges": "[\"Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 247,
+    "case_number": "CR-2025-0393",
+    "type": "document",
+    "title": "Property Owner Complaint",
+    "desc": "Written complaint from property owner regarding unauthorized entry",
+    "file_path": "",
+    "charges": "[\"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 248,
+    "case_number": "CR-2025-0291",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Forgery - First Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 249,
+    "case_number": "CR-2025-0291",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Forgery - First Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 250,
+    "case_number": "CR-2025-0248",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 251,
+    "case_number": "CR-2025-0191",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI\", \"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 252,
+    "case_number": "CR-2025-0191",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"DUI\", \"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 253,
+    "case_number": "CR-2025-0191",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"DUI\", \"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 254,
+    "case_number": "CR-2025-0124",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Burglary - Second Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 255,
+    "case_number": "CR-2025-0124",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Burglary - Second Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 256,
+    "case_number": "CR-2025-0477",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 257,
+    "case_number": "CR-2025-0477",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 258,
+    "case_number": "CR-2025-0493",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vehicular Homicide\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 259,
+    "case_number": "CR-2025-0334",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 260,
+    "case_number": "CR-2025-0059",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Felony DUI (Fourth Offense)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 261,
+    "case_number": "CR-2025-0059",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Felony DUI (Fourth Offense)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 262,
+    "case_number": "CR-2025-0127",
+    "type": "document",
+    "title": "Property Owner Complaint",
+    "desc": "Written complaint from property owner regarding unauthorized entry",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 263,
+    "case_number": "CR-2025-0044",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 264,
+    "case_number": "CR-2025-0044",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 265,
+    "case_number": "CR-2025-0083",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Loitering\", \"Misdemeanor Theft\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 266,
+    "case_number": "CR-2025-0083",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\", \"Misdemeanor Theft\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 267,
+    "case_number": "CR-2025-0335",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Loitering\", \"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 268,
+    "case_number": "CR-2025-0151",
+    "type": "body_cam",
+    "title": "Body Camera - Recovery",
+    "desc": "Officer body camera recording of weapon recovery",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 269,
+    "case_number": "CR-2025-0151",
+    "type": "document",
+    "title": "ATF Trace Results",
+    "desc": "ATF firearm trace results showing ownership and purchase history",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 270,
+    "case_number": "CR-2025-0151",
+    "type": "physical",
+    "title": "Seized Firearm Photo",
+    "desc": "Evidence photograph of recovered firearm with serial number visible",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 271,
+    "case_number": "CR-2025-0190",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Simple Battery\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 272,
+    "case_number": "CR-2025-0190",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Simple Battery\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 273,
+    "case_number": "CR-2025-0190",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Simple Battery\", \"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 274,
+    "case_number": "CR-2025-0070",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\", \"Disorderly Conduct\", \"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 275,
+    "case_number": "CR-2025-0070",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\", \"Disorderly Conduct\", \"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 276,
+    "case_number": "CR-2025-0258",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 277,
+    "case_number": "CR-2025-0285",
+    "type": "document",
+    "title": "Property Owner Complaint",
+    "desc": "Written complaint from property owner regarding unauthorized entry",
+    "file_path": "",
+    "charges": "[\"Shoplifting\", \"Harassing Communications\", \"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 278,
+    "case_number": "CR-2025-0285",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Officer body camera recording of arrest at the location",
+    "file_path": "",
+    "charges": "[\"Shoplifting\", \"Harassing Communications\", \"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 279,
+    "case_number": "CR-2025-0272",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 280,
+    "case_number": "CR-2025-0272",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Simple Assault\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 281,
+    "case_number": "CR-2025-0400",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Trafficking Methamphetamine\", \"Burglary - First Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 282,
+    "case_number": "CR-2025-0400",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Trafficking Methamphetamine\", \"Burglary - First Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 283,
+    "case_number": "CR-2025-0400",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\", \"Trafficking Methamphetamine\", \"Burglary - First Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 284,
+    "case_number": "CR-2025-0112",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 285,
+    "case_number": "CR-2025-0112",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 286,
+    "case_number": "CR-2025-0112",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 287,
+    "case_number": "CR-2025-0466",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Child Cruelty\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 288,
+    "case_number": "CR-2025-0466",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Child Cruelty\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 289,
+    "case_number": "CR-2025-0055",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 290,
+    "case_number": "CR-2025-0065",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Trafficking Methamphetamine\", \"Aggravated Battery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 291,
+    "case_number": "CR-2025-0303",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 292,
+    "case_number": "CR-2025-0303",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 293,
+    "case_number": "CR-2025-0303",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 294,
+    "case_number": "CR-2025-0316",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 295,
+    "case_number": "CR-2025-0316",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 296,
+    "case_number": "CR-2025-0316",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 297,
+    "case_number": "CR-2025-0172",
+    "type": "document",
+    "title": "Property Owner Statement",
+    "desc": "Written statement from the property owner detailing missing/damaged items",
+    "file_path": "",
+    "charges": "[\"Aggravated Stalking\", \"Burglary - First Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 298,
+    "case_number": "CR-2025-0159",
+    "type": "document",
+    "title": "Property Owner Statement",
+    "desc": "Written statement from the property owner detailing missing/damaged items",
+    "file_path": "",
+    "charges": "[\"Burglary - Second Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 299,
+    "case_number": "CR-2025-0253",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 300,
+    "case_number": "CR-2025-0253",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 301,
+    "case_number": "CR-2025-0253",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 302,
+    "case_number": "CR-2025-0173",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 303,
+    "case_number": "CR-2025-0307",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 304,
+    "case_number": "CR-2025-0317",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 305,
+    "case_number": "CR-2025-0317",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession of Controlled Substance\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 306,
+    "case_number": "CR-2025-0116",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 307,
+    "case_number": "CR-2025-0309",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 308,
+    "case_number": "CR-2025-0293",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\", \"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 309,
+    "case_number": "CR-2025-0398",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Theft by Taking (Felony)\", \"Public Intoxication\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 310,
+    "case_number": "CR-2025-0398",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Theft by Taking (Felony)\", \"Public Intoxication\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 311,
+    "case_number": "CR-2025-0398",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Theft by Taking (Felony)\", \"Public Intoxication\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 312,
+    "case_number": "CR-2025-0018",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Loss prevention camera footage of the alleged shoplifting",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 313,
+    "case_number": "CR-2025-0018",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 314,
+    "case_number": "CR-2025-0302",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 315,
+    "case_number": "CR-2025-0074",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Loss prevention camera footage of the alleged shoplifting",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 316,
+    "case_number": "CR-2025-0074",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 317,
+    "case_number": "CR-2025-0201",
+    "type": "crime_scene",
+    "title": "Point of Entry Photo",
+    "desc": "Crime scene photograph of the point of entry showing damage",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\", \"Fleeing and Eluding\", \"Burglary - Second Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 318,
+    "case_number": "CR-2025-0201",
+    "type": "document",
+    "title": "Property Owner Statement",
+    "desc": "Written statement from the property owner detailing missing/damaged items",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\", \"Fleeing and Eluding\", \"Burglary - Second Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 319,
+    "case_number": "CR-2025-0201",
+    "type": "physical",
+    "title": "Fingerprint Lift Card",
+    "desc": "Latent fingerprint recovered from point of entry \u2014 submitted to AFIS",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\", \"Fleeing and Eluding\", \"Burglary - Second Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 320,
+    "case_number": "CR-2025-0270",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 321,
+    "case_number": "CR-2025-0270",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 322,
+    "case_number": "CR-2025-0270",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 323,
+    "case_number": "CR-2025-0499",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 324,
+    "case_number": "CR-2025-0499",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 325,
+    "case_number": "CR-2025-0499",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"Obstruction of a Law Enforcement Officer\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 326,
+    "case_number": "CR-2025-0082",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\", \"Loitering\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 327,
+    "case_number": "CR-2025-0041",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 328,
+    "case_number": "CR-2025-0041",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 329,
+    "case_number": "CR-2025-0390",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 330,
+    "case_number": "CR-2025-0496",
+    "type": "physical",
+    "title": "Seized Firearm Photo",
+    "desc": "Evidence photograph of recovered firearm with serial number visible",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 331,
+    "case_number": "CR-2025-0496",
+    "type": "document",
+    "title": "ATF Trace Results",
+    "desc": "ATF firearm trace results showing ownership and purchase history",
+    "file_path": "",
+    "charges": "[\"Weapons Possession (Convicted Felon)\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 332,
+    "case_number": "CR-2025-0383",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"DUI\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 333,
+    "case_number": "CR-2025-0383",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 334,
+    "case_number": "CR-2025-0383",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"DUI\", \"Harassing Communications\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 335,
+    "case_number": "CR-2025-0391",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"Identity Fraud\", \"Reckless Driving\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 336,
+    "case_number": "CR-2025-0391",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"Identity Fraud\", \"Reckless Driving\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 337,
+    "case_number": "CR-2025-0192",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 338,
+    "case_number": "CR-2025-0192",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 339,
+    "case_number": "CR-2025-0192",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Disorderly Conduct\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 340,
+    "case_number": "CR-2025-0244",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Misdemeanor Theft\", \"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 341,
+    "case_number": "CR-2025-0244",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Misdemeanor Theft\", \"Public Intoxication\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 342,
+    "case_number": "CR-2025-0162",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 343,
+    "case_number": "CR-2025-0162",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 344,
+    "case_number": "CR-2025-0162",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 345,
+    "case_number": "CR-2025-0034",
+    "type": "surveillance",
+    "title": "Exterior Camera Footage",
+    "desc": "Security camera footage from the building exterior showing activity at time of incident",
+    "file_path": "",
+    "charges": "[\"Burglary - Second Degree\", \"Aggravated Stalking\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 346,
+    "case_number": "CR-2025-0198",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Loss prevention camera footage of the alleged shoplifting",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\", \"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 347,
+    "case_number": "CR-2025-0198",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\", \"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 348,
+    "case_number": "CR-2025-0123",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Obstruction of a Law Enforcement Officer\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 349,
+    "case_number": "CR-2025-0123",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Obstruction of a Law Enforcement Officer\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 350,
+    "case_number": "CR-2025-0279",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Officer body camera recording of arrest at the location",
+    "file_path": "",
+    "charges": "[\"Criminal Trespass\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 351,
+    "case_number": "CR-2025-0090",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 352,
+    "case_number": "CR-2025-0090",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"Fleeing and Eluding\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 353,
+    "case_number": "CR-2025-0243",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 354,
+    "case_number": "CR-2025-0243",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 355,
+    "case_number": "CR-2025-0243",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"Harassing Communications\", \"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 356,
+    "case_number": "CR-2025-0214",
+    "type": "document",
+    "title": "911 Call Transcript",
+    "desc": "Transcript of the 911 call reporting the incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 357,
+    "case_number": "CR-2025-0214",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 358,
+    "case_number": "CR-2025-0214",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 359,
+    "case_number": "CR-2025-0002",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 360,
+    "case_number": "CR-2025-0002",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 361,
+    "case_number": "CR-2025-0002",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 362,
+    "case_number": "CR-2025-0108",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 363,
+    "case_number": "CR-2025-0108",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 364,
+    "case_number": "CR-2025-0351",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Giving False Information to Police\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 365,
+    "case_number": "CR-2025-0160",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 366,
+    "case_number": "CR-2025-0160",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"DUI - Under the Influence\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 367,
+    "case_number": "CR-2025-0425",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 368,
+    "case_number": "CR-2025-0425",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 369,
+    "case_number": "CR-2025-0425",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Simple Assault\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 370,
+    "case_number": "CR-2025-0478",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\", \"Domestic Battery (Misdemeanor)\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 371,
+    "case_number": "CR-2025-0245",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 372,
+    "case_number": "CR-2025-0038",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Reckless Driving\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 373,
+    "case_number": "CR-2025-0166",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\", \"Vandalism\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 374,
+    "case_number": "CR-2025-0166",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\", \"Vandalism\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 375,
+    "case_number": "CR-2025-0166",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\", \"Vandalism\", \"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 376,
+    "case_number": "CR-2025-0409",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 377,
+    "case_number": "CR-2025-0409",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 378,
+    "case_number": "CR-2025-0006",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 379,
+    "case_number": "CR-2025-0324",
+    "type": "surveillance",
+    "title": "Store Camera Footage",
+    "desc": "Loss prevention camera footage of the alleged shoplifting",
+    "file_path": "",
+    "charges": "[\"Vandalism\", \"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 380,
+    "case_number": "CR-2025-0180",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 381,
+    "case_number": "CR-2025-0180",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Vandalism\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 382,
+    "case_number": "CR-2025-0347",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 383,
+    "case_number": "CR-2025-0347",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Petit Larceny\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 384,
+    "case_number": "CR-2025-0367",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"DUI - Under the Influence\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 385,
+    "case_number": "CR-2025-0367",
+    "type": "body_cam",
+    "title": "Body Camera - Field Sobriety",
+    "desc": "Officer body camera recording of field sobriety test and arrest",
+    "file_path": "",
+    "charges": "[\"Disorderly Conduct\", \"DUI - Under the Influence\", \"Possession of Controlled Substance\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 386,
+    "case_number": "CR-2025-0093",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 387,
+    "case_number": "CR-2025-0093",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 388,
+    "case_number": "CR-2025-0093",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Marijuana Possession (less than 1 oz)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 389,
+    "case_number": "CR-2025-0271",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Trafficking Cocaine\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 390,
+    "case_number": "CR-2025-0271",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Trafficking Cocaine\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 391,
+    "case_number": "CR-2025-0269",
+    "type": "document",
+    "title": "BAC Test Results",
+    "desc": "Blood alcohol content test results from Intoxilyzer 9000 at the precinct",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"DUI\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 392,
+    "case_number": "CR-2025-0269",
+    "type": "document",
+    "title": "Incident Report",
+    "desc": "Responding officer's incident report with timeline and observations",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"DUI\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 393,
+    "case_number": "CR-2025-0269",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"Entering Automobile\", \"DUI\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 394,
+    "case_number": "CR-2025-0355",
+    "type": "document",
+    "title": "Store Incident Report",
+    "desc": "Loss prevention officer's written report of the incident",
+    "file_path": "",
+    "charges": "[\"Theft by Taking (Felony)\", \"Child Cruelty\", \"Armed Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 395,
+    "case_number": "CR-2025-0355",
+    "type": "physical",
+    "title": "Recovered Merchandise",
+    "desc": "Evidence photograph of recovered stolen merchandise with price tags",
+    "file_path": "",
+    "charges": "[\"Theft by Taking (Felony)\", \"Child Cruelty\", \"Armed Robbery\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 396,
+    "case_number": "CR-2025-0342",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 397,
+    "case_number": "CR-2025-0342",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 398,
+    "case_number": "CR-2025-0342",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 399,
+    "case_number": "CR-2025-0413",
+    "type": "physical",
+    "title": "Fingerprint Lift Card",
+    "desc": "Latent fingerprint recovered from point of entry \u2014 submitted to AFIS",
+    "file_path": "",
+    "charges": "[\"Burglary - Second Degree\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 400,
+    "case_number": "CR-2025-0464",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 401,
+    "case_number": "CR-2025-0464",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Simple Battery\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 402,
+    "case_number": "CR-2025-0195",
+    "type": "document",
+    "title": "Victim Statement",
+    "desc": "Written statement provided by the victim to responding officers",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 403,
+    "case_number": "CR-2025-0195",
+    "type": "surveillance",
+    "title": "Nearby Business Surveillance",
+    "desc": "Security camera footage from nearby business showing the area at time of incident",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 404,
+    "case_number": "CR-2025-0195",
+    "type": "medical",
+    "title": "Victim Injury Documentation",
+    "desc": "Medical photographs documenting victim injuries taken at hospital",
+    "file_path": "",
+    "charges": "[\"Aggravated Assault\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 405,
+    "case_number": "CR-2025-0346",
+    "type": "document",
+    "title": "LP Officer Report",
+    "desc": "Loss prevention officer's incident report with item list and values",
+    "file_path": "",
+    "charges": "[\"Shoplifting\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 406,
+    "case_number": "CR-2025-0223",
+    "type": "surveillance",
+    "title": "Store Surveillance Footage",
+    "desc": "Loss prevention camera footage showing the alleged theft",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Reckless Driving\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 407,
+    "case_number": "CR-2025-0283",
+    "type": "dashcam",
+    "title": "Dashcam - Traffic Stop",
+    "desc": "Patrol vehicle dashcam recording of the traffic stop and field sobriety test administration",
+    "file_path": "",
+    "charges": "[\"DUI\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 408,
+    "case_number": "CR-2025-0419",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Child Cruelty\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 409,
+    "case_number": "CR-2025-0236",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Domestic Battery (Misdemeanor)\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 410,
+    "case_number": "CR-2025-0454",
+    "type": "body_cam",
+    "title": "Body Camera - Arrest",
+    "desc": "Responding officer body camera recording of arrest and initial statements",
+    "file_path": "",
+    "charges": "[\"Simple Battery\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 411,
+    "case_number": "CR-2025-0454",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from civilian witness to the altercation",
+    "file_path": "",
+    "charges": "[\"Simple Battery\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 412,
+    "case_number": "CR-2025-0454",
+    "type": "medical",
+    "title": "Victim Medical Records",
+    "desc": "Emergency room records documenting injuries sustained by the victim",
+    "file_path": "",
+    "charges": "[\"Simple Battery\", \"Misdemeanor Theft\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 413,
+    "case_number": "CR-2025-0184",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 414,
+    "case_number": "CR-2025-0184",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 415,
+    "case_number": "CR-2025-0184",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Possession with Intent to Distribute\"]",
+    "severity": "felony"
+  },
+  {
+    "id": 416,
+    "case_number": "CR-2025-0206",
+    "type": "document",
+    "title": "Police Incident Report",
+    "desc": "Responding officer's written incident report",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 417,
+    "case_number": "CR-2025-0206",
+    "type": "document",
+    "title": "Witness Statement",
+    "desc": "Written statement from a witness to the incident",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  },
+  {
+    "id": 418,
+    "case_number": "CR-2025-0206",
+    "type": "body_cam",
+    "title": "Body Camera Footage",
+    "desc": "Officer body camera recording from the incident",
+    "file_path": "",
+    "charges": "[\"Public Intoxication\", \"Driving on Suspended License\"]",
+    "severity": "misdemeanor"
+  }
+]

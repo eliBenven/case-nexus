@@ -94,6 +94,38 @@ def get_federal_sections(section_numbers: list[str]) -> str:
 # ============================================================
 
 CHARGE_TO_LAW = {
+    # --- Homicide ---
+    "Murder": {
+        "georgia": ["16-5-1"],
+        "federal": [],
+        "defenses": ["16-3-21", "16-3-23.1"],
+        "procedural": ["17-7-170", "17-10-6.1"],
+    },
+    "Malice Murder": {
+        "georgia": ["16-5-1"],
+        "federal": [],
+        "defenses": ["16-3-21", "16-3-23.1"],
+        "procedural": ["17-7-170", "17-10-6.1"],
+    },
+    "Felony Murder": {
+        "georgia": ["16-5-1"],
+        "federal": [],
+        "defenses": ["16-3-21", "16-3-23.1"],
+        "procedural": ["17-7-170", "17-10-6.1"],
+    },
+    "Voluntary Manslaughter": {
+        "georgia": ["16-5-2"],
+        "federal": [],
+        "defenses": ["16-3-21", "16-3-23.1"],
+        "procedural": ["17-7-170"],
+    },
+    "Involuntary Manslaughter": {
+        "georgia": ["16-5-3"],
+        "federal": [],
+        "defenses": [],
+        "procedural": [],
+    },
+
     # --- Violence ---
     "Simple Assault": {
         "georgia": ["16-5-20"],
@@ -149,6 +181,68 @@ CHARGE_TO_LAW = {
         "defenses": [],
         "procedural": [],
     },
+    "Child Cruelty": {
+        "georgia": ["16-5-70"],
+        "federal": [],
+        "defenses": [],
+        "procedural": ["17-7-170"],
+    },
+    "Domestic Battery (Misdemeanor)": {
+        "georgia": ["16-5-23.1"],
+        "federal": [],
+        "defenses": ["16-3-21"],
+        "procedural": [],
+    },
+    "Felony Domestic Violence": {
+        "georgia": ["16-5-23.1", "16-5-21"],
+        "federal": [],
+        "defenses": ["16-3-21"],
+        "procedural": ["17-7-170"],
+    },
+    "Assault on a Law Enforcement Officer": {
+        "georgia": ["16-5-21", "16-10-24"],
+        "federal": [],
+        "defenses": [],
+        "procedural": [],
+    },
+    "Resisting Arrest": {
+        "georgia": ["16-10-24"],
+        "federal": [],
+        "defenses": [],
+        "procedural": [],
+    },
+    "Kidnapping": {
+        "georgia": ["16-5-40"],
+        "federal": [],
+        "defenses": [],
+        "procedural": ["17-7-170", "17-10-6.1"],
+    },
+    "False Imprisonment": {
+        "georgia": ["16-5-41"],
+        "federal": [],
+        "defenses": [],
+        "procedural": [],
+    },
+    "Terroristic Threats": {
+        "georgia": ["16-11-37"],
+        "federal": [],
+        "defenses": [],
+        "procedural": [],
+    },
+
+    # --- Sexual Offenses ---
+    "Rape": {
+        "georgia": ["16-6-1"],
+        "federal": [],
+        "defenses": [],
+        "procedural": ["17-7-170", "17-10-6.1"],
+    },
+    "Sexual Battery": {
+        "georgia": ["16-6-22.1"],
+        "federal": [],
+        "defenses": [],
+        "procedural": [],
+    },
 
     # --- Property ---
     "Burglary": {
@@ -182,6 +276,12 @@ CHARGE_TO_LAW = {
         "procedural": [],
     },
     "Petit Larceny": {
+        "georgia": ["16-8-2"],
+        "federal": [],
+        "defenses": [],
+        "procedural": [],
+    },
+    "Misdemeanor Theft": {
         "georgia": ["16-8-2"],
         "federal": [],
         "defenses": [],
@@ -275,9 +375,21 @@ CHARGE_TO_LAW = {
         "defenses": [],
         "procedural": ["17-5-21"],
     },
+    "Weapons Possession (Convicted Felon)": {
+        "georgia": ["16-11-131"],
+        "federal": ["18 USC 922"],
+        "defenses": [],
+        "procedural": ["17-5-21"],
+    },
 
     # --- Drug Offenses ---
     "Possession of Controlled Substance": {
+        "georgia": ["16-13-30"],
+        "federal": ["21 USC 841", "21 USC 812"],
+        "defenses": [],
+        "procedural": ["17-5-1", "17-5-21"],
+    },
+    "Felony Drug Possession": {
         "georgia": ["16-13-30"],
         "federal": ["21 USC 841", "21 USC 812"],
         "defenses": [],
@@ -289,7 +401,25 @@ CHARGE_TO_LAW = {
         "defenses": [],
         "procedural": ["17-5-1", "17-5-21"],
     },
+    "Possession of Drug Related Objects": {
+        "georgia": ["16-13-32.2"],
+        "federal": [],
+        "defenses": [],
+        "procedural": ["17-5-21"],
+    },
     "Drug Trafficking": {
+        "georgia": ["16-13-31"],
+        "federal": ["21 USC 841", "21 USC 812"],
+        "defenses": [],
+        "procedural": ["17-5-1", "17-5-21", "17-7-170"],
+    },
+    "Trafficking Cocaine": {
+        "georgia": ["16-13-31"],
+        "federal": ["21 USC 841", "21 USC 812"],
+        "defenses": [],
+        "procedural": ["17-5-1", "17-5-21", "17-7-170"],
+    },
+    "Trafficking Methamphetamine": {
         "georgia": ["16-13-31"],
         "federal": ["21 USC 841", "21 USC 812"],
         "defenses": [],
@@ -387,6 +517,30 @@ def _match_charge(charge_text: str) -> str | None:
 # ============================================================
 
 CONSTITUTIONAL_PROVISIONS = {
+    "1st": {
+        "text": (
+            "Congress shall make no law respecting an establishment of religion, or "
+            "prohibiting the free exercise thereof; or abridging the freedom of speech, "
+            "or of the press; or the right of the people peaceably to assemble, and to "
+            "petition the Government for a redress of grievances."
+        ),
+        "key_holdings": [
+            "Brandenburg v. Ohio, 395 U.S. 444 (1969): Speech advocating illegal conduct is protected unless directed to inciting imminent lawless action and likely to produce such action.",
+            "Texas v. Johnson, 491 U.S. 397 (1989): Symbolic speech, including flag burning, is protected under the First Amendment.",
+            "Snyder v. Phelps, 562 U.S. 443 (2011): Speech on matters of public concern, even if offensive, is protected from tort liability.",
+        ],
+    },
+    "2nd": {
+        "text": (
+            "A well regulated Militia, being necessary to the security of a free State, "
+            "the right of the people to keep and bear Arms, shall not be infringed."
+        ),
+        "key_holdings": [
+            "District of Columbia v. Heller, 554 U.S. 570 (2008): The Second Amendment protects an individual's right to possess a firearm unconnected with service in a militia.",
+            "McDonald v. City of Chicago, 561 U.S. 742 (2010): The Second Amendment right to keep and bear arms is incorporated against the states through the Fourteenth Amendment.",
+            "New York State Rifle & Pistol Ass'n v. Bruen, 597 U.S. 1 (2022): Firearm regulations must be consistent with the historical tradition of firearm regulation.",
+        ],
+    },
     "4th": {
         "text": (
             "The right of the people to be secure in their persons, houses, papers, "
@@ -434,6 +588,30 @@ CONSTITUTIONAL_PROVISIONS = {
             "Barker v. Wingo, 407 U.S. 514 (1972): Speedy trial analysis uses four-factor balancing test: length of delay, reason for delay, defendant's assertion of right, and prejudice to defendant.",
         ],
     },
+    "8th": {
+        "text": (
+            "Excessive bail shall not be required, nor excessive fines imposed, "
+            "nor cruel and unusual punishments inflicted."
+        ),
+        "key_holdings": [
+            "Stack v. Boyle, 342 U.S. 1 (1951): Bail set higher than necessary to ensure the defendant's appearance at trial is excessive under the Eighth Amendment.",
+            "Furman v. Georgia, 408 U.S. 238 (1972): The arbitrary and inconsistent imposition of the death penalty constitutes cruel and unusual punishment.",
+            "Graham v. Florida, 560 U.S. 48 (2010): The Eighth Amendment prohibits life without parole for juvenile offenders convicted of non-homicide offenses.",
+            "Miller v. Alabama, 567 U.S. 460 (2012): Mandatory life without parole for juvenile homicide offenders violates the Eighth Amendment.",
+            "Timbs v. Indiana, 586 U.S. 146 (2019): The Excessive Fines Clause is incorporated against the states, limiting civil asset forfeiture.",
+        ],
+    },
+    "13th": {
+        "text": (
+            "Neither slavery nor involuntary servitude, except as a punishment for crime "
+            "whereof the party shall have been duly convicted, shall exist within the "
+            "United States, or any place subject to their jurisdiction."
+        ),
+        "key_holdings": [
+            "Bailey v. Alabama, 219 U.S. 219 (1911): Peonage statutes that criminalize breach of labor contracts violate the Thirteenth Amendment.",
+            "United States v. Kozminski, 487 U.S. 931 (1988): Involuntary servitude requires proof of physical or legal coercion.",
+        ],
+    },
     "14th": {
         "text": (
             "No State shall make or enforce any law which shall abridge the privileges or "
@@ -455,16 +633,50 @@ CONSTITUTIONAL_PROVISIONS = {
 # ============================================================
 
 LANDMARK_CASES = {
+    # 4th Amendment — Search & Seizure
     "Mapp v. Ohio": "367 U.S. 643 (1961). Exclusionary rule: Evidence obtained through searches violating the 4th Amendment is inadmissible in state courts.",
+    "Terry v. Ohio": "392 U.S. 1 (1968). Reasonable suspicion standard for stop-and-frisk. Stop must be brief; frisk limited to weapons check for officer safety.",
+    "Arizona v. Gant": "556 U.S. 332 (2009). Vehicle search incident to arrest limited to (1) arrestee's reach at time of search, or (2) reasonable belief of evidence of arrest crime in vehicle.",
+    "Riley v. California": "573 U.S. 373 (2014). Police must generally obtain a warrant before searching digital contents of a cell phone seized incident to arrest.",
+    "Carpenter v. United States": "585 U.S. 296 (2018). Acquisition of historical cell-site location information constitutes a Fourth Amendment search requiring a warrant.",
+    "Illinois v. Gates": "462 U.S. 213 (1983). Totality-of-the-circumstances test for determining probable cause based on informant tips, replacing the rigid Aguilar-Spinelli two-pronged test.",
+    "Whren v. United States": "517 U.S. 806 (1996). A traffic stop is reasonable under the Fourth Amendment regardless of the officer's subjective motivations, so long as objective circumstances justify the stop.",
+    "Florida v. Jardines": "569 U.S. 1 (2013). Using a drug-sniffing dog on a homeowner's porch to investigate the contents of the home is a search within the meaning of the Fourth Amendment.",
+    "Franks v. Delaware": "438 U.S. 154 (1978). Defendant may challenge the truthfulness of factual statements in a search warrant affidavit; if false statements are shown to be material, the warrant is voided.",
+    "Utah v. Strieff": "579 U.S. 232 (2016). Evidence discovered during an unlawful stop may be admissible if an intervening valid arrest warrant attenuates the connection.",
+    # 5th Amendment — Self-Incrimination & Due Process
     "Miranda v. Arizona": "384 U.S. 436 (1966). Custodial interrogation requires Miranda warnings. Unwarned statements are presumptively inadmissible.",
     "Brady v. Maryland": "373 U.S. 83 (1963). Prosecution must disclose all material exculpatory evidence. Applies to evidence favorable to the accused on guilt or punishment.",
     "Giglio v. United States": "405 U.S. 150 (1972). Extends Brady to impeachment evidence. Any deals, promises, or benefits to prosecution witnesses must be disclosed.",
+    "Kyles v. Whitley": "514 U.S. 419 (1995). Brady materiality: evidence is material if there is a reasonable probability that disclosure would have produced a different verdict. Cumulative effect of all suppressed evidence is considered.",
+    "Berghuis v. Thompkins": "560 U.S. 370 (2010). Suspect must unambiguously invoke the right to remain silent; mere silence during interrogation is insufficient.",
+    "Salinas v. Texas": "570 U.S. 178 (2013). Pre-arrest, pre-Miranda silence can be used against a defendant who does not expressly invoke the Fifth Amendment privilege.",
+    # 6th Amendment — Counsel, Speedy Trial, Confrontation
+    "Gideon v. Wainwright": "372 U.S. 335 (1963). The Sixth Amendment right to counsel applies to state criminal proceedings through the Fourteenth Amendment.",
     "Strickland v. Washington": "466 U.S. 668 (1984). Two-prong test for ineffective assistance of counsel: deficient performance + prejudice to the defense.",
     "Batson v. Kentucky": "476 U.S. 79 (1986). Race-based peremptory challenges violate equal protection. Three-step framework: prima facie case, neutral explanation, purposeful discrimination.",
-    "Terry v. Ohio": "392 U.S. 1 (1968). Reasonable suspicion standard for stop-and-frisk. Stop must be brief; frisk limited to weapons check for officer safety.",
-    "Arizona v. Gant": "556 U.S. 332 (2009). Vehicle search incident to arrest limited to (1) arrestee's reach at time of search, or (2) reasonable belief of evidence of arrest crime in vehicle.",
     "Crawford v. Washington": "541 U.S. 36 (2004). Testimonial hearsay barred under Confrontation Clause unless declarant unavailable and prior cross-examination opportunity existed.",
     "Barker v. Wingo": "407 U.S. 514 (1972). Four-factor speedy trial test: length of delay, government's reason, defendant's assertion of right, prejudice to defendant.",
+    "Padilla v. Kentucky": "559 U.S. 356 (2010). Defense counsel must advise noncitizen clients about the deportation risks of a guilty plea. Failure to do so constitutes ineffective assistance.",
+    "Lafler v. Cooper": "566 U.S. 156 (2012). Ineffective assistance of counsel during plea bargaining can form the basis for relief, even where the defendant was later convicted at a fair trial.",
+    "Missouri v. Frye": "566 U.S. 134 (2012). Defense counsel has a duty to communicate formal plea offers from the prosecution to the defendant.",
+    # 8th Amendment — Bail & Sentencing
+    "Stack v. Boyle": "342 U.S. 1 (1951). Bail set higher than necessary to ensure appearance is excessive under the Eighth Amendment.",
+    "Graham v. Florida": "560 U.S. 48 (2010). Life without parole for juvenile non-homicide offenders violates the Eighth Amendment.",
+    "Miller v. Alabama": "567 U.S. 460 (2012). Mandatory life without parole for juvenile homicide offenders violates the Eighth Amendment; individualized sentencing required.",
+    # 14th Amendment — Equal Protection & Due Process
+    "Jackson v. Virginia": "443 U.S. 307 (1979). Due process requires that a conviction be supported by evidence from which a rational trier of fact could find each element of the crime beyond a reasonable doubt.",
+    "Napue v. Illinois": "360 U.S. 264 (1959). Due process is violated when prosecution knowingly uses false testimony or fails to correct testimony it knows to be false.",
+    # Felony Murder & Death Penalty
+    "Enmund v. Florida": "458 U.S. 782 (1982). The Eighth Amendment prohibits the death penalty for a defendant who did not kill, attempt to kill, or intend to kill, and whose participation in a felony was minor.",
+    "Gregg v. Georgia": "428 U.S. 153 (1976). The death penalty is not per se unconstitutional under the Eighth Amendment where the sentencing scheme provides guided discretion to the jury.",
+    "Tison v. Arizona": "481 U.S. 137 (1987). The death penalty may be imposed on a felony murder defendant who was a major participant in the felony and exhibited reckless indifference to human life.",
+    # Drug Offenses
+    "Harmelin v. Michigan": "501 U.S. 957 (1991). A mandatory life sentence without parole for possessing a large quantity of cocaine does not constitute cruel and unusual punishment.",
+    # Domestic Violence / Family Violence
+    "Davis v. Washington": "547 U.S. 813 (2006). Statements made to police during an ongoing emergency are not testimonial and may be admitted without violating the Confrontation Clause; distinguishes from interrogation statements.",
+    # Bail
+    "United States v. Salerno": "481 U.S. 739 (1987). Pretrial detention based on dangerousness to the community is constitutional and does not violate due process or the Excessive Bail Clause.",
 }
 
 
@@ -485,9 +697,13 @@ def get_relevant_law(charges: list[str], case_data: dict = None) -> str:
     federal_sections_needed = set()
     amendments_needed = set()
 
-    # Always include search/seizure and speedy trial for any criminal case
-    ga_sections_needed.update(["17-5-21", "17-5-22", "17-7-170"])
-    amendments_needed.update(["4th", "5th", "6th", "14th"])
+    # Always include search/seizure, speedy trial, sentencing, and bail for any criminal case
+    ga_sections_needed.update([
+        "17-5-21", "17-5-22", "17-7-170",  # Search/seizure & speedy trial
+        "17-6-1",                            # Bail
+        "17-10-1", "17-10-3",               # Sentencing (general)
+    ])
+    amendments_needed.update(["1st", "2nd", "4th", "5th", "6th", "8th", "13th", "14th"])
 
     # Map charges to specific statutes
     for charge in charges:

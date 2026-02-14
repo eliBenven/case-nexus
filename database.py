@@ -91,6 +91,7 @@ def init_db():
                 title TEXT NOT NULL,
                 description TEXT DEFAULT '',
                 file_path TEXT DEFAULT '',
+                poster_path TEXT DEFAULT '',
                 source TEXT DEFAULT '',
                 date_collected TEXT DEFAULT '',
                 created_at TEXT NOT NULL,
@@ -122,9 +123,12 @@ def init_db():
 def get_all_cases() -> list[dict]:
     with get_db() as conn:
         rows = conn.execute(
-            "SELECT * FROM cases ORDER BY "
-            "CASE WHEN next_hearing_date IS NOT NULL AND next_hearing_date != '' "
-            "THEN next_hearing_date ELSE '9999-12-31' END ASC"
+            "SELECT c.*, COALESCE(ec.cnt, 0) AS evidence_count "
+            "FROM cases c "
+            "LEFT JOIN (SELECT case_number, COUNT(*) AS cnt FROM evidence GROUP BY case_number) ec "
+            "ON c.case_number = ec.case_number "
+            "ORDER BY CASE WHEN c.next_hearing_date IS NOT NULL AND c.next_hearing_date != '' "
+            "THEN c.next_hearing_date ELSE '9999-12-31' END ASC"
         ).fetchall()
         return [_row_to_dict(r) for r in rows]
 
@@ -278,12 +282,71 @@ def insert_evidence(items: list[dict]):
             conn.execute("""
                 INSERT INTO evidence (
                     case_number, evidence_type, title, description,
-                    file_path, source, date_collected, created_at
+                    file_path, poster_path, source, date_collected, created_at
                 ) VALUES (
                     :case_number, :evidence_type, :title, :description,
-                    :file_path, :source, :date_collected, :created_at
+                    :file_path, :poster_path, :source, :date_collected, :created_at
                 )
-            """, e)
+            """, {**{"poster_path": ""}, **e})
+
+
+def link_evidence_files(evidence_dir: str):
+    """Match generated evidence image/video files on disk to DB records.
+
+    Scans the evidence directory for files named like:
+        {case_number}_{type}_{id}.png/jpg/mp4
+    and updates the corresponding DB record with the file path.
+    For video files (.mp4), also sets poster_path to the matching .png.
+    """
+    import os
+    import re
+
+    files_by_id = {}  # evidence_id -> (file_path, extension)
+    for fname in os.listdir(evidence_dir):
+        # Match pattern: CR-2025-XXXX_type_ID.ext
+        m = re.match(r"(CR-\d{4}-\d{4})_(\w+?)_(\d+)\.(png|jpg|jpeg|mp4)$", fname)
+        if m:
+            eid = int(m.group(3))
+            ext = m.group(4)
+            files_by_id.setdefault(eid, {})[ext] = fname
+
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT id, file_path FROM evidence WHERE file_path = '' OR file_path IS NULL"
+        ).fetchall()
+
+        updated = 0
+        for row in rows:
+            eid = row[0]
+            if eid not in files_by_id:
+                continue
+
+            exts = files_by_id[eid]
+            if "mp4" in exts:
+                vid_url = f"/static/evidence/{exts['mp4']}"
+                # Find poster image
+                poster_fname = exts.get("png") or exts.get("jpg") or exts.get("jpeg", "")
+                poster_url = f"/static/evidence/{poster_fname}" if poster_fname else ""
+                conn.execute(
+                    "UPDATE evidence SET file_path = ?, poster_path = ? WHERE id = ?",
+                    (vid_url, poster_url, eid)
+                )
+            elif "png" in exts:
+                conn.execute(
+                    "UPDATE evidence SET file_path = ? WHERE id = ?",
+                    (f"/static/evidence/{exts['png']}", eid)
+                )
+            elif "jpg" in exts or "jpeg" in exts:
+                fname = exts.get("jpg") or exts.get("jpeg")
+                conn.execute(
+                    "UPDATE evidence SET file_path = ? WHERE id = ?",
+                    (f"/static/evidence/{fname}", eid)
+                )
+            else:
+                continue
+            updated += 1
+
+        print(f"Linked {updated} evidence files from disk")
 
 
 # --- Analysis Log ---
@@ -370,17 +433,20 @@ def build_memory_context(case_number: str = None) -> str:
 
 # --- Caseload Summary for AI Context ---
 
-def build_caseload_context() -> str:
-    """Build the full caseload summary for the 1M context window.
+def build_caseload_context(max_chars: int = 640_000) -> str:
+    """Build the full caseload summary for the context window.
 
     This is the key function that feeds ALL cases into Claude's context
-    for cross-case intelligence analysis.
+    for cross-case intelligence analysis.  Stops at complete case boundaries
+    when max_chars is reached (~160K tokens at 4 chars/token).
     """
     cases = get_all_cases()
     if not cases:
         return "No cases loaded."
 
     parts = [f"# FULL CASELOAD — {len(cases)} Active Cases\n"]
+    current_len = len(parts[0])
+    cases_included = 0
 
     for c in cases:
         charges = json.loads(c["charges"]) if isinstance(c["charges"], str) else c["charges"]
@@ -388,30 +454,39 @@ def build_caseload_context() -> str:
         witnesses = json.loads(c["witnesses"]) if isinstance(c["witnesses"], str) else c["witnesses"]
         witness_str = ", ".join(witnesses) if witnesses else "None listed"
 
-        parts.append(f"## Case {c['case_number']}: {c['defendant_name']}")
-        parts.append(f"Charges: {charge_str}")
-        parts.append(f"Severity: {c['severity']} | Status: {c['status']}")
-        parts.append(f"Court: {c['court']} | Judge: {c['judge']} | Prosecutor: {c['prosecutor']}")
+        case_lines = []
+        case_lines.append(f"## Case {c['case_number']}: {c['defendant_name']}")
+        case_lines.append(f"Charges: {charge_str}")
+        case_lines.append(f"Severity: {c['severity']} | Status: {c['status']}")
+        case_lines.append(f"Court: {c['court']} | Judge: {c['judge']} | Prosecutor: {c['prosecutor']}")
         if c.get("next_hearing_date"):
-            parts.append(f"Next Hearing: {c['next_hearing_date']} ({c.get('hearing_type', 'TBD')})")
-        parts.append(f"Filing: {c['filing_date']} | Arrest: {c['arrest_date']}")
-        parts.append(f"Arresting Officer: {c['arresting_officer']} | Precinct: {c['precinct']}")
+            case_lines.append(f"Next Hearing: {c['next_hearing_date']} ({c.get('hearing_type', 'TBD')})")
+        case_lines.append(f"Filing: {c['filing_date']} | Arrest: {c['arrest_date']}")
+        case_lines.append(f"Arresting Officer: {c['arresting_officer']} | Precinct: {c['precinct']}")
         if c.get("plea_offer"):
-            parts.append(f"Plea Offer: {c['plea_offer']}")
+            case_lines.append(f"Plea Offer: {c['plea_offer']}")
             if c.get("plea_offer_details"):
-                parts.append(f"Plea Details: {c['plea_offer_details']}")
+                case_lines.append(f"Plea Details: {c['plea_offer_details']}")
         if c.get("bond_status"):
-            parts.append(f"Bond: {c['bond_status']}")
+            case_lines.append(f"Bond: {c['bond_status']}")
         if c.get("prior_record"):
-            parts.append(f"Prior Record: {c['prior_record']}")
-        parts.append(f"Witnesses: {witness_str}")
+            case_lines.append(f"Prior Record: {c['prior_record']}")
+        case_lines.append(f"Witnesses: {witness_str}")
         if c.get("evidence_summary"):
-            parts.append(f"Evidence: {c['evidence_summary']}")
+            case_lines.append(f"Evidence: {c['evidence_summary']}")
         if c.get("notes"):
-            parts.append(f"Notes: {c['notes']}")
+            case_lines.append(f"Notes: {c['notes']}")
         if c.get("attorney_notes"):
-            parts.append(f"Attorney Notes: {c['attorney_notes']}")
-        parts.append("")
+            case_lines.append(f"Attorney Notes: {c['attorney_notes']}")
+        case_lines.append("")
+
+        case_block = "\n".join(case_lines)
+        if current_len + len(case_block) > max_chars:
+            parts.append(f"\n[... {len(cases) - cases_included} more cases truncated to fit context window]")
+            break
+        parts.append(case_block)
+        current_len += len(case_block)
+        cases_included += 1
 
     return "\n".join(parts)
 
@@ -448,6 +523,9 @@ def build_single_case_context(case_number: str) -> str:
         f"- Precinct: {c['precinct']}",
         f"- Bond Status: {c.get('bond_status', 'N/A')}",
     ])
+
+    if c.get("disposition"):
+        parts.append(f"- Disposition: {c['disposition']}")
 
     if c.get("next_hearing_date"):
         parts.append(f"- Next Hearing: {c['next_hearing_date']} ({c.get('hearing_type', 'TBD')})")

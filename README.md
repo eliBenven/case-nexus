@@ -24,6 +24,24 @@ Public defenders in Georgia carry 400-700 cases. They walk into court with minut
 | **Client Letter** | Plain-language letter explaining case status to client | Empathetic generation |
 | **Case Law Search** | Search Georgia case law via CourtListener API | External API integration |
 
+### Autonomous Agent with Tool Use
+
+The **Cascade Intelligence** feature transforms Claude from a chatbot into an autonomous investigator. Claude receives 9 tools and decides what to investigate:
+
+| Tool | What Claude Can Do |
+|------|--------------------|
+| `get_case` | Pull any case from the 500-case caseload |
+| `get_case_context` | Get full markdown context for a case |
+| `get_legal_context` | Look up Georgia statutes and federal law |
+| `get_alerts` | Check for deadline risks and red flags |
+| `get_connections` | Find cross-case patterns (same officer, shared witnesses) |
+| `get_prior_analyses` | Recall previous AI analysis results |
+| `search_case_law` | Search CourtListener for relevant precedent |
+| `verify_citations` | Verify legal citations against real databases |
+| `search_precedents_for_charges` | Find charge-specific case law |
+
+Claude autonomously calls these tools in a multi-turn loop (up to 8 rounds), deciding what cases to pull, what statutes to check, and what precedents to search for — all visible in a real-time tool timeline.
+
 ### Key Technical Features
 
 - **Real-time streaming** — Watch Claude's extended thinking in real-time via WebSocket
@@ -31,6 +49,7 @@ Public defenders in Georgia carry 400-700 cases. They walk into court with minut
 - **Citation verification** — Auto-verify legal citations against CourtListener database
 - **Cross-case intelligence** — AI discovers patterns: same officer in multiple stops, shared witnesses, judge tendencies
 - **Adversarial reasoning chains** — Each phase builds on the previous phase's output
+- **Agentic tool-use loop** — Claude decides what to investigate using 9 tools with extended thinking
 
 ## Tech Stack
 
@@ -65,10 +84,11 @@ This project is a thesis on what Claude Opus 4.6 can do:
 
 1. **1M Context Window** — The entire 500-case caseload (275K+ tokens) is loaded into a single prompt for the health check and chat features
 2. **Extended Thinking** — Every analysis mode uses thinking budgets from 10K to 60K tokens, all streamed to the UI in real-time
-3. **128K Output** — Motion generation uses up to 64K response tokens for comprehensive legal documents
-4. **Multimodal Vision** — Evidence images (surveillance, injury photos, dashcam stills) are analyzed with Opus 4.6's vision capabilities
-5. **Streaming** — All AI operations stream thinking and response deltas via SocketIO for real-time UX
-6. **Sequential Reasoning** — The adversarial simulation chains three separate thinking processes, each building on the previous
+3. **Tool Use (Function Calling)** — 9 tools exposed to Claude for autonomous investigation with extended thinking (requires `tool_choice: "auto"`)
+4. **128K Output** — Motion generation uses up to 64K response tokens for comprehensive legal documents
+5. **Multimodal Vision** — Evidence images (surveillance, injury photos, dashcam stills) are analyzed with Opus 4.6's vision capabilities
+6. **Streaming** — All AI operations stream thinking and response deltas via SocketIO for real-time UX
+7. **Sequential Reasoning** — The adversarial simulation chains three separate thinking processes, each building on the previous
 
 ## Demo Data
 
