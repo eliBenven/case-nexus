@@ -552,31 +552,64 @@ function renderToolCallIndicator(event, data) {
     }
 }
 
+function summarizeToolResult(toolName, preview, length) {
+    // Try to parse the preview as JSON for a meaningful summary
+    if (preview) {
+        try {
+            // Handle truncated previews by checking for valid JSON
+            let parsed = null;
+            try { parsed = JSON.parse(preview); } catch (_) {}
+            if (parsed !== null) {
+                if (Array.isArray(parsed)) {
+                    if (parsed.length === 0) return 'None found';
+                    const noun = toolName.replace(/^get_/, '').replace(/_/g, ' ');
+                    return parsed.length + ' ' + noun;
+                }
+                if (typeof parsed === 'object') {
+                    const keys = Object.keys(parsed);
+                    if (keys.length === 0) return 'Empty';
+                    if (parsed.error) return 'Error';
+                    return keys.length + ' fields';
+                }
+            }
+            // Unparseable JSON (truncated) — show size
+        } catch (_) {}
+    }
+    if (length > 1000) return (length / 1000).toFixed(1) + 'K chars';
+    return length + ' chars';
+}
+
+function formatResultPreview(preview) {
+    if (!preview) return '';
+    try {
+        const parsed = JSON.parse(preview);
+        return JSON.stringify(parsed, null, 2);
+    } catch (_) {
+        return preview;
+    }
+}
+
 function renderToolResultIndicator(event, data) {
     const prefix = event.replace(/_tool_result$/, '');
     const target = getToolTarget(prefix);
     if (!target) return;
 
-    const sizeStr = data.result_length > 1000
-        ? (data.result_length / 1000).toFixed(1) + 'K chars'
-        : data.result_length + ' chars';
+    const summary = summarizeToolResult(data.tool_name, data.result_preview, data.result_length);
 
     const indicator = el('div', { className: 'tool-result-indicator' },
         el('span', { className: 'tool-icon' }, '\u2713'),
         el('span', { className: 'tool-name' }, formatToolName(data.tool_name)),
-        el('span', { className: 'tool-result-size' }, sizeStr)
+        el('span', { className: 'tool-result-size' }, summary)
     );
 
-    // Add collapsible preview
-    if (data.result_preview) {
-        const details = document.createElement('details');
-        const summary = document.createElement('summary');
-        summary.textContent = 'Preview';
-        details.appendChild(summary);
+    // Add inline preview for non-trivial results
+    if (data.result_preview && data.result_length > 5) {
+        const formatted = formatResultPreview(data.result_preview);
+        const previewEl = el('div', { className: 'tool-result-preview' });
         const pre = document.createElement('pre');
-        pre.textContent = data.result_preview;
-        details.appendChild(pre);
-        indicator.appendChild(details);
+        pre.textContent = formatted.length > 300 ? formatted.substring(0, 300) + '...' : formatted;
+        previewEl.appendChild(pre);
+        indicator.appendChild(previewEl);
     }
 
     target.appendChild(indicator);
@@ -3415,8 +3448,20 @@ function getRiskColor(score) {
 function renderRiskHeatmap() {
     const panel = document.getElementById('risk-heatmap');
     const grid = document.getElementById('risk-heatmap-grid');
-    const tooltip = document.getElementById('risk-tooltip');
     if (!panel || !grid || !state.cases.length) return;
+
+    // Only show heatmap after AI analysis has produced alerts
+    if (!state.alerts || !state.alerts.length) {
+        panel.classList.add('hidden');
+        return;
+    }
+
+    // Move tooltip to body so position:fixed works regardless of parent transforms
+    let tooltip = document.getElementById('risk-tooltip');
+    if (tooltip && tooltip.parentElement !== document.body) {
+        tooltip.parentElement.removeChild(tooltip);
+        document.body.appendChild(tooltip);
+    }
 
     // Count alerts per case
     const alertsByCase = {};
@@ -3439,7 +3484,8 @@ function renderRiskHeatmap() {
         cell.style.opacity = 0.3 + (score / 100) * 0.7;
 
         cell.addEventListener('click', () => openCase(c.case_number));
-        cell.addEventListener('mouseenter', (e) => {
+        cell.addEventListener('mouseenter', () => {
+            const rect = cell.getBoundingClientRect();
             tooltip.classList.remove('hidden');
             tooltip.textContent = '';
             tooltip.appendChild(el('span', { className: 'risk-tooltip-case' }, c.case_number));
@@ -3447,12 +3493,8 @@ function renderRiskHeatmap() {
             const scoreSpan = el('span', { className: 'risk-tooltip-score' }, ' Risk: ' + score);
             scoreSpan.style.color = getRiskColor(score);
             tooltip.appendChild(scoreSpan);
-            tooltip.style.left = (e.clientX + 10) + 'px';
-            tooltip.style.top = (e.clientY - 30) + 'px';
-        });
-        cell.addEventListener('mousemove', (e) => {
-            tooltip.style.left = (e.clientX + 10) + 'px';
-            tooltip.style.top = (e.clientY - 30) + 'px';
+            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+            tooltip.style.top = (rect.top - 36) + 'px';
         });
         cell.addEventListener('mouseleave', () => {
             tooltip.classList.add('hidden');

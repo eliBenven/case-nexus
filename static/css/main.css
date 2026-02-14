@@ -504,7 +504,7 @@ body::after {
     background: var(--bg-glass);
     backdrop-filter: blur(12px) saturate(1.3);
     -webkit-backdrop-filter: blur(12px) saturate(1.3);
-    border: 1px solid var(--border);
+    border: 1px solid transparent;
     border-radius: var(--radius-lg);
     padding: 28px 20px;
     text-align: center;
@@ -2687,6 +2687,7 @@ body::after {
 
 .btn-load {
     padding: 12px 28px;
+    margin-bottom: 8px;
     font-size: 14px;
     border-radius: var(--radius);
     letter-spacing: 0.3px;
@@ -3924,6 +3925,7 @@ body::after {
 
 .tool-result-indicator {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     padding: 6px 14px;
@@ -3943,40 +3945,26 @@ body::after {
 .tool-result-indicator .tool-result-size {
     font-family: var(--font-mono);
     font-size: 10px;
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }
 
 .tool-result-indicator .tool-result-preview {
-    font-size: 10px;
-    color: var(--text-muted);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 400px;
-    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
 }
 
-.tool-result-indicator details {
-    flex: 1;
-    min-width: 0;
-}
-
-.tool-result-indicator details summary {
-    cursor: pointer;
-    color: var(--text-muted);
-    font-size: 10px;
-}
-
-.tool-result-indicator details pre {
-    margin-top: 6px;
-    padding: 8px;
+.tool-result-indicator .tool-result-preview pre {
+    padding: 8px 10px;
     background: var(--bg-secondary);
     border-radius: var(--radius-sm);
     font-size: 10px;
-    max-height: 120px;
+    font-family: var(--font-mono);
+    max-height: 140px;
     overflow-y: auto;
     white-space: pre-wrap;
-    word-break: break-all;
+    word-break: break-word;
+    color: var(--text-secondary);
+    line-height: 1.5;
 }
 
 .cascade-tool-log {
@@ -4417,8 +4405,9 @@ body::after {
     color: var(--text-primary);
     box-shadow: var(--shadow-md);
     pointer-events: none;
-    z-index: 1000;
+    z-index: 10001;
     white-space: nowrap;
+    transform: translateX(-50%);
 }
 
 .risk-tooltip .risk-tooltip-case {

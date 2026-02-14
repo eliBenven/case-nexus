@@ -41,11 +41,17 @@ MODEL = "claude-opus-4-6"
 
 # Context window safety — Opus 4.6 supports 1M input tokens.
 # If estimated input exceeds this, callers should reset/reload context.
-MAX_INPUT_TOKENS = 1_000_000
+MAX_INPUT_TOKENS = 200_000  # Claude API hard limit
 
 
-def _estimate_message_tokens(system_prompt: str, messages: list) -> int:
-    """Rough token estimate for a messages payload (4 chars ≈ 1 token)."""
+def _estimate_message_tokens(system_prompt: str, messages: list,
+                              tools: list = None) -> int:
+    """Conservative token estimate (3 chars ≈ 1 token for legal text).
+
+    Also counts tool definitions which the API bills as input tokens.
+    Uses 3 chars/token (not 4) because legal text with case numbers,
+    proper nouns, and codes tokenizes more densely.
+    """
     total = len(system_prompt)
     for msg in messages:
         content = msg.get("content", "")
@@ -57,7 +63,11 @@ def _estimate_message_tokens(system_prompt: str, messages: list) -> int:
                     for v in block.values():
                         if isinstance(v, str):
                             total += len(v)
-    return total // 4
+    # Tool definitions count toward input tokens
+    if tools:
+        import json as _json
+        total += len(_json.dumps(tools))
+    return total // 3  # conservative: legal text ≈ 3 chars/token
 
 # --- Token Budgets ---
 # max_tokens must be GREATER than thinking budget_tokens.
@@ -1399,7 +1409,7 @@ def run_cascade_summary(caseload_context: str, health_check_result: dict,
     )
 
 
-def run_agentic_cascade(caseload_context: str, emit_callback=None) -> dict:
+def run_agentic_cascade(caseload_context: str, emit_callback=None, usage_callback=None) -> dict:
     """Run an autonomous agentic cascade — Claude decides what to investigate.
 
     Instead of a fixed 4-phase pipeline, Claude has tools to pull cases,
@@ -1434,6 +1444,7 @@ def run_agentic_cascade(caseload_context: str, emit_callback=None) -> dict:
         emit_callback=emit_callback,
         event_prefix="cascade",
         max_turns=8,
+        usage_callback=usage_callback,
     )
 
 
@@ -1644,15 +1655,15 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
     Every thinking token streams to the frontend via SocketIO so users
     can watch Claude reason in real-time. This is the core UX of Case Nexus.
     """
-    # Safety: if context exceeds 1M tokens, signal a reset instead of crashing
+    # Safety: truncate user content if estimated tokens approach 200K API limit
     messages = messages_override or [{"role": "user", "content": user_content}]
     est = _estimate_message_tokens(system_prompt, messages)
-    if est > MAX_INPUT_TOKENS:
-        msg = f"Context exceeded 1M tokens (~{est:,}). Resetting context."
-        if emit_callback:
-            emit_callback(f"{event_prefix}_error", {"error": msg})
-            emit_callback("context_reset", {"reason": "exceeded_1m", "estimated_tokens": est})
-        return {"success": False, "error": msg, "context_reset": True}
+    if est > MAX_INPUT_TOKENS - 10_000:
+        # Truncate user content to fit within limit (leave 10K buffer for overhead)
+        safe_chars = (MAX_INPUT_TOKENS - 10_000 - len(system_prompt) // 3) * 3
+        if not messages_override:
+            user_content = user_content[:safe_chars] + "\n\n[... context truncated to fit API limit]"
+            messages = [{"role": "user", "content": user_content}]
 
     thinking_text = ""
     response_text = ""
@@ -1754,6 +1765,7 @@ def _run_agentic_analysis(
     system_prompt: str, user_content: str, max_tokens: int, thinking_budget: int,
     tools: list, emit_callback=None, event_prefix: str = "analysis",
     messages_override: list = None, max_turns: int = 5,
+    usage_callback=None,
 ) -> dict:
     """Agentic analysis loop with tool-use and extended thinking.
 
@@ -1773,15 +1785,26 @@ def _run_agentic_analysis(
     else:
         messages = [{"role": "user", "content": user_content}]
 
+    # Truncate initial user content if it already approaches the limit
+    est = _estimate_message_tokens(system_prompt, messages, tools=tools)
+    if est > MAX_INPUT_TOKENS - 10_000 and not messages_override:
+        safe_chars = (MAX_INPUT_TOKENS - 10_000 - len(system_prompt) // 3) * 3
+        if tools:
+            import json as _json
+            safe_chars -= len(_json.dumps(tools))
+        user_content = user_content[:max(safe_chars, 10_000)] + "\n\n[... context truncated to fit API limit]"
+        messages = [{"role": "user", "content": user_content}]
+
     for turn in range(max_turns):
         # Safety: check context size before each turn (messages grow with tool results)
-        est = _estimate_message_tokens(system_prompt, messages)
-        if est > MAX_INPUT_TOKENS:
-            msg = f"Context exceeded 1M tokens (~{est:,}) on turn {turn + 1}. Resetting."
+        est = _estimate_message_tokens(system_prompt, messages, tools=tools)
+        if est > MAX_INPUT_TOKENS - 5_000:
+            # Force last turn — disable tools to get a text response
             if emit_callback:
-                emit_callback(f"{event_prefix}_error", {"error": msg})
-                emit_callback("context_reset", {"reason": "exceeded_1m", "estimated_tokens": est})
-            return {"success": False, "error": msg, "context_reset": True}
+                emit_callback(f"{event_prefix}_response_delta", {
+                    "text": "\n\n[Context limit reached — finalizing analysis]\n\n"
+                })
+            max_turns = turn + 1  # Make this the last turn
 
         turn_content_blocks = []
         current_block_type = None
@@ -1912,6 +1935,10 @@ def _run_agentic_analysis(
                     u = final_msg.usage
                     total_usage["input_tokens"] += getattr(u, "input_tokens", 0)
                     total_usage["output_tokens"] += getattr(u, "output_tokens", 0)
+
+                    # Emit per-turn usage so the token viz updates during multi-turn cascades
+                    if usage_callback:
+                        usage_callback(total_usage)
 
                 # CRITICAL: Copy thinking block signatures from final_msg
                 if final_msg and hasattr(final_msg, "content"):

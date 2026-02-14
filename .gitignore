@@ -26,5 +26,11 @@ data/usc/*.xml
 data/usc/*.zip
 data/usc_index.json
 
+# Generator scripts (one-time use, not needed for app)
+generate_*.py
+
+# Logs
+*.log
+
 # Claude Code
 .claude/

@@ -57,7 +57,7 @@ def emit_input_estimate(text_length, sid):
     later with the real API usage, it adds the actual input_tokens on top.
     The slight over-count is fine — it makes the viz feel more dramatic.
     """
-    est = text_length // 4
+    est = text_length // 3  # conservative: legal text ≈ 3 chars/token
     with _token_lock:
         token_usage["total_input"] += est
     socketio.emit("token_update", token_usage, to=sid)
@@ -921,7 +921,8 @@ def handle_cascade():
     sid = request.sid
 
     def run():
-        caseload_context = db.build_caseload_context()
+        # Use compact context for agentic cascade — AI has tools to pull full case details
+        caseload_context = db.build_caseload_context(max_chars=200_000)
         # Don't include full legal corpus — AI has tools to look up statutes on demand
         corpus_stats = legal_corpus.get_corpus_stats()
         corpus_summary = (
@@ -930,9 +931,16 @@ def handle_cascade():
             f"- {corpus_stats['federal_sections']:,} Federal code sections (USC) indexed\n"
             f"- {corpus_stats['amendments']} Constitutional amendments with key holdings\n"
             f"- {corpus_stats['landmark_cases']} Landmark case summaries\n"
-            f"Use get_statute tool to retrieve specific statutory text as needed.\n"
+            f"Use get_case or get_case_context tools to pull full details for specific cases.\n"
         )
         full_context = caseload_context + corpus_summary
+
+        # Snapshot baseline BEFORE estimate so per-turn actuals replace (not add to) estimate
+        with _token_lock:
+            baseline_input = token_usage["total_input"]
+            baseline_output = token_usage["total_output"]
+            baseline_calls = token_usage["call_count"]
+
         emit_input_estimate(len(full_context), sid)
 
         socketio.emit("legal_corpus_loaded", corpus_stats, to=sid)
@@ -947,13 +955,26 @@ def handle_cascade():
         def emit_cb(event, payload):
             socketio.emit(event, payload, to=sid)
 
+        def on_turn_usage(usage):
+            """Update token viz after each agentic turn so it ticks up live."""
+            with _token_lock:
+                token_usage["total_input"] = baseline_input + usage.get("input_tokens", 0)
+                token_usage["total_output"] = baseline_output + usage.get("output_tokens", 0)
+                token_usage["call_count"] = baseline_calls + 1
+            socketio.emit("token_update", token_usage, to=sid)
+
         result = ai_engine.run_agentic_cascade(
             caseload_context=full_context,
             emit_callback=emit_cb,
+            usage_callback=on_turn_usage,
         )
 
         if result.get("success"):
-            track_tokens(result, sid)
+            # Skip track_tokens for input/output — on_turn_usage already updated those.
+            # Only add thinking estimate.
+            with _token_lock:
+                token_usage["total_thinking"] += len(result.get("thinking", "")) // 4
+            socketio.emit("token_update", token_usage, to=sid)
 
             # Log the analysis
             db.log_analysis(

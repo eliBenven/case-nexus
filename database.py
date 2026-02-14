@@ -433,12 +433,15 @@ def build_memory_context(case_number: str = None) -> str:
 
 # --- Caseload Summary for AI Context ---
 
-def build_caseload_context(max_chars: int = 640_000) -> str:
+def build_caseload_context(max_chars: int = 340_000) -> str:
     """Build the full caseload summary for the context window.
 
     This is the key function that feeds ALL cases into Claude's context
     for cross-case intelligence analysis.  Stops at complete case boundaries
-    when max_chars is reached (~160K tokens at 4 chars/token).
+    when max_chars is reached (~113K tokens at 3 chars/token).
+
+    Default 340K chars ≈ 113K tokens, leaving ~87K for system prompts,
+    legal summaries, tool definitions, and overhead within the 200K API limit.
     """
     cases = get_all_cases()
     if not cases:

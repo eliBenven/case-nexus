@@ -1814,7 +1814,7 @@ def generate_demo_evidence(cases: list[dict] | None = None) -> list[dict]:
                 "Image quality is poor due to low lighting. Faces are not clearly "
                 "identifiable. One figure appears to be in an aggressive posture."
             ),
-            "file_path": "/static/evidence/CR-2025-0047_surveillance_bar.mp4",
+            "file_path": "/static/motion-detection-outside-entry-1280x720.mp4",
             "poster_path": "/static/evidence/CR-2025-0047_surveillance_bar.png",
             "source": "Edgewood Bar security system",
             "date_collected": "2025-09-18",
@@ -1850,7 +1850,7 @@ def generate_demo_evidence(cases: list[dict] | None = None) -> list[dict]:
                 "Critical question: does footage show the alleged lane change "
                 "violation that justified the stop?"
             ),
-            "file_path": "/static/evidence/CR-2025-0012_dashcam_stop.mp4",
+            "file_path": "/static/motion-detection-entry-area-1280x720.mp4",
             "poster_path": "/static/evidence/CR-2025-0012_dashcam_stop.png",
             "source": "APD Unit 1447 dashcam system",
             "date_collected": "2025-06-12",
@@ -1909,7 +1909,7 @@ def generate_demo_evidence(cases: list[dict] | None = None) -> list[dict]:
                 "impeachment material for other Harris cases (CR-2025-0015, "
                 "CR-2025-0067)."
             ),
-            "file_path": "/static/evidence/CR-2025-0118_bystander_video.mp4",
+            "file_path": "/static/motion-detection-warehouse-door-1920x1080.mp4",
             "poster_path": "/static/evidence/CR-2025-0118_bystander_video.png",
             "source": "Bystander recording - Lamar Greene (iPhone)",
             "date_collected": "2025-07-15",
