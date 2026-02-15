@@ -45,12 +45,49 @@ export const fadeOut = (
   totalFrames: number,
   fadeDuration = 24,
 ) =>
-  interpolate(
-    frame,
-    [totalFrames - fadeDuration, totalFrames],
-    [1, 0],
-    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-  );
+  fadeDuration <= 0
+    ? 1
+    : interpolate(
+        frame,
+        [totalFrames - fadeDuration, totalFrames],
+        [1, 0],
+        { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+      );
+
+/** Scale from smaller → 1.0 (pop-in feel, replaces uniform slideUp) */
+export const scaleIn = (
+  frame: number,
+  start: number,
+  duration = 25,
+  from = 0.88,
+) =>
+  interpolate(frame, [start, start + duration], [from, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+/** Slide from the left (horizontal entrance) */
+export const slideFromLeft = (
+  frame: number,
+  start: number,
+  distance = 50,
+  duration = 28,
+) =>
+  interpolate(frame, [start, start + duration], [-distance, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+/** Slow ken-burns zoom: 1.0 → 1.0+amount over the full scene */
+export const slowZoom = (
+  frame: number,
+  totalFrames: number,
+  amount = 0.04,
+) =>
+  1 + interpolate(frame, [0, totalFrames], [0, amount], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
 
 // ── Shared visual styles ─────────────────────────────────────
 

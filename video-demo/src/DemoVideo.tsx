@@ -6,7 +6,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from 'remotion';
-import { getSceneFrames, FADE_OUT_SEC, FPS } from './config';
+import { getSceneFrames } from './config';
 import { fadeOut } from './styles';
 import { TitleScene } from './scenes/TitleScene';
 import { ProblemScene } from './scenes/ProblemScene';
@@ -43,15 +43,14 @@ const AUDIO_MAP: Record<string, string> = {
   finale: 'audio/finale.wav',
 };
 
-const FADE_OUT_FRAMES = Math.round(FADE_OUT_SEC * FPS);
-
-// Wrapper that fades the scene to black at the end
+// Wrapper that fades the scene to black at the end (or hard-cuts if fadeFrames=0)
 const SceneFadeWrapper: React.FC<{
   durationFrames: number;
+  fadeFrames: number;
   children: React.ReactNode;
-}> = ({ durationFrames, children }) => {
+}> = ({ durationFrames, fadeFrames, children }) => {
   const f = useCurrentFrame();
-  const opacity = fadeOut(f, durationFrames, FADE_OUT_FRAMES);
+  const opacity = fadeFrames > 0 ? fadeOut(f, durationFrames, fadeFrames) : 1;
 
   return (
     <AbsoluteFill style={{ opacity }}>
@@ -76,7 +75,7 @@ export const DemoVideo: React.FC = () => {
             durationInFrames={scene.durationFrames}
             name={scene.title}
           >
-            <SceneFadeWrapper durationFrames={scene.durationFrames}>
+            <SceneFadeWrapper durationFrames={scene.durationFrames} fadeFrames={scene.fadeFrames}>
               <Component />
             </SceneFadeWrapper>
             {AUDIO_MAP[scene.id] && (

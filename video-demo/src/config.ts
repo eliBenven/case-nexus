@@ -72,6 +72,8 @@ export interface SceneConfig {
   title: string;
   durationSec: number;
   narration: string;
+  /** Seconds of fade-to-black at end. 0 = hard cut. Default: FADE_OUT_SEC */
+  fadeOutSec?: number;
 }
 
 export const FADE_OUT_SEC = 0.8;
@@ -81,12 +83,14 @@ export const SCENES: SceneConfig[] = [
     id: 'title',
     title: 'Title Card',
     durationSec: 2,
+    fadeOutSec: 0.3,
     narration: '',
   },
   {
     id: 'problem',
     title: 'The Problem',
     durationSec: 22,
+    fadeOutSec: 0,
     narration:
       "Public defenders in Georgia carry five hundred active cases. They walk into court with minutes to prepare. A pattern of unconstitutional stops by the same officer across four cases goes unnoticed — because no human can hold five hundred case files in their head at once. Case Nexus changes that.",
   },
@@ -94,6 +98,7 @@ export const SCENES: SceneConfig[] = [
     id: 'sync',
     title: 'Caseload Sync',
     durationSec: 15,
+    fadeOutSec: 0,
     narration:
       "We sync five hundred cases from the court system. Felonies, misdemeanors, everything a public defender carries — charges, hearing dates, plea offers, witness lists, and prior records.",
   },
@@ -101,6 +106,7 @@ export const SCENES: SceneConfig[] = [
     id: 'healthcheck',
     title: 'Health Check — 1M Context',
     durationSec: 37,
+    fadeOutSec: 0,
     narration:
       "Now the hero feature. We load all five hundred cases — over two hundred seventy-five thousand tokens — into a single prompt. No RAG. No chunking. The AI sees every case simultaneously. Claude uses sixty thousand tokens of extended thinking to scan the entire caseload. It discovers that Officer Rodriguez appears in four separate traffic stop cases, all with contested vehicle searches. A Fourth Amendment pattern no attorney could spot manually.",
   },
@@ -108,6 +114,7 @@ export const SCENES: SceneConfig[] = [
     id: 'cascade',
     title: 'Cascade Intelligence',
     durationSec: 31,
+    fadeOutSec: 0.6,
     narration:
       "Cascade Intelligence turns Claude into an autonomous investigator with nine tools. It pulls cases, looks up Georgia statutes, searches real case law, and finds cross-case patterns — all on its own. Watch as Claude investigates a case, looks up the relevant statute, then searches for precedent. When it finishes, you get a strategic brief and smart actions you can execute with one click.",
   },
@@ -115,6 +122,7 @@ export const SCENES: SceneConfig[] = [
     id: 'adversarial',
     title: 'Adversarial Simulation',
     durationSec: 31,
+    fadeOutSec: 0.8,
     narration:
       "The adversarial simulation chains three separate Claude sessions. A prosecution AI builds the strongest possible case. A defense AI reads the prosecution's arguments and dismantles them. A judicial analyst synthesizes both sides. Each phase uses its own thinking budget — over eighty thousand tokens of chained reasoning. Three adversarial perspectives, each with full visible reasoning.",
   },
@@ -122,6 +130,7 @@ export const SCENES: SceneConfig[] = [
     id: 'closing',
     title: 'Closing — Capabilities',
     durationSec: 17,
+    fadeOutSec: 0,
     narration:
       "Case Nexus uses every major Opus capability. The million-token context window. Extended thinking with streaming. Autonomous tool use. Long-form output generation. And multi-phase reasoning chains.",
   },
@@ -129,6 +138,7 @@ export const SCENES: SceneConfig[] = [
     id: 'builtwith',
     title: 'Built With Claude Code',
     durationSec: 19,
+    fadeOutSec: 0.8,
     narration:
       "One more thing. This entire video demo was built with Claude Code — same model powering Case Nexus. Every scene, every animation, even the title card. Over twenty thousand lines of code. One model. Zero manual editing.",
   },
@@ -136,6 +146,7 @@ export const SCENES: SceneConfig[] = [
     id: 'finale',
     title: 'Finale — Mission',
     durationSec: 6,
+    fadeOutSec: 1.2,
     narration:
       "All in service of one goal... making sure no public defender's client falls through the cracks.",
   },
@@ -147,8 +158,9 @@ export function getSceneFrames() {
   return SCENES.map((scene) => {
     const startFrame = currentFrame;
     const durationFrames = scene.durationSec * FPS;
+    const fadeFrames = Math.round((scene.fadeOutSec ?? FADE_OUT_SEC) * FPS);
     currentFrame += durationFrames;
-    return { ...scene, startFrame, durationFrames };
+    return { ...scene, startFrame, durationFrames, fadeFrames };
   });
 }
 

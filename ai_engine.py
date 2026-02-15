@@ -38,6 +38,7 @@ if not _api_key:
 client = anthropic.Anthropic(
     api_key=_api_key,
     default_headers={"anthropic-beta": "context-1m-2025-08-07"},
+    max_retries=2,
 )
 
 MODEL = "claude-opus-4-6"

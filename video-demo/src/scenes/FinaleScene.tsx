@@ -6,12 +6,15 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, Img, staticFile } from 'remotion';
 import { COLORS, FPS, FONTS } from '../config';
-import { fade, slideUp } from '../styles';
+import { fade, slideUp, slowZoom } from '../styles';
+
+const TOTAL_FRAMES = 6 * FPS;
 
 export const FinaleScene: React.FC = () => {
   const f = useCurrentFrame();
 
   const missionStart = 1 * FPS;
+  const zoom = slowZoom(f, TOTAL_FRAMES, 0.03);
 
   return (
     <AbsoluteFill
@@ -22,6 +25,7 @@ export const FinaleScene: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: FONTS.sans,
+        transform: `scale(${zoom})`,
       }}
     >
       {/* Subtle gold glow behind text */}

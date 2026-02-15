@@ -692,10 +692,10 @@ body::after {
     gap: 16px;
     min-width: 0;
 }
-/* Override: dashboard-panels stacks vertically inside secondary col */
+/* Alerts & connections side-by-side inside secondary col */
 .dashboard-col-secondary .dashboard-panels {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
 
@@ -931,9 +931,9 @@ body::after {
     color: var(--gold);
     min-width: 32px;
 }
-.action-body { flex: 1; min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
-.action-case { font-family: var(--font-mono); font-size: 11px; color: var(--gold); cursor: pointer; font-weight: 400; }
-.action-text { font-size: 13px; margin-left: 8px; overflow-wrap: anywhere; word-break: break-word; }
+.action-body { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.action-case { font-family: var(--font-mono); font-size: 11px; color: var(--gold); cursor: pointer; font-weight: 400; white-space: nowrap; }
+.action-text { font-size: 13px; }
 .action-urgency {
     font-size: 10px;
     padding: 2px 8px;

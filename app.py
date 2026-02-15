@@ -30,7 +30,7 @@ import legal_corpus
 from demo_data import generate_demo_caseload, generate_demo_evidence
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "case-nexus-legal-intelligence")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(32).hex())
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 # Global token usage tracker — cumulative across ALL Opus 4.6 calls
@@ -1097,7 +1097,7 @@ db.init_db()
 if __name__ == "__main__":
     print("\n  Case Nexus — AI-Powered Legal Caseload Intelligence")
     print("  Powered by Claude Opus 4.6 Extended Thinking")
-    print("  http://localhost:5001\n")
-    socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5001)),
+    print("  http://localhost:5555\n")
+    socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5555)),
                  debug=os.environ.get("FLASK_DEBUG", "0") == "1",
                  allow_unsafe_werkzeug=True)

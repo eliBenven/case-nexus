@@ -1,26 +1,29 @@
 /**
  * ClosingScene — Capabilities list overlay on dimmed app shell.
- * Mission statement + branding moved to FinaleScene.
+ * No emoji. Monospace indices. Alternating slide directions.
  */
 
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { COLORS, FPS, FONTS } from '../config';
-import { fade, slideUp } from '../styles';
+import { fade, slideFromLeft, slowZoom } from '../styles';
 import { AppShell } from '../components/AppShell';
 
 const CAPABILITIES = [
-  { feature: 'Million-token context window', detail: '275K+ tokens in one prompt', icon: '📐' },
-  { feature: 'Extended thinking with streaming', detail: 'Visible reasoning chains', icon: '🧠' },
-  { feature: 'Autonomous tool use (9 tools)', detail: 'Agentic investigation loop', icon: '🔧' },
-  { feature: '128K output generation', detail: 'Court-ready legal motions', icon: '📄' },
-  { feature: 'Sequential reasoning chains', detail: '3-phase adversarial simulation', icon: '🔗' },
+  { feature: 'Million-token context window', detail: '275K+ tokens in one prompt' },
+  { feature: 'Extended thinking with streaming', detail: 'Visible reasoning chains' },
+  { feature: 'Autonomous tool use (9 tools)', detail: 'Agentic investigation loop' },
+  { feature: '128K output generation', detail: 'Court-ready legal motions' },
+  { feature: 'Sequential reasoning chains', detail: '3-phase adversarial simulation' },
 ];
+
+const TOTAL_FRAMES = 17 * FPS;
 
 export const ClosingScene: React.FC = () => {
   const f = useCurrentFrame();
 
   const listStart = 2 * FPS;
+  const zoom = slowZoom(f, TOTAL_FRAMES, 0.03);
 
   return (
     <>
@@ -38,39 +41,40 @@ export const ClosingScene: React.FC = () => {
         statusColor="ready"
         showCorpusBadge
       >
-        {/* Empty — we overlay on top */}
         <div />
       </AppShell>
 
       {/* Dark overlay to dim the background */}
       <AbsoluteFill style={{ background: 'rgba(7, 8, 12, 0.88)' }} />
 
-      {/* Content overlay */}
+      {/* Content overlay with slow zoom */}
       <AbsoluteFill style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: FONTS.sans,
+        transform: `scale(${zoom})`,
       }}>
-        {/* Header */}
+        {/* Header — shown immediately, no animation */}
         <div style={{
           position: 'absolute',
           top: 100,
           fontSize: 14,
           fontFamily: FONTS.mono,
           color: COLORS.textMuted,
-          opacity: fade(f, 5, 20),
           letterSpacing: '0.15em',
           textTransform: 'uppercase' as const,
         }}>
           Claude Opus 4.6 Capabilities
         </div>
 
-        {/* Feature list */}
+        {/* Feature list — alternating slide directions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: -20 }}>
           {CAPABILITIES.map((cap, i) => {
             const itemStart = listStart + i * 18;
+            // Alternate: odd items slide from left, even from right
+            const slideX = slideFromLeft(f, itemStart, i % 2 === 0 ? 50 : -50, 24);
             return (
               <div
                 key={cap.feature}
@@ -78,22 +82,26 @@ export const ClosingScene: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 18,
-                  opacity: fade(f, itemStart, 22),
-                  transform: `translateX(${slideUp(f, itemStart, 30, 22)}px)`,
+                  opacity: fade(f, itemStart, 18),
+                  transform: `translateX(${slideX}px)`,
                 }}
               >
+                {/* Monospace index instead of emoji */}
                 <div style={{
                   width: 48,
                   height: 48,
                   borderRadius: 10,
                   background: COLORS.bgTertiary,
-                  border: `1px solid ${COLORS.border}`,
+                  border: `1px solid ${COLORS.borderAccent}`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 22,
+                  fontSize: 16,
+                  fontFamily: FONTS.mono,
+                  fontWeight: 700,
+                  color: COLORS.gold,
                 }}>
-                  {cap.icon}
+                  {String(i + 1).padStart(2, '0')}
                 </div>
                 <div>
                   <div style={{ fontSize: 24, fontWeight: 600, color: COLORS.text }}>{cap.feature}</div>

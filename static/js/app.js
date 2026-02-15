@@ -3632,7 +3632,7 @@ function exportAsHTML(text, filename) {
 <style>body{font-family:Georgia,serif;max-width:800px;margin:2em auto;padding:0 1em;line-height:1.6;color:#222}
 h1,h2,h3{font-family:Georgia,serif}pre{background:#f5f5f5;padding:1em;overflow-x:auto}
 table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}</style>
-</head><body>${renderMarkdown(text)}</body></html>`;
+</head><body>${DOMPurify.sanitize(renderMarkdown(text))}</body></html>`;
     downloadAsFile(html, filename.endsWith('.html') ? filename : filename + '.html', 'text/html');
 }
 
@@ -3652,11 +3652,21 @@ function addDownloadButton(container, text, analysisType) {
 //  FEATURE: EVIDENCE UPLOAD
 // ============================================================
 
+function showUploadError(message) {
+    const zone = document.querySelector('.evidence-upload-zone');
+    if (!zone) return;
+    const existing = zone.querySelector('.upload-error');
+    if (existing) existing.remove();
+    const err = el('div', { className: 'upload-error error-message' }, message);
+    zone.parentElement.insertBefore(err, zone.nextSibling);
+    setTimeout(() => err.remove(), 5000);
+}
+
 async function uploadEvidence(file, caseNumber) {
     if (!file || !caseNumber) return;
     const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'video/mp4', 'video/quicktime', 'video/webm'];
     if (!allowed.includes(file.type)) {
-        alert('Supported formats: PNG, JPG, MP4, MOV, WebM');
+        showUploadError('Supported formats: PNG, JPG, MP4, MOV, WebM');
         return;
     }
 
@@ -3674,7 +3684,7 @@ async function uploadEvidence(file, caseNumber) {
         const result = await resp.json();
 
         if (result.error) {
-            alert('Upload failed: ' + result.error);
+            showUploadError('Upload failed: ' + result.error);
         } else {
             // Refresh evidence grid
             await loadEvidence(caseNumber);
@@ -3684,7 +3694,7 @@ async function uploadEvidence(file, caseNumber) {
             }
         }
     } catch (err) {
-        alert('Upload failed: ' + err.message);
+        showUploadError('Upload failed: ' + err.message);
     } finally {
         if (zone) zone.classList.remove('active');
     }
