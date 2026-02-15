@@ -17,7 +17,6 @@
     <header id="header">
         <div class="header-left">
             <div class="logo">
-                <span class="logo-icon">&#9878;</span>
                 <span class="logo-text">Case Nexus</span>
             </div>
             <span class="tagline">AI-Powered Legal Caseload Intelligence</span>
@@ -25,7 +24,7 @@
         <div class="header-center">
             <div id="token-viz" class="token-viz">
                 <div class="token-viz-label">
-                    <span class="token-viz-icon">&#9881;</span>
+                    <span class="token-viz-icon">&bull;</span>
                     <span>Opus 4.6 Tokens</span>
                 </div>
                 <div class="token-viz-bar-wrap">
@@ -39,16 +38,16 @@
                     <span class="token-chip input-chip"><span class="chip-dot"></span>In: <strong id="tv-input">0</strong></span>
                     <span class="token-chip thinking-chip"><span class="chip-dot"></span>Think: <strong id="tv-thinking">0</strong></span>
                     <span class="token-chip output-chip"><span class="chip-dot"></span>Out: <strong id="tv-output">0</strong></span>
-                    <span class="token-chip calls-chip">&#9889; <strong id="tv-calls">0</strong> calls</span>
+                    <span class="token-chip calls-chip"><strong id="tv-calls">0</strong> calls</span>
                 </div>
             </div>
         </div>
         <div class="header-right">
             <button id="btn-chat-toggle" class="btn btn-chat-toggle hidden" title="Ask your caseload anything">
-                &#128172; Chat
+                Chat
             </button>
             <span id="legal-corpus-badge" class="legal-corpus-badge hidden" title="Real statutory text loaded from official sources">
-                &#9878; <span id="lc-stats">Legal Corpus</span>
+                <span id="lc-stats">Legal Corpus</span>
             </span>
             <span class="model-badge">Claude Opus 4.6</span>
             <span id="status-badge" class="status-badge">Ready</span>
@@ -101,25 +100,25 @@
                     <p class="welcome-subtitle">AI-powered intelligence for public defenders</p>
                     <div class="welcome-features">
                         <div class="feature-card">
-                            <div class="feature-icon">&#128269;</div>
+                            <div class="feature-icon-text">01</div>
                             <h3>Health Check</h3>
                             <p>Scan all 500 cases for deadline risks, cross-case connections, and strategic opportunities</p>
                             <span class="feature-tag">1M Context Window</span>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">&#9878;</div>
+                            <div class="feature-icon-text">02</div>
                             <h3>Deep Analysis</h3>
                             <p>Individual case strategy with visible AI reasoning</p>
                             <span class="feature-tag">Extended Thinking</span>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">&#9876;</div>
+                            <div class="feature-icon-text">03</div>
                             <h3>Adversarial Sim</h3>
                             <p>Watch prosecution vs defense debate in real-time</p>
                             <span class="feature-tag">Dual Thinking Chains</span>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">&#128196;</div>
+                            <div class="feature-icon-text">04</div>
                             <h3>Motion Drafting</h3>
                             <p>Generate comprehensive legal motions</p>
                             <span class="feature-tag">128K Output</span>
@@ -142,14 +141,14 @@
                     </div>
                     <div class="command-actions">
                         <button id="btn-cascade" class="btn btn-gold btn-lg">
-                            <span class="btn-icon">&#9889;</span> Cascade Intelligence
+                            Cascade Intelligence
                             <span class="btn-sub">Autonomous 50+ tool investigation</span>
                         </button>
                         <button id="btn-health-check" class="btn btn-secondary">
-                            <span class="btn-icon">&#128269;</span> Health Check
+                            Health Check
                         </button>
                         <button id="btn-add-widget" class="btn btn-ghost btn-sm">
-                            <span class="btn-icon">&#10010;</span> Widget
+                            + Widget
                         </button>
                     </div>
                 </div>
@@ -158,7 +157,7 @@
                 <div id="cascade-progress" class="cascade-progress hidden">
                     <div class="cascade-pipeline">
                         <div class="cascade-step active" id="cascade-step-1" data-label="Autonomous Investigation">
-                            <span class="cascade-step-num">&#129302;</span>
+                            <span class="cascade-step-num">1</span>
                             <span class="cascade-step-label">Autonomous Investigation</span>
                             <span class="cascade-agentic-badge">Tool-Use Agent</span>
                         </div>
@@ -170,7 +169,6 @@
                 <!-- Smart Actions Bar -->
                 <div id="smart-actions-bar" class="smart-actions-bar hidden">
                     <div class="smart-actions-header">
-                        <span class="smart-actions-icon">&#9889;</span>
                         <span>AI Recommended Actions</span>
                     </div>
                     <div id="smart-actions-list" class="smart-actions-list"></div>
@@ -184,7 +182,7 @@
                     <div class="dashboard-col-primary">
                         <!-- Risk Heatmap -->
                         <div id="risk-heatmap" class="panel risk-heatmap hidden">
-                            <h3><span class="panel-icon">&#128293;</span> Caseload Risk Heatmap <span id="heatmap-case-count" class="badge">0</span></h3>
+                            <h3>Caseload Risk Heatmap <span id="heatmap-case-count" class="badge">0</span></h3>
                             <div id="risk-heatmap-grid" class="risk-heatmap-grid"></div>
                             <div class="risk-legend">
                                 <span class="risk-legend-label">Low</span>
@@ -196,7 +194,7 @@
 
                         <!-- Priority Actions -->
                         <div id="priority-actions" class="panel priority-panel hidden">
-                            <h3><span class="panel-icon">&#9889;</span> Priority Actions</h3>
+                            <h3>Priority Actions</h3>
                             <div id="actions-list" class="actions-list"></div>
                         </div>
                     </div>
@@ -205,14 +203,14 @@
                         <div class="dashboard-panels" id="dashboard-panels" style="display:none">
                             <div class="panel alerts-panel">
                                 <h3>
-                                    <span class="panel-icon">&#9888;</span> Alerts
+                                    Alerts
                                     <span id="alert-count" class="badge">0</span>
                                 </h3>
                                 <div id="alerts-list" class="alerts-list"></div>
                             </div>
                             <div class="panel connections-panel">
                                 <h3>
-                                    <span class="panel-icon">&#128279;</span> Cross-Case Connections
+                                    Cross-Case Connections
                                     <span id="connection-count" class="badge">0</span>
                                 </h3>
                                 <div id="connections-list" class="connections-list"></div>
@@ -221,7 +219,7 @@
 
                         <!-- Memory / Prior Insights Panel -->
                         <div id="memory-panel" class="panel memory-panel hidden">
-                            <h3><span class="panel-icon">&#129504;</span> Analysis Memory <span id="memory-count" class="badge">0</span></h3>
+                            <h3>Analysis Memory <span id="memory-count" class="badge">0</span></h3>
                             <div id="memory-list" class="memory-list"></div>
                         </div>
                     </div>
@@ -235,19 +233,19 @@
                     <h2 id="case-title"></h2>
                     <div class="case-actions">
                         <button id="btn-hearing-prep" class="btn btn-primary btn-hearing">
-                            <span class="btn-icon">&#9889;</span> Hearing Prep
+                            Hearing Prep
                         </button>
                         <button id="btn-deep-analysis" class="btn btn-secondary">
-                            <span class="btn-icon">&#128300;</span> Deep Analysis
+                            Deep Analysis
                         </button>
                         <button id="btn-adversarial" class="btn btn-secondary">
-                            <span class="btn-icon">&#9876;</span> Adversarial Sim
+                            Adversarial Sim
                         </button>
                         <button id="btn-motion" class="btn btn-secondary">
-                            <span class="btn-icon">&#128196;</span> Draft Motion
+                            Draft Motion
                         </button>
                         <button id="btn-client-letter" class="btn btn-secondary">
-                            <span class="btn-icon">&#9993;</span> Client Letter
+                            Client Letter
                         </button>
                     </div>
                 </div>
@@ -267,7 +265,7 @@
                         <div class="case-tab-panel" id="tab-evidence">
                             <div id="case-evidence-summary"></div>
                             <div class="case-law-search">
-                                <h3>&#9878; Case Law Search</h3>
+                                <h3>Case Law Search</h3>
                                 <div class="case-law-input-row">
                                     <input type="text" id="case-law-query" class="case-law-input" placeholder="Search Georgia case law (e.g. 'aggravated assault self-defense')">
                                     <select id="case-law-court" class="case-law-court">
@@ -281,7 +279,7 @@
                                 <div id="case-law-results" class="case-law-results hidden"></div>
                             </div>
                             <div id="case-evidence" class="case-evidence hidden">
-                                <h3>&#128247; Evidence Items</h3>
+                                <h3>Evidence Items</h3>
                                 <div id="evidence-grid" class="evidence-grid"></div>
                             </div>
                         </div>
@@ -297,14 +295,14 @@
                 <div id="deep-analysis-panel" class="deep-analysis-panel hidden">
                     <details class="thinking-details" id="deep-thinking-details" open>
                         <summary>
-                            <span class="thinking-icon pulse">&#9881;</span>
+                            <span class="thinking-icon pulse">&bull;</span>
                             AI Reasoning
                             <span id="deep-thinking-count" class="thinking-count"></span>
                         </summary>
                         <div id="deep-thinking-stream" class="side-stream deep-thinking-stream"></div>
                     </details>
                     <div id="deep-response-status" class="deep-response-status hidden">
-                        <span class="thinking-icon pulse">&#9881;</span>
+                        <span class="thinking-icon pulse">&bull;</span>
                         <span id="deep-response-status-text">Generating structured analysis...</span>
                     </div>
                 </div>
@@ -314,7 +312,7 @@
             <div id="view-thinking" class="view">
                 <div class="thinking-header">
                     <div class="thinking-title">
-                        <span class="thinking-icon pulse">&#9881;</span>
+                        <span class="thinking-icon pulse">&bull;</span>
                         <h2 id="thinking-title-text">Analyzing...</h2>
                     </div>
                     <div id="thinking-meta" class="thinking-meta">
@@ -331,16 +329,23 @@
 
             <!-- Adversarial View -->
             <div id="view-adversarial" class="view adversarial-view">
+                <!-- Header -->
+                <div class="adversarial-header">
+                    <button id="btn-adversarial-back" class="btn btn-ghost">&larr; Back to Case</button>
+                    <h2>Adversarial Simulation</h2>
+                    <span id="adversarial-case" class="case-ref"></span>
+                </div>
+
                 <!-- Phase Progress Bar -->
                 <div class="adversarial-progress">
                     <div class="phase-step active" id="phase-step-1">
                         <span class="phase-num">1</span>
-                        <span class="phase-label">Prosecution</span>
+                        <span class="phase-label">Prosecution Brief</span>
                     </div>
                     <div class="phase-connector" id="phase-conn-1"></div>
                     <div class="phase-step" id="phase-step-2">
                         <span class="phase-num">2</span>
-                        <span class="phase-label">Defense</span>
+                        <span class="phase-label">Defense Response</span>
                     </div>
                     <div class="phase-connector" id="phase-conn-2"></div>
                     <div class="phase-step" id="phase-step-3">
@@ -349,65 +354,65 @@
                     </div>
                 </div>
 
-                <!-- Header -->
-                <div class="adversarial-header">
-                    <button id="btn-adversarial-back" class="btn btn-ghost">&larr; Back to Case</button>
-                    <h2>Adversarial Simulation</h2>
-                    <span id="adversarial-case" class="case-ref"></span>
-                </div>
-
-                <!-- Split Panels: Prosecution vs Defense -->
-                <div class="adversarial-panels">
-                    <div class="adversarial-side prosecution" id="side-prosecution">
-                        <h3>&#9878; Prosecution</h3>
-                        <details class="thinking-details" id="prosecution-thinking-details" open>
+                <!-- Adversarial Grid: Left/Right/Bottom -->
+                <div class="adversarial-briefs">
+                    <!-- Phase 1: Prosecution -->
+                    <div class="adversarial-brief prosecution" id="side-prosecution">
+                        <div class="brief-header prosecution">
+                            <span class="brief-phase">Phase 1</span>
+                            <h3>Prosecution Brief</h3>
+                        </div>
+                        <details class="thinking-details" id="prosecution-thinking-details">
                             <summary>
-                                <span class="thinking-icon pulse">&#9881;</span>
-                                Thinking
+                                <span class="thinking-icon pulse"></span>
+                                Reasoning
                                 <span id="prosecution-thinking-count" class="thinking-count"></span>
                             </summary>
                             <div id="prosecution-thinking" class="side-stream"></div>
                         </details>
-                        <div class="side-response">
-                            <div class="side-label">Arguments</div>
+                        <div class="brief-body">
                             <div id="prosecution-response" class="side-content markdown-body"></div>
                         </div>
                     </div>
-                    <div class="adversarial-divider">
-                        <span>VS</span>
-                    </div>
-                    <div class="adversarial-side defense" id="side-defense">
-                        <h3>&#9881; Defense</h3>
+
+                    <!-- Phase 2: Defense -->
+                    <div class="adversarial-brief defense" id="side-defense">
+                        <div class="brief-header defense">
+                            <span class="brief-phase">Phase 2</span>
+                            <h3>Defense Response</h3>
+                        </div>
                         <details class="thinking-details" id="defense-thinking-details">
                             <summary>
-                                <span class="thinking-icon pulse">&#9881;</span>
-                                Thinking
+                                <span class="thinking-icon pulse"></span>
+                                Reasoning
                                 <span id="defense-thinking-count" class="thinking-count"></span>
                             </summary>
                             <div id="defense-thinking" class="side-stream"></div>
                         </details>
-                        <div class="side-response">
-                            <div class="side-label">Counter-Arguments</div>
+                        <div class="brief-body">
                             <div id="defense-response" class="side-content markdown-body"></div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Judge Panel (appears during Phase 3) -->
-                <div id="judge-panel" class="judge-panel hidden">
-                    <div class="judge-panel-header">
-                        <h3>&#9878; Judicial Analysis</h3>
-                        <span class="judge-subtitle">Objective assessment by senior judicial analyst</span>
+                    <!-- Phase 3: Judicial Analysis -->
+                    <div class="adversarial-brief judge" id="judge-panel">
+                        <div class="brief-header judge">
+                            <span class="brief-phase">Phase 3</span>
+                            <h3>Judicial Analysis</h3>
+                            <span class="brief-subtitle">Objective assessment by senior judicial analyst</span>
+                        </div>
+                        <details class="thinking-details" id="judge-thinking-details">
+                            <summary>
+                                <span class="thinking-icon pulse"></span>
+                                Reasoning
+                                <span id="judge-thinking-count" class="thinking-count"></span>
+                            </summary>
+                            <div id="judge-thinking" class="side-stream"></div>
+                        </details>
+                        <div class="brief-body">
+                            <div id="judge-response" class="side-content markdown-body"></div>
+                        </div>
                     </div>
-                    <details class="thinking-details" id="judge-thinking-details">
-                        <summary>
-                            <span class="thinking-icon pulse">&#9881;</span>
-                            Thinking
-                            <span id="judge-thinking-count" class="thinking-count"></span>
-                        </summary>
-                        <div id="judge-thinking" class="side-stream"></div>
-                    </details>
-                    <div id="judge-response" class="judge-content markdown-body"></div>
                 </div>
             </div>
 
@@ -419,9 +424,9 @@
                     <div class="motion-meta">
                         <span id="motion-length" class="meta-item"></span>
                         <span id="citation-status" class="meta-item citation-status hidden"></span>
-                        <button id="btn-motion-print" class="btn btn-secondary btn-print">&#128424; Print</button>
-                        <button id="btn-motion-copy" class="btn btn-secondary">&#128203; Copy</button>
-                        <button id="btn-motion-download" class="btn btn-secondary btn-export">&#11015; Download</button>
+                        <button id="btn-motion-print" class="btn btn-secondary btn-print">Print</button>
+                        <button id="btn-motion-copy" class="btn btn-secondary">Copy</button>
+                        <button id="btn-motion-download" class="btn btn-secondary btn-export">Download</button>
                     </div>
                 </div>
                 <div id="motion-case-banner" class="motion-case-banner hidden">
@@ -432,7 +437,7 @@
                 <!-- Citation Verification Panel -->
                 <div id="citation-panel" class="citation-panel hidden">
                     <div class="citation-panel-header">
-                        <h3>&#9878; Citation Verification</h3>
+                        <h3>Citation Verification</h3>
                         <span id="citation-summary" class="citation-summary"></span>
                     </div>
                     <div id="citation-list" class="citation-list"></div>
@@ -443,7 +448,7 @@
         <!-- Right Panel: AI Thinking Stream (visible during analysis) -->
         <aside id="right-panel" class="right-panel hidden">
             <div class="right-panel-header">
-                <h3><span class="thinking-icon pulse">&#9881;</span> AI Reasoning</h3>
+                <h3><span class="thinking-icon pulse">&bull;</span> AI Reasoning</h3>
                 <span id="right-thinking-tokens" class="meta-item">0 tokens</span>
             </div>
             <div id="right-thinking-stream" class="thinking-stream"></div>
@@ -454,7 +459,6 @@
     <div id="chat-panel" class="chat-panel hidden">
         <div class="chat-header">
             <div class="chat-header-left">
-                <span class="chat-icon">&#128172;</span>
                 <h3>Caseload Chat</h3>
                 <span class="chat-subtitle">Ask anything about your 500 cases</span>
             </div>
@@ -468,10 +472,10 @@
                 <p class="chat-welcome-title">Ask your caseload anything</p>
                 <p class="chat-welcome-hint">Try these:</p>
                 <div class="chat-suggestions">
-                    <button class="chat-suggestion" data-q="Which cases have hearings this week and what should I prepare for?">&#128197; Hearings this week</button>
-                    <button class="chat-suggestion" data-q="Which of my cases are most at risk for speedy trial violations?">&#9200; Speedy trial risks</button>
-                    <button class="chat-suggestion" data-q="Do any of my cases share the same arresting officer? Are there credibility concerns?">&#128110; Officer patterns</button>
-                    <button class="chat-suggestion" data-q="Compare the plea offers across my drug possession cases. Which ones seem unfair?">&#9878; Plea comparison</button>
+                    <button class="chat-suggestion" data-q="Which cases have hearings this week and what should I prepare for?">Hearings this week</button>
+                    <button class="chat-suggestion" data-q="Which of my cases are most at risk for speedy trial violations?">Speedy trial risks</button>
+                    <button class="chat-suggestion" data-q="Do any of my cases share the same arresting officer? Are there credibility concerns?">Officer patterns</button>
+                    <button class="chat-suggestion" data-q="Compare the plea offers across my drug possession cases. Which ones seem unfair?">Plea comparison</button>
                 </div>
             </div>
         </div>
@@ -484,14 +488,14 @@
     <!-- Widget Creator Modal -->
     <div id="widget-modal" class="modal hidden">
         <div class="modal-content widget-modal-content">
-            <h3>&#10010; Create Dashboard Widget</h3>
+            <h3>Create Dashboard Widget</h3>
             <p class="modal-hint">Tell Opus 4.6 what you want to see. It will analyze all 500 cases and build it.</p>
             <input type="text" id="widget-request" class="widget-request-input" placeholder="e.g., Show me all cases where bond exceeds $10K and defendant is still detained..." autocomplete="off">
             <div class="widget-suggestions">
-                <button class="btn btn-ghost widget-suggestion" data-req="Show me a calendar view of all hearings in the next 30 days with case severity">&#128197; Hearing Calendar</button>
-                <button class="btn btn-ghost widget-suggestion" data-req="Which prosecutors am I dealing with most, and what are their plea offer patterns?">&#128101; Prosecutor Analysis</button>
-                <button class="btn btn-ghost widget-suggestion" data-req="Rank my cases by likelihood of dismissal and explain why for each">&#128200; Dismissal Odds</button>
-                <button class="btn btn-ghost widget-suggestion" data-req="Which of my clients have been in custody longest relative to the severity of their charges?">&#9878; Custody Review</button>
+                <button class="btn btn-ghost widget-suggestion" data-req="Show me a calendar view of all hearings in the next 30 days with case severity">Hearing Calendar</button>
+                <button class="btn btn-ghost widget-suggestion" data-req="Which prosecutors am I dealing with most, and what are their plea offer patterns?">Prosecutor Analysis</button>
+                <button class="btn btn-ghost widget-suggestion" data-req="Rank my cases by likelihood of dismissal and explain why for each">Dismissal Odds</button>
+                <button class="btn btn-ghost widget-suggestion" data-req="Which of my clients have been in custody longest relative to the severity of their charges?">Custody Review</button>
             </div>
             <div class="modal-actions">
                 <button id="btn-widget-create" class="btn btn-primary">Build Widget</button>

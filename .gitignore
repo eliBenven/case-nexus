@@ -32,5 +32,9 @@ generate_*.py
 # Logs
 *.log
 
+# Video demo (Remotion)
+video-demo/node_modules/
+video-demo/out/
+
 # Claude Code
 .claude/

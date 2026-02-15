@@ -35,13 +35,17 @@ if not _api_key:
         "ANTHROPIC_API_KEY not set. Create a .env file with:\n"
         "  ANTHROPIC_API_KEY=your-key-here"
     )
-client = anthropic.Anthropic(api_key=_api_key)
+client = anthropic.Anthropic(
+    api_key=_api_key,
+    default_headers={"anthropic-beta": "context-1m-2025-08-07"},
+)
 
 MODEL = "claude-opus-4-6"
 
-# Context window safety — Opus 4.6 supports 1M input tokens.
-# If estimated input exceeds this, callers should reset/reload context.
-MAX_INPUT_TOKENS = 200_000  # Claude API hard limit
+# Context window safety — Opus 4.6 supports 1M input tokens (beta).
+# Requires anthropic-beta: context-1m-2025-08-07 header (set on client above).
+# Without the header, the API enforces a 200K limit.
+MAX_INPUT_TOKENS = 1_000_000
 
 
 def _estimate_message_tokens(system_prompt: str, messages: list,
@@ -67,7 +71,7 @@ def _estimate_message_tokens(system_prompt: str, messages: list,
     if tools:
         import json as _json
         total += len(_json.dumps(tools))
-    return total // 3  # conservative: legal text ≈ 3 chars/token
+    return total // 3 + 2000  # conservative: legal text ≈ 3 chars/token, +2K padding
 
 # --- Token Budgets ---
 # max_tokens must be GREATER than thinking budget_tokens.
@@ -437,7 +441,8 @@ CITE THESE DIRECTLY — quote specific statutory language when analyzing charges
 3. Do NOT hallucinate case details — only reference information provided.
 4. Prioritize by real-world impact: missed deadlines > constitutional issues > strategy opportunities.
 5. Be thorough — scan EVERY case. An overworked defender's client depends on you catching what they miss.
-6. When referencing statutes, quote the actual text provided rather than paraphrasing from memory."""
+6. When referencing statutes, quote the actual text provided rather than paraphrasing from memory.
+7. Use American English exclusively — "defense" not "defence", "analyze" not "analyse", etc."""
 
 DEEP_ANALYSIS_PROMPT = """You are Case Nexus, a senior public defender's strategic analyst performing a comprehensive case evaluation.
 
@@ -1576,8 +1581,7 @@ def analyze_evidence(case_context: str, evidence_item: dict,
             model=MODEL,
             max_tokens=EVIDENCE_MAX_TOKENS,
             thinking={
-                "type": "enabled",
-                "budget_tokens": EVIDENCE_THINKING,
+                "type": "adaptive",
             },
             system=EVIDENCE_ANALYSIS_PROMPT.replace("{today}", today),
             messages=[{"role": "user", "content": user_content}],
@@ -1676,8 +1680,7 @@ def _run_streaming_analysis(system_prompt: str, user_content: str,
             model=MODEL,
             max_tokens=max_tokens,
             thinking={
-                "type": "enabled",
-                "budget_tokens": thinking_budget,
+                "type": "adaptive",
             },
             system=system_prompt,
             messages=messages,
@@ -1798,7 +1801,7 @@ def _run_agentic_analysis(
     for turn in range(max_turns):
         # Safety: check context size before each turn (messages grow with tool results)
         est = _estimate_message_tokens(system_prompt, messages, tools=tools)
-        if est > MAX_INPUT_TOKENS - 5_000:
+        if est > MAX_INPUT_TOKENS - 10_000:
             # Force last turn — disable tools to get a text response
             if emit_callback:
                 emit_callback(f"{event_prefix}_response_delta", {
@@ -1821,8 +1824,7 @@ def _run_agentic_analysis(
                 model=MODEL,
                 max_tokens=max_tokens,
                 thinking={
-                    "type": "enabled",
-                    "budget_tokens": thinking_budget,
+                    "type": "adaptive",
                 },
                 system=system_prompt,
                 messages=messages,
@@ -1999,14 +2001,6 @@ def _run_agentic_analysis(
                 for b in turn_content_blocks:
                     if b["type"] != "tool_use":
                         continue
-
-                    if emit_callback:
-                        emit_callback(f"{event_prefix}_tool_call", {
-                            "tool_name": b["name"],
-                            "tool_id": b["id"],
-                            "tool_input": b["input"],
-                            "status": "executing",
-                        })
 
                     result_str = _execute_tool(b["name"], b["input"])
 

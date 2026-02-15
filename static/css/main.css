@@ -543,6 +543,21 @@ body::after {
     position: relative;
     filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
 }
+.feature-icon-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--gold-dim);
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    border: 1px solid rgba(201, 168, 76, 0.2);
+}
 .feature-card h3 {
     font-family: var(--font-display);
     font-size: 18px;
@@ -1188,29 +1203,29 @@ body::after {
 /* Hearing Callout */
 .hearing-callout {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 18px; border-radius: var(--radius);
+    padding: 10px 14px; border-radius: var(--radius-sm);
     background: var(--bg-tertiary); border: 1px solid var(--border);
     margin-bottom: 10px;
     transition: border-color 0.2s var(--ease-out);
 }
-.hearing-callout.urgent { border-color: rgba(239, 68, 68, 0.3); background: var(--red-bg); }
-.hearing-callout.soon { border-color: rgba(245, 158, 11, 0.3); background: var(--orange-bg); }
-.hearing-callout-left { display: flex; gap: 12px; align-items: center; }
-.hearing-callout-icon { font-size: 22px; }
-.hearing-callout-date { font-size: 14px; font-weight: 700; display: block; }
+.hearing-callout.urgent { border-color: rgba(239, 68, 68, 0.2); }
+.hearing-callout.soon { border-color: rgba(245, 158, 11, 0.2); }
+.hearing-callout-left { display: flex; gap: 10px; align-items: center; }
+.hearing-callout-icon { display: none; }
+.hearing-callout-date { font-size: 13px; font-weight: 600; display: block; }
 .hearing-callout-type { font-size: 11px; color: var(--text-muted); font-weight: 300; }
 .hearing-countdown { text-align: center; }
 .countdown-number {
-    font-family: var(--font-display);
-    font-size: 32px;
+    font-family: var(--font-mono);
+    font-size: 20px;
     font-weight: 700;
     display: block;
     line-height: 1;
+    color: var(--text-primary);
 }
-.countdown-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.countdown-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 .hearing-countdown.urgent .countdown-number {
     color: var(--red);
-    text-shadow: 0 0 20px rgba(229, 72, 77, 0.3);
 }
 .hearing-countdown.soon .countdown-number { color: var(--orange); }
 
@@ -1515,11 +1530,15 @@ body::after {
 }
 .thinking-title { display: flex; align-items: center; gap: 12px; }
 .thinking-icon {
-    font-size: 24px;
-    color: var(--gold);
-    filter: drop-shadow(0 0 6px rgba(201, 168, 76, 0.3));
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--gold);
+    border-top-color: transparent;
+    border-radius: 50%;
+    vertical-align: middle;
 }
-.thinking-icon.pulse { animation: thinkingSpin 2s ease-in-out infinite; }
+.thinking-icon.pulse { animation: thinkingSpin 1s linear infinite; }
 .thinking-meta { display: flex; gap: 16px; }
 .meta-item { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); font-weight: 400; }
 
@@ -1637,42 +1656,86 @@ body::after {
 }
 .case-ref { font-family: var(--font-mono); color: var(--gold); font-weight: 400; }
 
-/* Split Panels */
-.adversarial-panels {
+/* Adversarial Grid: prosecution left, defense right, judge full-width bottom */
+.adversarial-briefs {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 0;
-    margin-bottom: 18px;
-    min-height: 500px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.adversarial-brief.judge {
+    grid-column: 1 / -1;
 }
 
-.adversarial-side {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.adversarial-brief {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     overflow: hidden;
     transition: opacity 0.4s var(--ease-out);
+    display: flex;
+    flex-direction: column;
+    max-height: 45vh;
 }
-.adversarial-side.dimmed { opacity: 0.35; }
-.adversarial-side h3 {
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 6px;
+.adversarial-brief .brief-body {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
 }
-.adversarial-side.prosecution h3 { color: var(--red); }
-.adversarial-side.defense h3 { color: var(--green); }
+.adversarial-brief.dimmed { opacity: 0.35; }
+.adversarial-brief.hidden { display: none; }
 
-.adversarial-divider {
+.brief-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0 18px;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.brief-header h3 {
     font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+}
+.brief-header.prosecution { border-left: 3px solid var(--red); }
+.brief-header.prosecution h3 { color: var(--red); }
+.brief-header.defense { border-left: 3px solid var(--green); }
+.brief-header.defense h3 { color: var(--green); }
+.brief-header.judge { border-left: 3px solid var(--gold); }
+.brief-header.judge h3 { color: var(--gold); }
+
+.brief-phase {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     color: var(--text-muted);
-    opacity: 0.4;
+    padding: 2px 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+}
+.brief-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: auto;
+}
+
+.brief-body {
+    padding: 12px 16px;
+    min-height: 60px;
+}
+.brief-body:empty,
+.side-content:empty {
+    min-height: 40px;
+}
+.side-content:empty::after {
+    content: 'Waiting...';
+    color: var(--text-muted);
+    font-size: 12px;
+    font-style: italic;
 }
 
 /* Collapsible Thinking Sections */
@@ -1708,8 +1771,9 @@ body::after {
     transform: rotate(90deg);
 }
 .thinking-details summary .thinking-icon {
-    font-size: 14px;
-    color: var(--gold);
+    width: 12px;
+    height: 12px;
+    border-width: 1.5px;
 }
 .thinking-count {
     margin-left: auto;
@@ -1762,59 +1826,18 @@ body::after {
 .prosecution .side-content { border-left: 2px solid var(--red-dim); }
 .defense .side-content { border-left: 2px solid var(--green-dim); }
 
-/* Judge Panel */
-.judge-panel {
-    background: var(--bg-card);
-    border: 2px solid var(--border-accent);
-    border-radius: var(--radius-lg);
-    margin-top: 18px;
-    overflow: hidden;
-    flex-shrink: 0;
-    box-shadow: var(--shadow-glow);
-}
-.judge-panel.hidden { display: none; }
-
-.judge-panel-header {
-    padding: 18px 22px;
-    background: var(--gold-glow);
-    border-bottom: 1px solid var(--border-accent);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-.judge-panel-header h3 {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--gold);
-    margin: 0;
-}
-.judge-subtitle {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-left: auto;
-    font-weight: 300;
-}
-
-.judge-panel .thinking-details {
-    margin: 14px;
-    border-color: var(--border-accent);
-}
-.judge-panel .thinking-details summary {
-    background: var(--gold-glow);
-    color: var(--gold);
-}
-.judge-panel .side-stream {
+/* Judge brief accent */
+.adversarial-brief.judge .side-stream {
     border-left: 2px solid var(--gold-dim);
 }
 
-.judge-content {
-    padding: 22px 26px;
-    font-family: var(--font-sans);
-    font-size: 14px;
-    line-height: 1.75;
-    color: var(--text-primary);
-    white-space: normal;
+.adversarial-brief .thinking-details {
+    margin: 8px 12px;
+    flex-shrink: 0;
+}
+
+.adversarial-brief .side-content {
+    border-left: none;
 }
 
 .typing { color: var(--text-muted); animation: blink 1s infinite; }
@@ -2822,8 +2845,8 @@ body::after {
 }
 
 @keyframes thinkingSpin {
-    0%, 100% { opacity: 1; transform: rotate(0deg); }
-    50% { opacity: 0.5; transform: rotate(180deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @keyframes pulse-badge {
@@ -3532,6 +3555,8 @@ body::after {
     cursor: pointer;
     transition: all 0.25s var(--ease-out);
     max-width: 280px;
+    min-width: 0;
+    overflow: hidden;
 }
 .smart-action-btn:hover {
     border-color: var(--border-accent);
@@ -3551,6 +3576,13 @@ body::after {
     font-size: 12px;
     font-weight: 600;
     color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+    width: 100%;
 }
 .action-reason {
     font-size: 10px;
@@ -3558,6 +3590,13 @@ body::after {
     margin-top: 2px;
     line-height: 1.3;
     font-weight: 300;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+    width: 100%;
 }
 
 /* ============================================================
@@ -3592,7 +3631,7 @@ body::after {
     background: var(--bg-tertiary);
     border-bottom: 1px solid var(--border);
 }
-.widget-icon { font-size: 16px; }
+.widget-icon { display: none; }
 .widget-header h3 {
     font-family: var(--font-display);
     flex: 1;
@@ -3724,7 +3763,7 @@ body::after {
     margin-bottom: 10px;
     animation: fadeInUp 0.3s var(--ease-out) both;
 }
-.memory-icon { font-size: 12px; }
+.memory-icon { display: none; }
 
 /* ============================================================
    RESPONSIVE BREAKPOINTS
@@ -3748,9 +3787,9 @@ body::after {
     .welcome-features {
         grid-template-columns: repeat(2, 1fr);
     }
-    .adversarial-panels {
+    .adversarial-briefs {
         grid-template-columns: 1fr;
-        min-height: auto;
+        gap: 14px;
     }
     .adv-divider {
         display: none;
@@ -3886,7 +3925,10 @@ body::after {
 }
 
 .tool-call-indicator .tool-icon {
-    font-size: 14px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
     flex-shrink: 0;
 }
 
@@ -3939,7 +3981,8 @@ body::after {
 
 .tool-result-indicator .tool-icon {
     color: var(--green);
-    font-size: 13px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
 .tool-result-indicator .tool-result-size {
@@ -4078,8 +4121,13 @@ body::after {
 }
 
 .cascade-timeline-icon {
-    font-size: 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    width: 20px;
+    text-align: center;
     flex-shrink: 0;
+    color: inherit;
 }
 
 .cascade-timeline-tool-name {
@@ -4174,12 +4222,11 @@ body::after {
 
 .case-timeline {
     margin: 16px 0;
-    padding: 16px 20px;
+    padding: 16px 20px 20px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: visible;
-    overflow: hidden;
 }
 
 .case-timeline h4 {
@@ -4194,13 +4241,13 @@ body::after {
 
 .timeline-track-container {
     position: relative;
-    height: 70px;
-    margin: 20px 40px 0 20px;
+    height: 80px;
+    margin: 24px 60px 10px 40px;
 }
 
 .timeline-track {
     position: absolute;
-    top: 20px;
+    top: 28px;
     left: 0;
     right: 0;
     height: 4px;
@@ -4221,20 +4268,21 @@ body::after {
 .timeline-marker {
     position: absolute;
     top: 0;
+    bottom: 0;
     transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     z-index: 1;
 }
 
 .timeline-marker-dot {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 10px;
     height: 10px;
     border-radius: 50%;
     border: 2px solid var(--text-muted);
     background: var(--bg-primary);
-    margin-top: 15px;
 }
 
 .timeline-marker.past .timeline-marker-dot {
@@ -4243,12 +4291,12 @@ body::after {
 }
 
 .timeline-marker.today .timeline-marker-dot {
-    width: 14px;
-    height: 14px;
-    margin-top: 13px;
+    width: 12px;
+    height: 12px;
+    top: 23px;
     background: var(--gold);
     border-color: var(--gold);
-    box-shadow: 0 0 8px var(--gold-glow-strong);
+    box-shadow: 0 0 6px var(--gold-glow-strong);
 }
 
 .timeline-marker.future .timeline-marker-dot {
@@ -4272,20 +4320,25 @@ body::after {
 
 .timeline-marker-event {
     position: absolute;
-    bottom: 100%;
-    margin-bottom: 6px;
-    font-size: 9px;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
     color: var(--text-secondary);
     white-space: nowrap;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .timeline-marker-label {
     position: absolute;
-    top: 100%;
-    margin-top: 6px;
+    top: 42px;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 9px;
     color: var(--text-muted);
     font-family: var(--font-mono);
@@ -4836,4 +4889,140 @@ body::after {
     max-height: 80vh;
     border-radius: var(--radius);
     box-shadow: 0 8px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================================
+   HEALTH CHECK PROGRESS UI
+   ============================================================ */
+
+.hc-progress-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.hc-progress-phases {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hc-phase {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    transition: all 0.35s var(--ease-out);
+}
+
+.hc-phase.pending {
+    opacity: 0.35;
+}
+
+.hc-phase.active {
+    opacity: 1;
+    border-color: var(--gold);
+    background: var(--gold-glow);
+}
+.hc-phase.active .hc-phase-icon {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.hc-phase.complete {
+    opacity: 0.7;
+    border-color: var(--green);
+}
+.hc-phase.complete .hc-phase-icon {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.hc-phase-icon {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.hc-phase-label {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.hc-phase.pending .hc-phase-label { color: var(--text-muted); }
+
+.hc-phase-status {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+}
+
+.hc-phase.active .hc-phase-status {
+    color: var(--gold);
+    animation: pulse 1.2s ease-in-out infinite;
+}
+
+.hc-phase.complete .hc-phase-status {
+    color: var(--green);
+}
+
+.hc-raw-thinking {
+    margin-top: 8px;
+}
+
+.hc-raw-thinking summary {
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    padding: 6px 0;
+}
+
+.hc-raw-stream {
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-top: 8px;
+    padding: 12px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.hc-generating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    margin-top: 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--gold);
+    background: var(--gold-glow);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold);
+    animation: glowPulse 1.5s ease-in-out infinite;
 }

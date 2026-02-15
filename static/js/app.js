@@ -526,7 +526,7 @@ function renderToolCallIndicator(event, data) {
             className: 'tool-call-indicator',
             id: 'tool-call-' + (data.tool_id || ''),
         },
-            el('span', { className: 'tool-icon' }, '\u{1F527}'),
+            el('span', { className: 'tool-icon' }, ''),
             el('span', { className: 'tool-name' }, formatToolName(data.tool_name)),
             el('span', { className: 'tool-status calling' }, 'calling')
         );
@@ -651,7 +651,7 @@ socket.on('legal_corpus_loaded', (data) => {
 $('#btn-load-demo').addEventListener('click', () => {
     const btn = $('#btn-load-demo');
     btn.disabled = true;
-    btn.textContent = '\u2699 Syncing from court CMS...';
+    btn.textContent = 'Syncing from court CMS...';
     btn.classList.add('loading-pulse');
     setStatus('Syncing caseload...', 'loading');
     // Show skeleton case items while loading
@@ -777,7 +777,7 @@ $('#btn-health-check').addEventListener('click', () => {
     if (state.analysisActive) return;
     state.analysisActive = true;
     setStatus('Health Check...', 'analyzing');
-    startThinkingView('Right, scanning the whole bleeding caseload...');
+    startThinkingView('Scanning entire caseload...');
     showRightPanel(true);
 
     // Pre-fill dashboard panels with skeletons so user sees what's coming
@@ -836,10 +836,10 @@ function renderCaseInfo(c) {
             ));
         }
     };
-    addStat('Court', c.court, '\u2696');
-    addStat('Judge', c.judge, '\u2696');
-    addStat('Prosecutor', c.prosecutor, '\u2694');
-    addStat('Officer', c.arresting_officer, '\u{1F46E}');
+    addStat('Court', c.court);
+    addStat('Judge', c.judge);
+    addStat('Prosecutor', c.prosecutor);
+    addStat('Officer', c.arresting_officer);
     hero.appendChild(statsRow);
 
     // Next Hearing Callout
@@ -848,15 +848,15 @@ function renderCaseInfo(c) {
         const urgencyClass = daysUntil <= 7 ? 'urgent' : daysUntil <= 30 ? 'soon' : 'normal';
         hero.appendChild(el('div', { className: 'hearing-callout ' + urgencyClass },
             el('div', { className: 'hearing-callout-left' },
-                el('span', { className: 'hearing-callout-icon' }, '\u{1F4C5}'),
+                el('span', { className: 'hearing-callout-icon' }, ''),
                 el('div', {},
                     el('span', { className: 'hearing-callout-date' }, c.next_hearing_date),
                     el('span', { className: 'hearing-callout-type' }, c.hearing_type || 'Hearing')
                 )
             ),
             el('div', { className: 'hearing-countdown ' + urgencyClass },
-                el('span', { className: 'countdown-number' }, daysUntil > 0 ? String(daysUntil) : 'TODAY'),
-                el('span', { className: 'countdown-label' }, daysUntil > 0 ? (daysUntil === 1 ? 'day away' : 'days away') : '')
+                el('span', { className: 'countdown-number' }, daysUntil > 0 ? String(daysUntil) : '0'),
+                el('span', { className: 'countdown-label' }, daysUntil > 0 ? (daysUntil === 1 ? 'day' : 'days') : 'today')
             )
         ));
     }
@@ -1004,7 +1004,7 @@ $('#btn-deep-analysis').addEventListener('click', () => {
     const analysisEl = $('#case-analysis');
     analysisEl.textContent = '';
     analysisEl.appendChild(el('div', { className: 'analysis-loading' },
-        el('span', { className: 'thinking-icon pulse' }, '\u2699'),
+        el('span', { className: 'thinking-icon pulse' }, ''),
         el('span', {}, 'Running deep analysis with extended thinking...')
     ));
     // Skeleton preview of the structured analysis that will appear
@@ -1246,16 +1246,94 @@ socket.on('health_check_started', (data) => {
     if (data.context_tokens) setContextIndicator(data.context_tokens);
 });
 
+// --- Health Check: Fancy progress UI instead of raw thinking dump ---
+const HC_PHASES = [
+    { id: 'hc-deadline', icon: '1', label: 'Scanning deadlines & speedy trial calculations' },
+    { id: 'hc-connections', icon: '2', label: 'Finding cross-case connections' },
+    { id: 'hc-constitutional', icon: '3', label: 'Checking constitutional issues' },
+    { id: 'hc-pleas', icon: '4', label: 'Analyzing plea offers & disparities' },
+    { id: 'hc-strategy', icon: '5', label: 'Generating priority actions' },
+];
+let _hcThinkingChars = 0;
+let _hcPhaseIdx = 0;
+
+function _buildHcProgressUI() {
+    const stream = $('#thinking-stream');
+    stream.textContent = '';
+
+    const wrap = el('div', { className: 'hc-progress-wrap' });
+    const phasesDiv = el('div', { className: 'hc-progress-phases' });
+    HC_PHASES.forEach(p => {
+        const phase = el('div', { className: 'hc-phase pending', id: p.id },
+            el('span', { className: 'hc-phase-icon' }, p.icon),
+            el('span', { className: 'hc-phase-label' }, p.label),
+            el('span', { className: 'hc-phase-status' })
+        );
+        phasesDiv.appendChild(phase);
+    });
+    wrap.appendChild(phasesDiv);
+
+    const details = document.createElement('details');
+    details.className = 'hc-raw-thinking';
+    const summary = document.createElement('summary');
+    summary.textContent = 'View raw AI reasoning';
+    details.appendChild(summary);
+    const pre = el('pre', { className: 'hc-raw-stream', id: 'hc-raw-stream' });
+    details.appendChild(pre);
+    wrap.appendChild(details);
+
+    stream.appendChild(wrap);
+    _hcThinkingChars = 0;
+    _hcPhaseIdx = 0;
+
+    const first = document.getElementById(HC_PHASES[0].id);
+    if (first) {
+        first.className = 'hc-phase active';
+        first.querySelector('.hc-phase-status').textContent = '...';
+    }
+}
+
+function _advanceHcPhase() {
+    if (_hcPhaseIdx >= HC_PHASES.length) return;
+    const cur = document.getElementById(HC_PHASES[_hcPhaseIdx].id);
+    if (cur) {
+        cur.className = 'hc-phase complete';
+        cur.querySelector('.hc-phase-status').textContent = '\u2713';
+    }
+    _hcPhaseIdx++;
+    if (_hcPhaseIdx < HC_PHASES.length) {
+        const next = document.getElementById(HC_PHASES[_hcPhaseIdx].id);
+        if (next) {
+            next.className = 'hc-phase active';
+            next.querySelector('.hc-phase-status').textContent = '...';
+        }
+    }
+}
+
 socket.on('health_check_thinking_started', () => {
-    appendThinking('Right, having a butcher\'s at the whole caseload...\n\n', 'both');
+    _buildHcProgressUI();
 });
 
 socket.on('health_check_thinking_delta', (data) => {
-    appendThinking(data.text, 'both');
+    _hcThinkingChars += data.text.length;
+    const phaseThreshold = 8000;
+    const expectedPhase = Math.min(Math.floor(_hcThinkingChars / phaseThreshold), HC_PHASES.length - 1);
+    while (_hcPhaseIdx < expectedPhase) _advanceHcPhase();
+    const raw = document.getElementById('hc-raw-stream');
+    if (raw) { raw.textContent += data.text; raw.scrollTop = raw.scrollHeight; }
+    state.thinkingTokenCount += data.text.split(/\s+/).length;
 });
 
 socket.on('health_check_thinking_complete', () => {
-    appendThinking('\n\n--- Done having a think ---\n', 'both');
+    while (_hcPhaseIdx < HC_PHASES.length) _advanceHcPhase();
+    setStatus('Generating results...', 'analyzing');
+    $('#thinking-title-text').textContent = 'Generating results...';
+    const stream = $('#thinking-stream');
+    const genBanner = el('div', { className: 'hc-generating' },
+        el('span', { className: 'thinking-icon pulse' }, ''),
+        document.createTextNode(' Building alerts, connections, and priority actions...')
+    );
+    stream.appendChild(genBanner);
 });
 
 socket.on('health_check_response_started', () => {});
@@ -1819,22 +1897,13 @@ socket.on('adversarial_phase', (data) => {
         defenseThinkingTokens = 0;
         state.defenseText = '';
         document.getElementById('defense-response').textContent = '';
-        const prosDet = document.getElementById('prosecution-thinking-details');
         const defDet = document.getElementById('defense-thinking-details');
-        if (prosDet) prosDet.open = false;
         if (defDet) defDet.open = true;
     } else if (phase === 'judge') {
         judgeThinkingTokens = 0;
         state.judgeText = '';
         const judgeEl = document.getElementById('judge-response');
         if (judgeEl) judgeEl.textContent = '';
-        const defDet = document.getElementById('defense-thinking-details');
-        if (defDet) defDet.open = false;
-        const judgePanel = document.getElementById('judge-panel');
-        if (judgePanel) {
-            judgePanel.classList.remove('hidden');
-            judgePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
         const judgeDet = document.getElementById('judge-thinking-details');
         if (judgeDet) judgeDet.open = true;
     }
@@ -1853,8 +1922,7 @@ socket.on('prosecution_thinking_delta', (data) => {
     if (counter) counter.textContent = prosecutionThinkingTokens.toLocaleString() + ' tokens';
 });
 socket.on('prosecution_thinking_complete', () => {
-    const det = document.getElementById('prosecution-thinking-details');
-    if (det) det.open = false;
+    // Don't auto-collapse — let user control it
 });
 socket.on('prosecution_response_started', () => {
     if (!state.prosecutionText) {
@@ -1882,8 +1950,7 @@ socket.on('defense_thinking_delta', (data) => {
     if (counter) counter.textContent = defenseThinkingTokens.toLocaleString() + ' tokens';
 });
 socket.on('defense_thinking_complete', () => {
-    const det = document.getElementById('defense-thinking-details');
-    if (det) det.open = false;
+    // Don't auto-collapse — let user control it
 });
 socket.on('defense_response_started', () => {
     if (!state.defenseText) {
@@ -1914,8 +1981,7 @@ socket.on('judge_thinking_delta', (data) => {
     if (counter) counter.textContent = judgeThinkingTokens.toLocaleString() + ' tokens';
 });
 socket.on('judge_thinking_complete', () => {
-    const det = document.getElementById('judge-thinking-details');
-    if (det) det.open = false;
+    // Don't auto-collapse — let user control it
 });
 socket.on('judge_response_started', () => {
     if (!state.judgeText) {
@@ -2148,11 +2214,11 @@ async function loadEvidence(caseNumber) {
             const isVideo = item.file_path && /\.(mp4|mov|webm)$/i.test(item.file_path);
             const hasFile = item.file_path && item.file_path.length > 0;
             const EVIDENCE_ICONS = {
-                dashcam: '\u{1F6A8}', surveillance: '\u{1F4F9}', video: '\u{1F4F1}',
-                body_cam: '\u{1F4F7}', medical: '\u{1FA7A}', physical: '\u{1F50D}',
-                document: '\u{1F4C4}', crime_scene: '\u{1F6A7}', photograph: '\u{1F4F7}',
+                dashcam: '', surveillance: '', video: '',
+                body_cam: '', medical: '', physical: '',
+                document: '', crime_scene: '', photograph: '',
             };
-            const icon = EVIDENCE_ICONS[item.evidence_type] || '\u{1F4CE}';
+            const icon = EVIDENCE_ICONS[item.evidence_type] || '';
 
             const card = el('div', { className: 'evidence-card' },
                 el('div', { className: 'evidence-thumb', onclick: () => { if (hasFile) openEvidenceLightbox(item); } },
@@ -2167,7 +2233,7 @@ async function loadEvidence(caseNumber) {
                             video.preload = 'metadata';
                             video.addEventListener('mouseenter', () => video.play());
                             video.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
-                            const badge = el('div', { className: 'evidence-video-badge' }, '\u25B6 Video');
+                            const badge = el('div', { className: 'evidence-video-badge' }, 'Video');
                             const wrapper = el('div', { className: 'evidence-video-wrap' }, video, badge);
                             return wrapper;
                         })()
@@ -2434,7 +2500,7 @@ function sendChatMessage(text) {
     const aiMsg = el('div', { className: 'chat-msg chat-msg-ai' });
     const thinkingDetails = el('details', { className: 'thinking-details chat-thinking-details' });
     const summary = el('summary', {});
-    summary.appendChild(el('span', { className: 'thinking-icon pulse' }, '\u2699'));
+    summary.appendChild(el('span', { className: 'thinking-icon pulse' }, ''));
     summary.appendChild(document.createTextNode(' Thinking'));
     const thinkingCount = el('span', { className: 'thinking-count chat-thinking-count' });
     summary.appendChild(thinkingCount);
@@ -2565,8 +2631,8 @@ $('#btn-hearing-prep').addEventListener('click', () => {
     const analysisEl = $('#case-analysis');
     analysisEl.textContent = '';
     analysisEl.appendChild(el('div', { className: 'analysis-loading hearing-prep-loading' },
-        el('span', { className: 'thinking-icon pulse' }, '\u26A1'),
-        el('span', {}, 'Bashing out the hearing brief — half a mo...')
+        el('span', { className: 'thinking-icon pulse' }, ''),
+        el('span', {}, 'Preparing hearing brief...')
     ));
     const skelWrap = el('div', { className: 'analysis-skeleton-preview' });
     skelWrap.dataset.skeleton = 'true';
@@ -2641,7 +2707,7 @@ $('#btn-client-letter').addEventListener('click', () => {
     const analysisEl = $('#case-analysis');
     analysisEl.textContent = '';
     analysisEl.appendChild(el('div', { className: 'analysis-loading' },
-        el('span', { className: 'thinking-icon pulse' }, '\u2709'),
+        el('span', { className: 'thinking-icon pulse' }, ''),
         el('span', {}, 'Writing client letter in plain English...')
     ));
 
@@ -2832,12 +2898,14 @@ socket.on('cascade_complete', (data) => {
     const text = cascadeResponseText || data.summary;
     if (text) {
         const container = document.getElementById('custom-widgets');
+        // Remove any existing brief to prevent duplicates
+        container.querySelectorAll('.cascade-summary-widget').forEach(w => w.remove());
         const widget = el('div', { className: 'custom-widget cascade-summary-widget' });
         const header = el('div', { className: 'widget-header' },
-            el('span', { className: 'widget-icon' }, '\u{1F916}'),
+            el('span', { className: 'widget-icon' }, ''),
             el('h3', {}, 'Strategic Intelligence Brief'),
             el('span', { className: 'widget-badge cascade-badge' }, 'Agentic Cascade'),
-            ...(toolCalls.length ? [el('span', { className: 'tool-calls-badge' }, '\u{1F527} ' + toolCalls.length + ' tools used')] : [])
+            ...(toolCalls.length ? [el('span', { className: 'tool-calls-badge' }, toolCalls.length + ' tools used')] : [])
         );
         widget.appendChild(header);
         const body = el('div', { className: 'markdown-body widget-body' });
@@ -2929,14 +2997,14 @@ function renderSmartActions(actions) {
                 if (state.smartActions[idx]) selected.push({ action: state.smartActions[idx], btnEl: b });
             });
             if (selected.length) runBatchActions(selected);
-        }}, '\u26A1 Run Selected (0)')
+        }}, 'Run Selected (0)')
     );
     bar.appendChild(batchBar);
 
     function updateBatchControls() {
         const count = list.querySelectorAll('.smart-action-btn.selected').length;
         const runBtn = document.getElementById('btn-run-batch');
-        if (runBtn) runBtn.textContent = '\u26A1 Run Selected (' + count + ')';
+        if (runBtn) runBtn.textContent = 'Run Selected (' + count + ')';
     }
 }
 
@@ -3060,7 +3128,7 @@ socket.on('memory_loaded', (data) => {
             const details = document.createElement('details');
             details.className = 'memory-badge';
             const summary = el('summary', {},
-                el('span', { className: 'memory-icon' }, '\u{1F9E0}'),
+                el('span', { className: 'memory-icon' }, ''),
                 el('span', {}, `Building on ${data.insight_count} prior ${data.insight_count === 1 ? 'analysis' : 'analyses'}`)
             );
             details.appendChild(summary);
@@ -3147,7 +3215,7 @@ socket.on('widget_results', (data) => {
     const container = document.getElementById('custom-widgets');
     const widget = el('div', { className: 'custom-widget' });
     const header = el('div', { className: 'widget-header' },
-        el('span', { className: 'widget-icon' }, '\u{1F4CA}'),
+        el('span', { className: 'widget-icon' }, ''),
         el('h3', {}, data.request || 'Custom Widget'),
         el('button', {
             className: 'btn btn-ghost btn-sm widget-close',
@@ -3186,17 +3254,17 @@ async function refreshDashboard() {
 
 function getCascadeToolIcon(toolName) {
     const icons = {
-        'get_case':                      { icon: '\u2696', color: 'var(--gold)' },
-        'get_case_context':              { icon: '\u{1F4CB}', color: 'var(--gold)' },
-        'get_legal_context':             { icon: '\u{1F4DC}', color: 'var(--purple)' },
-        'get_alerts':                    { icon: '\u26A0', color: 'var(--red)' },
-        'get_connections':               { icon: '\u{1F517}', color: 'var(--blue)' },
-        'get_prior_analyses':            { icon: '\u{1F9E0}', color: 'var(--orange)' },
-        'search_case_law':               { icon: '\u{1F528}', color: 'var(--blue)' },
+        'get_case':                      { icon: 'C', color: 'var(--gold)' },
+        'get_case_context':              { icon: 'CC', color: 'var(--gold)' },
+        'get_legal_context':             { icon: 'LC', color: 'var(--purple)' },
+        'get_alerts':                    { icon: '!', color: 'var(--red)' },
+        'get_connections':               { icon: 'CN', color: 'var(--blue)' },
+        'get_prior_analyses':            { icon: 'PA', color: 'var(--orange)' },
+        'search_case_law':               { icon: 'CL', color: 'var(--blue)' },
         'verify_citations':              { icon: '\u2713', color: 'var(--green)' },
-        'search_precedents_for_charges': { icon: '\u{1F4DA}', color: 'var(--purple)' },
+        'search_precedents_for_charges': { icon: 'SP', color: 'var(--purple)' },
     };
-    return icons[toolName] || { icon: '\u{1F527}', color: 'var(--text-secondary)' };
+    return icons[toolName] || { icon: '>', color: 'var(--text-secondary)' };
 }
 
 function handleCascadeToolCall(data) {
@@ -3335,13 +3403,13 @@ function renderCaseTimeline(caseData, container) {
     track.appendChild(progress);
     trackContainer.appendChild(track);
 
-    // Render markers — merge events that are within 5% of each other
+    // Render markers — merge events that are within 8% of each other
     const pcts = dates.map(d => ((d.date.getTime() - minDate) / range) * 100);
     const rendered = []; // track rendered markers for merging
     dates.forEach((d, i) => {
         const pct = pcts[i];
         const prevRendered = rendered.length > 0 ? rendered[rendered.length - 1] : null;
-        const tooClose = prevRendered && Math.abs(pct - prevRendered.pct) < 5;
+        const tooClose = prevRendered && Math.abs(pct - prevRendered.pct) < 8;
 
         if (tooClose) {
             // Merge into previous marker's event label
@@ -3539,9 +3607,9 @@ function addDownloadButton(container, text, analysisType) {
     const filename = caseNum + '_' + analysisType;
     const bar = el('div', { className: 'export-bar' },
         el('button', { className: 'btn btn-secondary btn-sm btn-export', onclick: () => exportAsMarkdown(text, filename) },
-            '\u2B07 Download .md'),
+            'Download .md'),
         el('button', { className: 'btn btn-secondary btn-sm btn-export', onclick: () => exportAsHTML(text, filename) },
-            '\u2B07 Download .html')
+            'Download .html')
     );
     container.appendChild(bar);
 }
@@ -3618,17 +3686,17 @@ async function renderMemoryPanel() {
         list.textContent = '';
 
         const typeIcons = {
-            'health_check': '\u{1F4CB}',
-            'deep_analysis': '\u{1F50D}',
-            'agentic_cascade': '\u{1F916}',
-            'adversarial': '\u2694',
-            'hearing_prep': '\u26A1',
-            'client_letter': '\u2709',
+            'health_check': 'HC',
+            'deep_analysis': 'DA',
+            'agentic_cascade': 'AC',
+            'adversarial': 'AD',
+            'hearing_prep': 'HP',
+            'client_letter': 'CL',
         };
 
         const VISIBLE = 4;
         insights.forEach((ins, i) => {
-            const icon = typeIcons[ins.analysis_type] || '\u{1F9E0}';
+            const icon = typeIcons[ins.analysis_type] || '';
             const typeName = (ins.analysis_type || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             const scope = ins.scope === 'full_caseload' ? 'Full Caseload' : ins.scope;
             const timestamp = ins.created_at ? new Date(ins.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';

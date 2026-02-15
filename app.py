@@ -25,7 +25,7 @@ import legal_corpus
 from demo_data import generate_demo_caseload, generate_demo_evidence
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "case-nexus-legal-intelligence"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "case-nexus-legal-intelligence")
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 # Global token usage tracker — cumulative across ALL Opus 4.6 calls
@@ -638,10 +638,12 @@ def handle_analyze_evidence(data):
         if result.get("success"):
             track_tokens(result, sid)
             response_text = result.get("response", "")
+            usage = result.get("usage") or {}
             db.log_analysis("evidence_analysis", case_number,
                             result.get("thinking", ""),
                             {"response_text": response_text},
-                            result.get("usage"))
+                            usage.get("input_tokens", 0) if isinstance(usage, dict) else 0,
+                            datetime.now().isoformat())
             socketio.emit("evidence_analysis_results", {
                 "case_number": case_number,
                 "evidence_id": evidence_id,
