@@ -4,7 +4,7 @@
 
 Built for the *Built with Opus 4.6: a Claude Code Hackathon*
 
-Case Nexus transforms how public defenders manage crushing caseloads. It loads an entire 500-case caseload into Claude Opus 4.6's 1M context window and provides real-time AI analysis — from identifying speedy trial risks across all cases simultaneously, to generating court-ready motions, to simulating adversarial prosecution vs. defense debates.
+Case Nexus transforms how public defenders manage crushing caseloads. It loads an entire 500-case caseload into Claude Opus 4.6's 1M context window and uses extended thinking to identify speedy trial risks across all cases simultaneously, generate court-ready motions, and simulate adversarial prosecution vs. defense debates.
 
 ## What It Does
 
@@ -16,7 +16,7 @@ Public defenders in Georgia carry 400-700 cases. They walk into court with minut
 |------|-------------|-------------------|
 | **Caseload Health Check** | Scans ALL 500 cases for risks, cross-case connections, plea disparities | 1M context window (275K+ tokens loaded) |
 | **Deep Case Analysis** | Defense strategy with strength meter, evidence gaps, constitutional issues | Extended thinking (40K tokens) |
-| **Adversarial Simulation** | Prosecution builds case -> Defense dismantles it -> Judge provides synthesis | 80K+ thinking tokens across 3 phases |
+| **Adversarial Simulation** | Prosecution builds case, Defense dismantles it, Judge synthesizes both | 80K+ thinking tokens across 3 phases |
 | **Motion Generation** | Court-ready legal motions with Georgia formatting and citation verification | 128K output (64K response tokens) |
 | **Evidence Analysis** | Forensic analysis of evidence images (photos, surveillance, documents) | Multimodal vision |
 | **Caseload Chat** | Ask questions about your entire caseload conversationally | 1M context + multi-turn |
@@ -92,7 +92,7 @@ This project is a thesis on what Claude Opus 4.6 can do:
 
 ## Built with Claude Code
 
-This entire project — including the demo video — was built with Claude Code (Claude Opus 4.6). The demo video is a programmatic Remotion project (3,200+ lines of TypeScript) with 9 animated scenes, synced narration, and pixel-perfect recreations of the app UI. Zero manual video editing. ~20,000 total lines of code across the app and video.
+This entire project — including the demo video — was built with Claude Code (Claude Opus 4.6). The demo video is a programmatic Remotion project (3,300+ lines of TypeScript) with 9 animated scenes, synced narration, and pixel-perfect recreations of the app UI. Zero manual video editing. ~20,000 total lines of code across the app and video.
 
 ## Demo Data
 
