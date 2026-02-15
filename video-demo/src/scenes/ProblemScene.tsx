@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, Img, staticFile } from 'remotion';
+import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { COLORS, FPS, FONTS } from '../config';
 import { fade, slideUp, countUp, container, gridOverlay } from '../styles';
 
@@ -10,7 +10,6 @@ export const ProblemScene: React.FC = () => {
   const textStart = 3 * FPS;
   const patternStart = 8 * FPS;
   const closingStart = 16 * FPS;
-  const screenshotStart = 17 * FPS;
 
   return (
     <AbsoluteFill style={container}>
@@ -92,27 +91,6 @@ export const ProblemScene: React.FC = () => {
         Case Nexus changes that.
       </div>
 
-      {/* App screenshot peek */}
-      <div
-        style={{
-          position: 'absolute',
-          right: 60,
-          bottom: 60,
-          width: 480,
-          height: 300,
-          borderRadius: 12,
-          overflow: 'hidden',
-          border: `1px solid ${COLORS.border}`,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
-          opacity: fade(f, screenshotStart, 40),
-          transform: `translateY(${slideUp(f, screenshotStart, 40, 40)}px)`,
-        }}
-      >
-        <Img
-          src={staticFile('screenshots/caseload-loaded.png')}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-      </div>
     </AbsoluteFill>
   );
 };

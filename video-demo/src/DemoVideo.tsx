@@ -14,7 +14,9 @@ import { SyncScene } from './scenes/SyncScene';
 import { HealthCheckScene } from './scenes/HealthCheckScene';
 import { CascadeScene } from './scenes/CascadeScene';
 import { AdversarialScene } from './scenes/AdversarialScene';
+import { BuiltWithScene } from './scenes/BuiltWithScene';
 import { ClosingScene } from './scenes/ClosingScene';
+import { FinaleScene } from './scenes/FinaleScene';
 
 // Map scene IDs → React components
 const SCENE_COMPONENTS: Record<string, React.FC> = {
@@ -24,7 +26,9 @@ const SCENE_COMPONENTS: Record<string, React.FC> = {
   healthcheck: HealthCheckScene,
   cascade: CascadeScene,
   adversarial: AdversarialScene,
+  builtwith: BuiltWithScene,
   closing: ClosingScene,
+  finale: FinaleScene,
 };
 
 // Scenes that have narration audio files in public/audio/
@@ -34,7 +38,9 @@ const AUDIO_MAP: Record<string, string> = {
   healthcheck: 'audio/healthcheck.wav',
   cascade: 'audio/cascade.wav',
   adversarial: 'audio/adversarial.wav',
+  builtwith: 'audio/builtwith.wav',
   closing: 'audio/closing.wav',
+  finale: 'audio/finale.wav',
 };
 
 const FADE_OUT_FRAMES = Math.round(FADE_OUT_SEC * FPS);

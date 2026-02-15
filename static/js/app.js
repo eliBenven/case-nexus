@@ -52,6 +52,8 @@ const state = {
     prosecutionText: '',
     defenseText: '',
     judgeText: '',
+    // Health check response accumulator (for live findings rendering)
+    healthCheckResponseText: '',
     // Cascade tool timeline
     cascadeToolLog: [],
     // Batch smart actions
@@ -1056,9 +1058,9 @@ function clearAdversarialPanels() {
     // Reset phase progress
     setAdversarialPhase(1);
 
-    // Hide judge panel
+    // Dim judge panel (visible but muted, like defense)
     const judgePanel = document.getElementById('judge-panel');
-    if (judgePanel) judgePanel.classList.add('hidden');
+    if (judgePanel) judgePanel.classList.remove('hidden');
 
     // Reset thinking details state
     const prosDet = document.getElementById('prosecution-thinking-details');
@@ -1336,9 +1338,41 @@ socket.on('health_check_thinking_complete', () => {
     stream.appendChild(genBanner);
 });
 
-socket.on('health_check_response_started', () => {});
-socket.on('health_check_response_delta', () => {});
-socket.on('health_check_complete', () => {});
+socket.on('health_check_response_started', () => {
+    state.healthCheckResponseText = '';
+    // Remove the "Building alerts..." banner since real content is arriving
+    const banner = document.querySelector('.hc-generating');
+    if (banner) banner.remove();
+    // Create response container in the thinking view
+    const stream = $('#thinking-stream');
+    if (stream && !document.getElementById('hc-response-container')) {
+        const header = el('div', { className: 'hc-response-header' },
+            el('span', { className: 'thinking-icon pulse' }, ''),
+            document.createTextNode(' Findings')
+        );
+        header.style.cssText = 'font-size:13px;font-weight:600;color:var(--gold);margin-top:16px;margin-bottom:8px;display:flex;align-items:center;gap:6px;';
+        stream.appendChild(header);
+        const container = el('div', { id: 'hc-response-container', className: 'markdown-body' });
+        container.style.cssText = 'padding:12px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;max-height:400px;overflow-y:auto;';
+        stream.appendChild(container);
+    }
+    $('#thinking-title-text').textContent = 'Findings streaming...';
+});
+socket.on('health_check_response_delta', (data) => {
+    state.healthCheckResponseText += data.text;
+    const container = document.getElementById('hc-response-container');
+    if (container) {
+        streamRenderMarkdown(container, state.healthCheckResponseText, 'hc-response');
+    }
+});
+socket.on('health_check_complete', () => {
+    // Final render of full response
+    const container = document.getElementById('hc-response-container');
+    if (container && state.healthCheckResponseText) {
+        safeRenderMarkdown(container, state.healthCheckResponseText);
+    }
+    setStatus('Complete', 'ready');
+});
 
 socket.on('health_check_results', (data) => {
     stopThinking();
@@ -2083,12 +2117,12 @@ socket.on('citation_verification_results', (data) => {
         // Still show local citations if available
         if (data.local_citations && data.local_citations.length) {
             panel.classList.remove('hidden');
-            summary.textContent = data.local_citations.length + ' citations found (API unavailable)';
+            summary.textContent = data.local_citations.length + ' citations found (verification unavailable)';
             data.local_citations.forEach(cite => {
                 list.appendChild(el('div', { className: 'citation-item ambiguous' },
                     el('span', { className: 'citation-badge ambiguous' }, '?'),
                     el('span', { className: 'citation-text' }, cite),
-                    el('span', { className: 'citation-label' }, 'Unverified (API unavailable)')
+                    el('span', { className: 'citation-label' }, 'Unverified (search unavailable)')
                 ));
             });
         }
@@ -2131,7 +2165,7 @@ socket.on('citation_verification_results', (data) => {
         );
         if (c.case_name) item.appendChild(el('span', { className: 'citation-case-name' }, c.case_name));
         if (c.url) {
-            const link = el('a', { className: 'citation-link', href: c.url, target: '_blank' }, 'View on CourtListener');
+            const link = el('a', { className: 'citation-link', href: c.url, target: '_blank' }, 'View Source');
             item.appendChild(link);
         }
         list.appendChild(item);
@@ -2141,7 +2175,7 @@ socket.on('citation_verification_results', (data) => {
         list.appendChild(el('div', { className: 'citation-item not-found' },
             el('span', { className: 'citation-badge not-found' }, '\u2717'),
             el('span', { className: 'citation-text' }, c.citation || c.normalized),
-            el('span', { className: 'citation-label' }, 'Not found in CourtListener \u2014 may be hallucinated')
+            el('span', { className: 'citation-label' }, 'Not found via web search \u2014 may be hallucinated')
         ));
     });
 
@@ -2774,7 +2808,7 @@ $('#btn-case-law-search').addEventListener('click', () => {
     resultsEl.classList.remove('hidden');
     resultsEl.textContent = '';
     const hint = el('p', { className: 'searching-hint' });
-    hint.textContent = 'Searching CourtListener...';
+    hint.textContent = 'Searching case law...';
     resultsEl.appendChild(hint);
     socket.emit('search_case_law', { query, court });
 });

@@ -115,7 +115,7 @@ Record each section as its own clip. Pick the best take of each. Never try one c
 | 1:05 | Click Cascade Intelligence (gold button) | *"Cascade Intelligence. Nine tools. Claude investigates autonomously."* | `9 tools • 8 rounds • autonomous` |
 | 1:12 | First tool call appears — **1x speed** | *"Claude pulls case CR-2025-0089 for deeper investigation..."* | — |
 | 1:18 | Second tool call | *"Now looking up the Georgia statute..."* | — |
-| 1:24 | Third tool call | *"Searching CourtListener for case law precedent..."* | — |
+| 1:24 | Third tool call | *"Searching for case law precedent..."* | — |
 | 1:30 | Gap between calls → speed to 2x | — | — |
 | 1:35 | Strategic brief rendering — **1x speed** | *"A genuine agentic loop — Claude decides what matters, gets the information, builds strategy."* | — |
 | 1:42 | Slow scroll through brief | *(silence — let judges read key findings)* | — |
@@ -189,7 +189,7 @@ Record this AFTER editing the screen capture. Watch your edit on loop, then spea
 >
 > Cascade Intelligence. Nine tools. Claude investigates autonomously.
 >
-> Claude pulls case CR-2025-0089 for deeper investigation... now looking up the Georgia statute... searching CourtListener for case law precedent...
+> Claude pulls case CR-2025-0089 for deeper investigation... now looking up the Georgia statute... searching for case law precedent...
 >
 > A genuine agentic loop — Claude decides what matters, gets the information, builds strategy.
 >

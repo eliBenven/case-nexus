@@ -1,10 +1,10 @@
 /**
- * ClosingScene — Final slide with capabilities list + mission statement.
- * Shows the full app UI in background with an overlay.
+ * ClosingScene — Capabilities list overlay on dimmed app shell.
+ * Mission statement + branding moved to FinaleScene.
  */
 
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, Img, staticFile } from 'remotion';
+import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { COLORS, FPS, FONTS } from '../config';
 import { fade, slideUp } from '../styles';
 import { AppShell } from '../components/AppShell';
@@ -21,8 +21,6 @@ export const ClosingScene: React.FC = () => {
   const f = useCurrentFrame();
 
   const listStart = 2 * FPS;
-  const missionStart = 12 * FPS;
-  const logoStart = 16 * FPS;
 
   return (
     <>
@@ -106,53 +104,6 @@ export const ClosingScene: React.FC = () => {
           })}
         </div>
 
-        {/* Mission statement */}
-        <div style={{
-          position: 'absolute',
-          bottom: 200,
-          textAlign: 'center',
-          maxWidth: 900,
-          opacity: fade(f, missionStart, 35),
-          transform: `translateY(${slideUp(f, missionStart, 25, 35)}px)`,
-        }}>
-          <div style={{
-            fontSize: 28,
-            fontWeight: 500,
-            color: COLORS.textSecondary,
-            lineHeight: 1.6,
-            fontStyle: 'italic',
-          }}>
-            Making sure no public defender's client falls through the cracks
-          </div>
-        </div>
-
-        {/* Final branding */}
-        <div style={{
-          position: 'absolute',
-          bottom: 70,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 10,
-          opacity: fade(f, logoStart, 30),
-        }}>
-          <div style={{
-            fontSize: 44,
-            fontWeight: 800,
-            color: COLORS.gold,
-            letterSpacing: '0.06em',
-            textShadow: `0 0 40px ${COLORS.goldGlowStrong}`,
-          }}>
-            CASE NEXUS
-          </div>
-          <div style={{ fontSize: 14, fontFamily: FONTS.mono, color: COLORS.textMuted }}>
-            github.com/eliBenven/case-nexus
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, opacity: 0.65 }}>
-            <Img src={staticFile('icon.png')} style={{ width: 22, height: 22, borderRadius: 5 }} />
-            <span style={{ fontSize: 14, color: COLORS.textMuted }}>Eli Benveniste &middot; VenTech</span>
-          </div>
-        </div>
       </AbsoluteFill>
     </>
   );

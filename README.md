@@ -22,7 +22,7 @@ Public defenders in Georgia carry 400-700 cases. They walk into court with minut
 | **Caseload Chat** | Ask questions about your entire caseload conversationally | 1M context + multi-turn |
 | **Hearing Prep Brief** | 30-second brief for walking into court (judge tendencies included) | Fast extended thinking |
 | **Client Letter** | Plain-language letter explaining case status to client | Empathetic generation |
-| **Case Law Search** | Search Georgia case law via CourtListener API | External API integration |
+| **Case Law Search** | Search Georgia case law via AI web search | Claude + web search |
 
 ### Autonomous Agent with Tool Use
 
@@ -36,8 +36,8 @@ The **Cascade Intelligence** feature transforms Claude from a chatbot into an au
 | `get_alerts` | Check for deadline risks and red flags |
 | `get_connections` | Find cross-case patterns (same officer, shared witnesses) |
 | `get_prior_analyses` | Recall previous AI analysis results |
-| `search_case_law` | Search CourtListener for relevant precedent |
-| `verify_citations` | Verify legal citations against real databases |
+| `search_case_law` | Search the web for relevant precedent |
+| `verify_citations` | Verify legal citations via AI web search |
 | `search_precedents_for_charges` | Find charge-specific case law |
 
 Claude autonomously calls these tools in a multi-turn loop (up to 8 rounds), deciding what cases to pull, what statutes to check, and what precedents to search for — all visible in a real-time tool timeline.
@@ -46,7 +46,7 @@ Claude autonomously calls these tools in a multi-turn loop (up to 8 rounds), dec
 
 - **Real-time streaming** — Watch Claude's extended thinking in real-time via WebSocket
 - **Live token visualization** — See cumulative token usage across the 1M context window
-- **Citation verification** — Auto-verify legal citations against CourtListener database
+- **Citation verification** — Auto-verify legal citations via Claude + web search
 - **Cross-case intelligence** — AI discovers patterns: same officer in multiple stops, shared witnesses, judge tendencies
 - **Adversarial reasoning chains** — Each phase builds on the previous phase's output
 - **Agentic tool-use loop** — Claude decides what to investigate using 9 tools with extended thinking
@@ -57,7 +57,7 @@ Claude autonomously calls these tools in a multi-turn loop (up to 8 rounds), dec
 - **AI**: Claude Opus 4.6 via Anthropic SDK (streaming, extended thinking, multimodal)
 - **Database**: SQLite with WAL mode
 - **Frontend**: Vanilla JS, marked.js (markdown), DOMPurify (XSS prevention)
-- **External API**: CourtListener (citation verification, case law search)
+- **Citation Verification**: Claude Opus 4.6 + web search (no external API keys needed)
 
 ## Setup
 
@@ -89,6 +89,10 @@ This project is a thesis on what Claude Opus 4.6 can do:
 5. **Multimodal Vision** — Evidence images (surveillance, injury photos, dashcam stills) are analyzed with Opus 4.6's vision capabilities
 6. **Streaming** — All AI operations stream thinking and response deltas via SocketIO for real-time UX
 7. **Sequential Reasoning** — The adversarial simulation chains three separate thinking processes, each building on the previous
+
+## Built with Claude Code
+
+This entire project — including the demo video — was built with Claude Code (Claude Opus 4.6). The demo video is a programmatic Remotion project (3,200+ lines of TypeScript) with 9 animated scenes, synced narration, and pixel-perfect recreations of the app UI. Zero manual video editing. ~20,000 total lines of code across the app and video.
 
 ## Demo Data
 

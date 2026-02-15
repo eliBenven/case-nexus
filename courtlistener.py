@@ -1,39 +1,77 @@
-"""CourtListener API Client — Citation verification and case law search.
+"""Citation Verification & Case Law Search — Claude Opus 4.6 + Web Search.
 
-Integrates with Free Law Project's CourtListener API to:
+Uses Claude's built-in web search tool to:
 1. Verify legal citations in AI-generated motions (anti-hallucination)
 2. Search for relevant case law by jurisdiction and topic
-3. Retrieve full opinion text for context grounding
+3. Find precedents for specific criminal charges
 
-API docs: https://www.courtlistener.com/help/api/
+Replaces the previous CourtListener API integration with Claude + web search.
+Claude reads the citations, searches the web to confirm they exist, and
+returns structured verification results. No external API keys required.
 """
 
+import json
 import os
 import re
-import requests
-from typing import Optional
+import anthropic
+from dotenv import load_dotenv
 
-COURTLISTENER_BASE = "https://www.courtlistener.com"
-CITATION_LOOKUP_URL = f"{COURTLISTENER_BASE}/api/rest/v3/citation-lookup/"
-SEARCH_URL = f"{COURTLISTENER_BASE}/api/rest/v4/search/"
-OPINIONS_URL = f"{COURTLISTENER_BASE}/api/rest/v4/opinions/"
+load_dotenv()
 
-# Optional API token for higher rate limits
-API_TOKEN = os.getenv("COURTLISTENER_API_TOKEN", "")
+# Lazy client to avoid circular imports with ai_engine
+_client = None
 
 
-def _headers() -> dict:
-    h = {"Content-Type": "application/x-www-form-urlencoded"}
-    if API_TOKEN:
-        h["Authorization"] = f"Token {API_TOKEN}"
-    return h
+def _get_client():
+    global _client
+    if _client is None:
+        _client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    return _client
 
 
-def _auth_headers() -> dict:
-    h = {}
-    if API_TOKEN:
-        h["Authorization"] = f"Token {API_TOKEN}"
-    return h
+MODEL = "claude-opus-4-6"
+
+WEB_SEARCH_TOOL = {
+    "type": "web_search_20250305",
+    "name": "web_search",
+}
+
+
+def _extract_text(response) -> str:
+    """Extract all text content blocks from a Claude response."""
+    parts = []
+    for block in response.content:
+        if hasattr(block, "text"):
+            parts.append(block.text)
+    return "\n".join(parts)
+
+
+def _extract_json_from_text(text: str):
+    """Extract JSON object or array from Claude's response text."""
+    # Try code blocks first
+    json_match = re.search(r'```(?:json)?\s*\n?([\s\S]*?)\n?```', text)
+    if json_match:
+        try:
+            return json.loads(json_match.group(1))
+        except json.JSONDecodeError:
+            pass
+
+    # Try the whole text
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # Try finding a JSON object or array
+    for pattern in [r'\{[\s\S]*\}', r'\[[\s\S]*\]']:
+        match = re.search(pattern, text)
+        if match:
+            try:
+                return json.loads(match.group())
+            except json.JSONDecodeError:
+                continue
+
+    return None
 
 
 # ============================================================
@@ -41,13 +79,14 @@ def _auth_headers() -> dict:
 # ============================================================
 
 def verify_citations(text: str) -> dict:
-    """Submit text to CourtListener's citation-lookup endpoint.
+    """Verify legal citations in text using Claude + web search.
 
-    Extracts and verifies all legal citations found in the text.
-    Returns verified, unverified, and ambiguous citations.
+    Extracts citations via regex, then asks Claude to search the web
+    and confirm each one is real. Returns the same format as before:
+    verified, not_found, and ambiguous citations.
 
     Args:
-        text: Legal text containing citations (up to ~64K chars)
+        text: Legal text containing citations
 
     Returns:
         {
@@ -59,106 +98,96 @@ def verify_citations(text: str) -> dict:
             "error": str or None,
         }
     """
-    # Truncate to API limit (~64K chars)
-    if len(text) > 64000:
-        text = text[:64000]
+    local_cites = extract_citations_local(text)
 
-    try:
-        resp = requests.post(
-            CITATION_LOOKUP_URL,
-            data={"text": text},
-            headers=_headers(),
-            timeout=30,
-        )
-
-        if resp.status_code == 429:
-            return {
-                "verified": [], "not_found": [], "ambiguous": [],
-                "total_found": 0, "verified_count": 0,
-                "error": "Rate limited — try again in a moment",
-            }
-
-        if resp.status_code != 200:
-            return {
-                "verified": [], "not_found": [], "ambiguous": [],
-                "total_found": 0, "verified_count": 0,
-                "error": f"API returned status {resp.status_code}",
-            }
-
-        citations = resp.json()
-        return _parse_citation_results(citations)
-
-    except requests.Timeout:
+    if not local_cites:
         return {
             "verified": [], "not_found": [], "ambiguous": [],
             "total_found": 0, "verified_count": 0,
-            "error": "Citation lookup timed out",
+            "error": None,
         }
+
+    try:
+        client = _get_client()
+
+        prompt = f"""You are a legal citation verification assistant. I have extracted the following legal citations from a legal document. For EACH citation, search the web to verify whether it is a real, valid legal citation.
+
+Citations to verify:
+{json.dumps(local_cites, indent=2)}
+
+For each citation, determine:
+- "verified": The citation refers to a real case/statute that you confirmed exists via web search
+- "not_found": You searched but could not find evidence this citation exists (likely hallucinated)
+- "ambiguous": You found partial matches but cannot confirm the exact citation
+
+Return ONLY a JSON object in this exact format (no other text):
+{{
+  "verified": [
+    {{"citation": "...", "normalized": "...", "case_name": "...", "url": "...", "status": "verified"}}
+  ],
+  "not_found": [
+    {{"citation": "...", "normalized": "...", "status": "not_found"}}
+  ],
+  "ambiguous": [
+    {{"citation": "...", "normalized": "...", "status": "ambiguous"}}
+  ]
+}}
+
+Search Google Scholar, court databases, and legal sites. Only mark as "verified" if you find clear evidence the citation is real. Include a URL where the case can be found."""
+
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=4096,
+            tools=[WEB_SEARCH_TOOL],
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        result_text = _extract_text(response)
+        parsed = _extract_json_from_text(result_text)
+
+        if parsed and isinstance(parsed, dict):
+            verified = parsed.get("verified", [])
+            not_found = parsed.get("not_found", [])
+            ambiguous = parsed.get("ambiguous", [])
+            return {
+                "verified": verified,
+                "not_found": not_found,
+                "ambiguous": ambiguous,
+                "total_found": len(verified) + len(not_found) + len(ambiguous),
+                "verified_count": len(verified),
+                "error": None,
+            }
+
+        return {
+            "verified": [], "not_found": [], "ambiguous": [],
+            "total_found": len(local_cites), "verified_count": 0,
+            "error": "Could not parse verification results",
+        }
+
     except Exception as e:
         return {
             "verified": [], "not_found": [], "ambiguous": [],
-            "total_found": 0, "verified_count": 0,
+            "total_found": len(local_cites), "verified_count": 0,
             "error": str(e),
         }
-
-
-def _parse_citation_results(citations: list) -> dict:
-    """Parse the citation-lookup API response into verified/not_found/ambiguous."""
-    verified = []
-    not_found = []
-    ambiguous = []
-
-    for c in citations:
-        citation_text = c.get("citation", "")
-        normalized = c.get("normalized_citations", [])
-        status = c.get("status", 0)
-        clusters = c.get("clusters", [])
-
-        entry = {
-            "citation": citation_text,
-            "normalized": normalized[0] if normalized else citation_text,
-            "start_index": c.get("start_index", 0),
-            "end_index": c.get("end_index", 0),
-        }
-
-        if status == 200 and clusters:
-            cluster = clusters[0] if isinstance(clusters, list) else clusters
-            cluster_url = ""
-            case_name = ""
-            if isinstance(cluster, dict):
-                cluster_url = cluster.get("absolute_url", "")
-                case_name = cluster.get("case_name", "")
-            elif isinstance(cluster, str):
-                cluster_url = cluster
-
-            entry["url"] = f"{COURTLISTENER_BASE}{cluster_url}" if cluster_url and not cluster_url.startswith("http") else cluster_url
-            entry["case_name"] = case_name
-            entry["status"] = "verified"
-            verified.append(entry)
-        elif status == 404:
-            entry["status"] = "not_found"
-            not_found.append(entry)
-        else:
-            entry["status"] = "ambiguous"
-            ambiguous.append(entry)
-
-    return {
-        "verified": verified,
-        "not_found": not_found,
-        "ambiguous": ambiguous,
-        "total_found": len(citations),
-        "verified_count": len(verified),
-        "error": None,
-    }
 
 
 # ============================================================
 #  CASE LAW SEARCH
 # ============================================================
 
+COURT_NAMES = {
+    "ga": "Georgia",
+    "scotus": "U.S. Supreme Court",
+    "ca11": "Eleventh Circuit",
+    "ca5": "Fifth Circuit",
+    "ca9": "Ninth Circuit",
+}
+
+
 def search_opinions(query: str, court: str = "ga",
                     max_results: int = 5) -> list:
-    """Search CourtListener for relevant case law opinions.
+    """Search for relevant case law using Claude + web search.
 
     Args:
         query: Natural language or citation search query
@@ -168,61 +197,61 @@ def search_opinions(query: str, court: str = "ga",
     Returns:
         List of opinion summaries with URLs
     """
-    params = {
-        "q": query,
-        "type": "o",  # opinions
-        "court": court,
-        "order_by": "score desc",
-        "page_size": max_results,
-    }
+    court_name = COURT_NAMES.get(court, court)
 
     try:
-        resp = requests.get(
-            SEARCH_URL,
-            params=params,
-            headers=_auth_headers(),
-            timeout=15,
-        )
-        if resp.status_code != 200:
-            return []
+        client = _get_client()
 
-        data = resp.json()
-        results = []
-        for item in data.get("results", [])[:max_results]:
-            # v4 API nests snippet inside opinions array
-            snippet = ""
-            opinions = item.get("opinions", [])
-            if opinions:
-                raw = opinions[0].get("snippet", "")
-                # Strip HTML tags from snippet
-                snippet = re.sub(r"<[^>]+>", "", raw).strip()
-                # Truncate to reasonable length
-                if len(snippet) > 400:
-                    snippet = snippet[:400] + "..."
-            # Fallback to syllabus or posture if no snippet
-            if not snippet:
-                snippet = item.get("syllabus", "") or item.get("posture", "")
-                if len(snippet) > 400:
-                    snippet = snippet[:400] + "..."
-            results.append({
-                "case_name": item.get("caseName", ""),
-                "citation": item.get("citation", [""]),
-                "court": item.get("court", ""),
-                "date_filed": item.get("dateFiled", ""),
-                "snippet": snippet,
-                "url": f"{COURTLISTENER_BASE}{item.get('absolute_url', '')}",
-            })
-        return results
+        prompt = f"""Search the web for relevant case law opinions about: {query}
+
+Jurisdiction: {court_name}
+Return up to {max_results} results.
+
+For each result, provide:
+- case_name: Full case name
+- citation: The legal citation as an array (e.g., ["410 U.S. 113"])
+- court: The court that decided the case
+- date_filed: When the opinion was filed
+- snippet: A brief summary or relevant excerpt (max 400 chars)
+- url: A URL where the full opinion can be found
+
+Return ONLY a JSON array (no other text):
+[
+  {{
+    "case_name": "...",
+    "citation": ["..."],
+    "court": "...",
+    "date_filed": "...",
+    "snippet": "...",
+    "url": "..."
+  }}
+]
+
+Search Google Scholar, CourtListener, Casetext, Justia, and other legal databases. Only include cases you can confirm exist."""
+
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=4096,
+            tools=[WEB_SEARCH_TOOL],
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        result_text = _extract_text(response)
+        parsed = _extract_json_from_text(result_text)
+
+        if parsed and isinstance(parsed, list):
+            return parsed[:max_results]
+
+        return []
 
     except Exception:
         return []
 
 
 # ============================================================
-#  EXTRACT CITATIONS FROM TEXT (local regex fallback)
+#  EXTRACT CITATIONS FROM TEXT (local regex — no API call)
 # ============================================================
 
-# Pattern matches common legal citation formats
 CITATION_PATTERN = re.compile(
     r'\b(\d{1,3})\s+'
     r'(U\.S\.|S\.\s*Ct\.|L\.\s*Ed\.|F\.\d[a-z]*|F\.\s*Supp\.\s*\d*'
@@ -238,9 +267,9 @@ _case_law_cache = {}  # session cache: charge_key -> results
 
 def search_relevant_precedents(charges: list[str], jurisdiction: str = "ga",
                                 max_per_charge: int = 3) -> str:
-    """Search CourtListener for relevant precedents based on charges.
+    """Search for relevant precedents based on charges.
 
-    Results are cached per-session to avoid redundant API calls.
+    Results are cached per-session to avoid redundant calls.
     Returns formatted text suitable for injection into AI context.
     """
     parts = []
@@ -264,13 +293,13 @@ def search_relevant_precedents(charges: list[str], jurisdiction: str = "ga",
     if not parts:
         return ""
 
-    return "## RELEVANT CASE LAW (from CourtListener API)\n\n" + "\n".join(parts)
+    return "## RELEVANT CASE LAW (verified via web search)\n\n" + "\n".join(parts)
 
 
 def extract_citations_local(text: str) -> list[str]:
     """Extract legal citations from text using regex (no API call).
 
-    Useful as a fast pre-check before hitting the API.
+    Useful as a fast pre-check before sending to Claude for verification.
     """
     matches = CITATION_PATTERN.findall(text)
     citations = []

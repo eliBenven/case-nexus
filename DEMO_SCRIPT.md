@@ -86,11 +86,11 @@ This is your **autonomous agent / tool use** showcase. The highest-impact featur
 
 **Say**:
 
-> "Cascade Intelligence turns Claude into an autonomous investigator. It has nine tools — it can pull any case, look up Georgia statutes, search real case law through the CourtListener API, and find cross-case patterns. It decides what to investigate on its own."
+> "Cascade Intelligence turns Claude into an autonomous investigator. It has nine tools — it can pull any case, look up Georgia statutes, search real case law via web search, and find cross-case patterns. It decides what to investigate on its own."
 
 **Do**: Watch tool calls appear in real-time. THIS IS THE MONEY SHOT. Each tool call shows the name, status, and result preview. As they appear:
 
-> "Claude just decided to pull case CR-2025-0089 for deeper investigation... now it's looking up the relevant Georgia statute... now it's searching CourtListener for case law precedent..."
+> "Claude just decided to pull case CR-2025-0089 for deeper investigation... now it's looking up the relevant Georgia statute... now it's searching for case law precedent..."
 
 **Do**: Point at each tool call as it streams in. Let at least 3-4 tool calls play out visually.
 

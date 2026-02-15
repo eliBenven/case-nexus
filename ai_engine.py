@@ -210,13 +210,13 @@ TOOL_DEFINITIONS = [
     },
     {
         "name": "search_case_law",
-        "description": "Search CourtListener for relevant case law opinions. Returns case names, citations, dates, snippets, and URLs.",
+        "description": "Search the web for relevant case law opinions using AI-powered web search. Returns case names, citations, dates, snippets, and URLs.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Natural language or citation search query, e.g. 'aggravated assault self-defense Georgia'"
+                    "description": "Natural language or citation search query, e.g. 'aggravated assault self-defense Georgia'. Uses Claude web search to find real case law."
                 },
                 "court": {
                     "type": "string",
@@ -234,7 +234,7 @@ TOOL_DEFINITIONS = [
     },
     {
         "name": "verify_citations",
-        "description": "Submit legal text to CourtListener's citation-lookup API to verify that all citations are real and not hallucinated. Returns verified, not_found, and ambiguous citations.",
+        "description": "Verify that legal citations in text are real and not hallucinated using AI-powered web search. Returns verified, not_found, and ambiguous citations.",
         "input_schema": {
             "type": "object",
             "properties": {
@@ -248,7 +248,7 @@ TOOL_DEFINITIONS = [
     },
     {
         "name": "search_precedents_for_charges",
-        "description": "Search CourtListener for relevant precedents based on a list of criminal charges. Returns formatted precedent text organized by charge.",
+        "description": "Search the web for relevant precedents based on a list of criminal charges. Returns formatted precedent text organized by charge.",
         "input_schema": {
             "type": "object",
             "properties": {
@@ -343,12 +343,6 @@ def _execute_tool(tool_name: str, tool_input: dict) -> str:
 
     except Exception as e:
         return json.dumps({"error": f"Tool execution error ({tool_name}): {str(e)}"})
-
-    finally:
-        pass
-
-    # Truncation handled below — applied to the return value
-    # (Python won't reach here due to returns above, but kept for clarity)
 
 
 # Apply truncation as a post-processing step — wrap _execute_tool

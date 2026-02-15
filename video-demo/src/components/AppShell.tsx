@@ -93,17 +93,19 @@ export const AppShell: React.FC<AppShellProps> = ({
         {/* Gold accent line under header */}
         <div style={{ position: 'absolute', bottom: -1, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.goldGlowStrong}, transparent)` }} />
 
-        {/* Left: Logo */}
+        {/* Left: Logo — no icon, gradient text matches real app */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 24, color: COLORS.gold }}>⚖</span>
             <span
               style={{
                 fontFamily: FONTS.sans,
                 fontSize: 21,
                 fontWeight: 700,
                 letterSpacing: '0.02em',
-                color: COLORS.text,
+                background: `linear-gradient(135deg, ${COLORS.text} 0%, rgba(212, 175, 55, 0.7) 100%)`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
               }}
             >
               Case Nexus
@@ -114,36 +116,55 @@ export const AppShell: React.FC<AppShellProps> = ({
           </span>
         </div>
 
-        {/* Center: Token Visualization Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: COLORS.textMuted }}>
-            <span style={{ fontSize: 14 }}>⚙</span>
+        {/* Center: Token Visualization Bar — pill wrapper matches .token-viz */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: '6px 16px',
+          background: COLORS.bgTertiary,
+          border: `1px solid ${COLORS.border}`,
+          borderRadius: 20,
+          minWidth: 420,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 500, color: COLORS.text, whiteSpace: 'nowrap' as const }}>
+            <span style={{ fontSize: 12, color: COLORS.gold }}>{'\u2022'}</span>
             <span>Opus 4.6 Tokens</span>
           </div>
-          {/* Bar */}
-          <div style={{ width: 200, height: 6, borderRadius: 3, background: COLORS.bgTertiary, overflow: 'hidden' }}>
-            <div style={{ width: `${barPercent}%`, height: '100%', borderRadius: 3, background: COLORS.gold, boxShadow: barPercent > 0 ? `0 0 12px ${COLORS.goldGlowStrong}` : 'none', transition: 'width 0.1s' }} />
+          {/* Bar — flex fill within pill */}
+          <div style={{ flex: 1, height: 5, borderRadius: 3, background: COLORS.bg, overflow: 'hidden', minWidth: 60 }}>
+            <div style={{
+              width: `${barPercent}%`,
+              height: '100%',
+              borderRadius: 3,
+              background: `linear-gradient(90deg, ${COLORS.goldDim}, ${COLORS.gold}, ${COLORS.goldBright})`,
+              boxShadow: '0 0 8px rgba(201, 168, 76, 0.25)',
+            }} />
           </div>
           {/* Total count */}
-          <span style={{ fontSize: 12, fontFamily: FONTS.mono, color: COLORS.text, fontWeight: 600, minWidth: 50 }}>
-            {totalTokens > 0 ? fmt(totalTokens) : '0'}
-          </span>
-          <span style={{ fontSize: 10, color: COLORS.textMuted }}>/ 1M context</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, whiteSpace: 'nowrap' as const }}>
+            <span style={{ fontSize: 12, fontFamily: FONTS.mono, color: COLORS.gold, fontWeight: 600 }}>
+              {totalTokens > 0 ? fmt(totalTokens) : '0'}
+            </span>
+            <span style={{ fontSize: 10, color: COLORS.textMuted }}>/ 1M context</span>
+          </div>
 
-          {/* Breakdown chips */}
-          <div style={{ display: 'flex', gap: 8, marginLeft: 8 }}>
+          {/* Breakdown chips — with pill backgrounds */}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <TokenChip label="In" value={fmt(tokenInput)} color={COLORS.blue} />
             <TokenChip label="Think" value={fmt(tokenThinking)} color={COLORS.purple} />
             <TokenChip label="Out" value={fmt(tokenOutput)} color={COLORS.green} />
-            <span style={{ fontSize: 10, fontFamily: FONTS.mono, color: COLORS.orange }}>⚡ {tokenCalls} calls</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontFamily: FONTS.mono, padding: '2px 8px', borderRadius: 10, background: COLORS.bg, color: COLORS.gold, whiteSpace: 'nowrap' as const }}>
+              <strong style={{ fontWeight: 500 }}>{tokenCalls}</strong> calls
+            </span>
           </div>
         </div>
 
-        {/* Right: Badges */}
+        {/* Right: Badges + Chat button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {showCorpusBadge && (
             <span style={{ fontSize: 10, padding: '4px 12px', background: COLORS.greenBg, color: COLORS.green, border: `1px solid rgba(34, 197, 94, 0.2)`, borderRadius: 20, fontWeight: 500 }}>
-              ⚖ Legal Corpus
+              Legal Corpus
             </span>
           )}
           <span style={{ fontSize: 10, padding: '4px 12px', background: COLORS.goldGlow, color: COLORS.gold, border: `1px solid ${COLORS.borderAccent}`, borderRadius: 20, fontWeight: 500, letterSpacing: '0.3px' }}>
@@ -152,6 +173,20 @@ export const AppShell: React.FC<AppShellProps> = ({
           <span style={{ fontSize: 10, padding: '4px 12px', borderRadius: 20, fontWeight: 500, letterSpacing: '0.3px', background: sc.bg, color: sc.fg }}>
             {statusText}
           </span>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 7,
+            padding: '7px 16px',
+            background: `linear-gradient(135deg, ${COLORS.goldDim} 0%, ${COLORS.gold} 50%, ${COLORS.goldBright} 100%)`,
+            borderRadius: 8,
+            cursor: 'pointer',
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#07080c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#07080c', letterSpacing: '0.02em' }}>Chat</span>
+          </div>
         </div>
       </div>
 
@@ -194,7 +229,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           </div>
 
           {/* Case list */}
-          <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div style={{ flex: 1, overflow: 'hidden', padding: '4px 0' }}>
             {visibleCases === 0 ? (
               <SyncButton />
             ) : (
@@ -229,39 +264,60 @@ export const AppShell: React.FC<AppShellProps> = ({
 // ── Sub-components ───────────────────────────────────────────
 
 const TokenChip: React.FC<{ label: string; value: string; color: string }> = ({ label, value, color }) => (
-  <span style={{ fontSize: 10, fontFamily: FONTS.mono, color: COLORS.textMuted }}>
-    <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: color, marginRight: 4 }} />
-    {label}: <strong style={{ color }}>{value}</strong>
+  <span style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+    fontSize: 10,
+    fontFamily: FONTS.mono,
+    padding: '2px 8px',
+    borderRadius: 10,
+    background: COLORS.bg,
+    whiteSpace: 'nowrap' as const,
+  }}>
+    <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: color }} />
+    {label}: <strong style={{ color, fontWeight: 500 }}>{value}</strong>
   </span>
 );
 
 const SyncButton: React.FC = () => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', textAlign: 'center', color: COLORS.textMuted }}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: COLORS.green, marginBottom: 16 }}>
+    <div style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 8,
+      padding: '5px 14px',
+      background: COLORS.greenBg,
+      border: '1px solid rgba(34, 197, 94, 0.2)',
+      borderRadius: 20,
+      fontSize: 11,
+      fontWeight: 500,
+      color: COLORS.green,
+      marginBottom: 10,
+    }}>
       <span style={{ width: 6, height: 6, background: COLORS.green, borderRadius: '50%' }} />
       Fulton County Superior Court
     </div>
-    <p style={{ fontSize: 12, marginBottom: 12, color: COLORS.textMuted }}>Case Management System</p>
+    <p style={{ fontSize: 12, marginBottom: 12, color: COLORS.textMuted, fontWeight: 300 }}>Case Management System</p>
     <div style={{
-      padding: '10px 28px',
-      background: `linear-gradient(135deg, ${COLORS.gold} 0%, ${COLORS.goldDim} 100%)`,
-      color: COLORS.bg,
-      fontWeight: 700,
+      padding: '12px 28px',
+      background: `linear-gradient(135deg, ${COLORS.gold} 0%, ${COLORS.goldBright} 100%)`,
+      color: '#0a0b0e',
+      fontWeight: 600,
       fontSize: 14,
       borderRadius: LAYOUT.radius,
-      cursor: 'pointer',
+      letterSpacing: '0.3px',
+      boxShadow: `inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 3px rgba(212, 175, 55, 0.2)`,
     }}>
       Sync Caseload
     </div>
-    <p style={{ fontSize: 11, marginTop: 8, color: COLORS.textMuted }}>Pull assigned cases from court CMS</p>
+    <p style={{ fontSize: 12, marginTop: 8, color: COLORS.textMuted, fontWeight: 300 }}>Pull assigned cases from court CMS</p>
   </div>
 );
 
 const CaseItem: React.FC<{ caseData: MockCase; selected?: boolean }> = ({ caseData, selected }) => {
   const isFelony = caseData.severity === 'felony';
   const borderColor = isFelony ? COLORS.red : COLORS.blue;
-  const badgeColor = isFelony ? COLORS.red : COLORS.blue;
-  const badgeBg = isFelony ? COLORS.redBg : COLORS.blueBg;
 
   return (
     <div style={{
@@ -275,8 +331,8 @@ const CaseItem: React.FC<{ caseData: MockCase; selected?: boolean }> = ({ caseDa
           {caseData.id}
         </span>
         <div style={{ display: 'flex', gap: 4 }}>
-          {isFelony && <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 10, fontWeight: 600, background: COLORS.redBg, color: COLORS.red }}>F</span>}
-          {!isFelony && <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 10, fontWeight: 600, background: COLORS.blueBg, color: COLORS.blue }}>M</span>}
+          {isFelony && <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, fontWeight: 600, letterSpacing: '0.3px', background: COLORS.redBg, color: COLORS.red }}>F</span>}
+          {!isFelony && <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, fontWeight: 600, letterSpacing: '0.3px', background: COLORS.blueBg, color: COLORS.blue }}>M</span>}
         </div>
       </div>
       <div style={{ fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em' }}>

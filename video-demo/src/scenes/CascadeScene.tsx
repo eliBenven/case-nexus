@@ -19,12 +19,12 @@ import { Cursor, type CursorWaypoint } from '../components/Cursor';
 // ── Cursor path ──────────────────────────────────────────────
 
 const CURSOR: CursorWaypoint[] = [
-  { frame: 0, x: 600, y: 400 },
-  { frame: 40, x: 1410, y: 86 },            // Cascade Intelligence button
-  { frame: 70, x: 1410, y: 86, click: true },
-  { frame: 130, x: 700, y: 350 },           // watch tool calls
-  { frame: 400, x: 700, y: 500 },           // watch brief
-  { frame: 700, x: 700, y: 500, hidden: true },
+  { frame: 0, x: 960, y: 400 },
+  { frame: 40, x: 1600, y: 103 },            // Cascade Intelligence button (right side of command center)
+  { frame: 70, x: 1600, y: 103, click: true },
+  { frame: 130, x: 800, y: 400 },           // watch tool calls
+  { frame: 400, x: 800, y: 600 },           // watch brief
+  { frame: 700, x: 800, y: 600, hidden: true },
 ];
 
 // ── Tool data ────────────────────────────────────────────────
@@ -55,9 +55,9 @@ const TOOL_CALLS: ToolCall[] = [
     round: 1,
     tool: 'get_case',
     description: 'Pulling case for investigation',
-    detail: 'CR-2025-0089 — Darnell Washington — Possession with Intent',
+    detail: 'CR-2025-0012 — Marcus Webb — Traffic Stop DUI',
     color: COLORS.blue,
-    thinkingText: 'This case has a contested vehicle search. Let me examine the arrest details...',
+    thinkingText: 'This DUI case has a contested vehicle search during a traffic stop. Let me examine the arrest details...',
   },
   {
     round: 2,
@@ -87,9 +87,9 @@ const TOOL_CALLS: ToolCall[] = [
     round: 5,
     tool: 'verify_citations',
     description: 'Verifying legal citations',
-    detail: 'CourtListener: 3 citations verified, 0 hallucinated',
+    detail: 'Web Search: 3 citations verified, 0 hallucinated',
     color: COLORS.purple,
-    thinkingText: 'All cited cases confirmed via CourtListener API. Proceeding to strategic assessment...',
+    thinkingText: 'All cited cases confirmed via web search. Proceeding to strategic assessment...',
   },
 ];
 
@@ -103,7 +103,7 @@ export const CascadeScene: React.FC = () => {
   const toolsStart = clickFrame + 30;
   const callsStart = clickFrame + 80;
   const callDuration = 4 * FPS;
-  const briefStart = 25 * FPS;
+  const briefStart = 22 * FPS;
 
   // Token counts
   const tokenInput = isActive ? countUp(f, clickFrame, 120, 0, 48000) : 0;
@@ -127,62 +127,97 @@ export const CascadeScene: React.FC = () => {
         showCorpusBadge={isActive}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
-          {/* Header button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{
-              padding: '10px 24px',
-              background: isActive ? COLORS.bgCard : `linear-gradient(135deg, ${COLORS.gold} 0%, ${COLORS.goldDim} 100%)`,
-              color: isActive ? COLORS.gold : COLORS.bg,
-              fontWeight: 700,
-              fontSize: 14,
-              borderRadius: 8,
-              border: isActive ? `1px solid ${COLORS.borderAccent}` : 'none',
-            }}>
-              ⚡ Cascade Intelligence
+          {/* Command Center (matches real .command-center) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+            {/* Stat pills */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <StatPill value="500" label="Cases" />
+              <StatPill value="167" label="Felonies" color={COLORS.red} />
+              <StatPill value="333" label="Misdemeanors" color={COLORS.blue} />
+              <StatPill value="487" label="Active" />
             </div>
-            {isActive && (
-              <span style={{ fontSize: 12, color: COLORS.textMuted, opacity: fade(f, clickFrame + 10, 20) }}>
-                9 tools • autonomous investigation
-              </span>
-            )}
+            {/* Action buttons (matches real .command-actions) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{
+                padding: '10px 20px',
+                background: isActive
+                  ? COLORS.bgHover
+                  : `linear-gradient(135deg, ${COLORS.goldDim} 0%, ${COLORS.gold} 50%, ${COLORS.goldBright} 100%)`,
+                color: isActive ? COLORS.gold : '#07080c',
+                fontWeight: 700,
+                fontSize: 13,
+                borderRadius: 8,
+                letterSpacing: '0.02em',
+                border: isActive ? `1px solid ${COLORS.borderAccent}` : 'none',
+                boxShadow: isActive ? `0 0 12px rgba(212, 175, 55, 0.08)` : 'none',
+              }}>
+                Cascade Intelligence
+              </div>
+              <div style={{
+                padding: '9px 18px',
+                background: COLORS.surfaceRaised,
+                color: COLORS.text,
+                fontWeight: 500,
+                fontSize: 13,
+                borderRadius: 8,
+                border: `1px solid ${COLORS.borderLight}`,
+              }}>
+                Health Check
+              </div>
+              <div style={{
+                padding: '7px 14px',
+                background: 'transparent',
+                color: COLORS.textSecondary,
+                fontSize: 11,
+                borderRadius: 8,
+              }}>
+                + Widget
+              </div>
+            </div>
           </div>
-
-          {/* Tool grid */}
+          {/* Pinned: subtitle + tool grid */}
           {isActive && (
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', opacity: fade(f, toolsStart, 25) }}>
-              {TOOLS.map((tool, i) => {
-                // Is this tool currently being called?
-                const activeCall = TOOL_CALLS.find(
-                  (tc) => tc.tool === tool.name && f >= callsStart + TOOL_CALLS.indexOf(tc) * callDuration && f < callsStart + (TOOL_CALLS.indexOf(tc) + 1) * callDuration,
-                );
-                const wasUsed = TOOL_CALLS.find(
-                  (tc) => tc.tool === tool.name && f >= callsStart + TOOL_CALLS.indexOf(tc) * callDuration + callDuration,
-                );
+            <div style={{ flexShrink: 0 }}>
+              <span style={{ fontSize: 12, color: COLORS.textMuted, opacity: fade(f, clickFrame + 10, 20), display: 'block', marginBottom: 12 }}>
+                Cascade Intelligence — 9 tools • autonomous investigation
+              </span>
 
-                return (
-                  <span
-                    key={tool.name}
-                    style={{
-                      padding: '5px 12px',
-                      borderRadius: 6,
-                      border: `1px solid ${activeCall ? COLORS.gold : wasUsed ? COLORS.green + '40' : COLORS.border}`,
-                      background: activeCall ? `${COLORS.gold}12` : wasUsed ? `${COLORS.green}08` : COLORS.bgSecondary,
-                      fontSize: 11,
-                      fontFamily: FONTS.mono,
-                      color: activeCall ? COLORS.gold : wasUsed ? COLORS.green : COLORS.textMuted,
-                      opacity: fade(f, toolsStart + i * 6, 18),
-                    }}
-                  >
-                    {tool.icon} {tool.name}
-                  </span>
-                );
-              })}
+              {/* Tool grid */}
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', opacity: fade(f, toolsStart, 25) }}>
+                {TOOLS.map((tool, i) => {
+                  // Is this tool currently being called?
+                  const activeCall = TOOL_CALLS.find(
+                    (tc) => tc.tool === tool.name && f >= callsStart + TOOL_CALLS.indexOf(tc) * callDuration && f < callsStart + (TOOL_CALLS.indexOf(tc) + 1) * callDuration,
+                  );
+                  const wasUsed = TOOL_CALLS.find(
+                    (tc) => tc.tool === tool.name && f >= callsStart + TOOL_CALLS.indexOf(tc) * callDuration + callDuration,
+                  );
+
+                  return (
+                    <span
+                      key={tool.name}
+                      style={{
+                        padding: '5px 12px',
+                        borderRadius: 6,
+                        border: `1px solid ${activeCall ? COLORS.gold : wasUsed ? COLORS.green + '40' : COLORS.border}`,
+                        background: activeCall ? `${COLORS.gold}12` : wasUsed ? `${COLORS.green}08` : COLORS.bgSecondary,
+                        fontSize: 11,
+                        fontFamily: FONTS.mono,
+                        color: activeCall ? COLORS.gold : wasUsed ? COLORS.green : COLORS.textMuted,
+                        opacity: fade(f, toolsStart + i * 6, 18),
+                      }}
+                    >
+                      {tool.icon} {tool.name}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {/* Tool call timeline */}
+          {/* Tool call timeline (scrollable area) */}
           {isActive && (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden', minHeight: 0 }}>
               {TOOL_CALLS.map((call, i) => {
                 const start = callsStart + i * callDuration;
                 if (f < start) return null;
@@ -251,12 +286,68 @@ export const CascadeScene: React.FC = () => {
                 );
               })}
 
-              {/* Summary badges */}
+              {/* Strategic Brief */}
               {f >= briefStart && (
-                <div style={{ display: 'flex', gap: 32, justifyContent: 'center', marginTop: 12, opacity: fade(f, briefStart, 25) }}>
-                  <SummaryBadge label="Rounds" value="8" color={COLORS.blue} />
-                  <SummaryBadge label="Tools Used" value="9" color={COLORS.green} />
-                  <SummaryBadge label="Thinking" value="Visible" color={COLORS.gold} />
+                <div style={{
+                  padding: '20px 24px',
+                  borderRadius: 12,
+                  border: `1px solid ${COLORS.borderAccent}`,
+                  background: COLORS.bgCard,
+                  opacity: fade(f, briefStart, 30),
+                  transform: `translateY(${slideUp(f, briefStart, 16, 25)}px)`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 14,
+                  boxShadow: `0 0 24px ${COLORS.goldGlow}`,
+                }}>
+                  {/* Brief header */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontSize: 11, fontFamily: FONTS.mono, fontWeight: 800, color: COLORS.gold, letterSpacing: '0.1em', padding: '3px 10px', borderRadius: 5, background: `${COLORS.gold}15` }}>
+                        STRATEGIC BRIEF
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.text }}>
+                        CR-2025-0012 — Marcus Webb
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 12 }}>
+                      <span style={{ fontSize: 10, fontFamily: FONTS.mono, color: COLORS.blue }}>8 rounds</span>
+                      <span style={{ fontSize: 10, fontFamily: FONTS.mono, color: COLORS.green }}>9 tools</span>
+                      <span style={{ fontSize: 10, fontFamily: FONTS.mono, color: COLORS.purple }}>45K thinking</span>
+                    </div>
+                  </div>
+
+                  {/* Finding */}
+                  <div style={{ opacity: fade(f, briefStart + 15, 20) }}>
+                    <div style={{ fontSize: 11, fontFamily: FONTS.mono, fontWeight: 700, color: COLORS.red, letterSpacing: '0.06em', marginBottom: 4 }}>
+                      PRIMARY FINDING
+                    </div>
+                    <div style={{ fontSize: 15, color: COLORS.text, lineHeight: 1.5 }}>
+                      Officer J. Rodriguez conducted contested vehicle searches in 4 separate traffic stop cases (CR-2025-0012, 0089, 0118, 0134). All searches lack documented probable cause beyond initial stop. This constitutes a systematic Fourth Amendment pattern suitable for a consolidated motion to suppress.
+                    </div>
+                  </div>
+
+                  {/* Recommendation */}
+                  <div style={{ opacity: fade(f, briefStart + 30, 20) }}>
+                    <div style={{ fontSize: 11, fontFamily: FONTS.mono, fontWeight: 700, color: COLORS.green, letterSpacing: '0.06em', marginBottom: 4 }}>
+                      RECOMMENDED ACTION
+                    </div>
+                    <div style={{ fontSize: 14, color: COLORS.textSecondary, lineHeight: 1.5 }}>
+                      File consolidated motion to suppress under <span style={{ color: COLORS.gold, fontFamily: FONTS.mono, fontSize: 13 }}>State v. Henderson</span> — officer pattern of warrantless vehicle searches without voluntary consent. Cite O.C.G.A. § 16-13-30 requirements for controlled substance seizure.
+                    </div>
+                  </div>
+
+                  {/* Smart Actions */}
+                  <div style={{ opacity: fade(f, briefStart + 45, 20), display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={{ fontSize: 11, fontFamily: FONTS.mono, fontWeight: 700, color: COLORS.gold, letterSpacing: '0.06em' }}>
+                      SMART ACTIONS
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <SmartAction label="File Motion to Suppress" urgency="critical" />
+                      <SmartAction label="Request Rodriguez Discovery" urgency="critical" />
+                      <SmartAction label="Draft Consolidated Brief" urgency="high" />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -269,9 +360,56 @@ export const CascadeScene: React.FC = () => {
   );
 };
 
-const SummaryBadge: React.FC<{ label: string; value: string; color: string }> = ({ label, value, color }) => (
-  <div style={{ textAlign: 'center' }}>
-    <div style={{ fontSize: 28, fontWeight: 800, fontFamily: FONTS.mono, color }}>{value}</div>
-    <div style={{ fontSize: 13, color: COLORS.textMuted, marginTop: 2 }}>{label}</div>
+const SmartAction: React.FC<{ label: string; urgency: 'critical' | 'high' | 'medium' }> = ({ label, urgency }) => {
+  const color = urgency === 'critical' ? COLORS.red : urgency === 'high' ? COLORS.orange : COLORS.blue;
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      padding: '12px 18px',
+      borderRadius: 8,
+      border: `1px solid ${color}40`,
+      background: `${color}0a`,
+      cursor: 'pointer',
+    }}>
+      <div style={{
+        width: 20,
+        height: 20,
+        borderRadius: 5,
+        border: `2px solid ${color}60`,
+        flexShrink: 0,
+      }} />
+      <span style={{ fontSize: 16, fontWeight: 600, color: COLORS.text }}>{label}</span>
+      <span style={{
+        fontSize: 11,
+        fontFamily: FONTS.mono,
+        fontWeight: 700,
+        color,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase' as const,
+        marginLeft: 4,
+      }}>
+        {urgency}
+      </span>
+    </div>
+  );
+};
+
+const StatPill: React.FC<{ value: string; label: string; color?: string }> = ({ value, label, color }) => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '6px 14px',
+    borderRadius: 20,
+    border: `1px solid ${color ? color + '30' : COLORS.border}`,
+    background: COLORS.bgCard,
+    fontSize: 12,
+    fontWeight: 500,
+    color: COLORS.textSecondary,
+  }}>
+    <span style={{ fontWeight: 700, fontFamily: FONTS.mono, color: color || COLORS.text }}>{value}</span>
+    {label}
   </div>
 );

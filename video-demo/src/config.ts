@@ -80,50 +80,64 @@ export const SCENES: SceneConfig[] = [
   {
     id: 'title',
     title: 'Title Card',
-    durationSec: 6,
+    durationSec: 2,
     narration: '',
   },
   {
     id: 'problem',
     title: 'The Problem',
-    durationSec: 20,
+    durationSec: 22,
     narration:
-      "Public defenders in Georgia carry 500 active cases. They walk into court with minutes to prepare. A pattern of unconstitutional stops by the same officer across four cases goes unnoticed, because no human can hold 500 case files in their head at once. Case Nexus changes that.",
+      "Public defenders in Georgia carry five hundred active cases. They walk into court with minutes to prepare. A pattern of unconstitutional stops by the same officer across four cases goes unnoticed — because no human can hold five hundred case files in their head at once. Case Nexus changes that.",
   },
   {
     id: 'sync',
     title: 'Caseload Sync',
     durationSec: 15,
     narration:
-      "We sync 500 cases from the court system. Felonies, misdemeanors, everything a public defender carries. Each case includes charges, hearing dates, plea offers, witness lists, and prior records.",
+      "We sync five hundred cases from the court system. Felonies, misdemeanors, everything a public defender carries — charges, hearing dates, plea offers, witness lists, and prior records.",
   },
   {
     id: 'healthcheck',
     title: 'Health Check — 1M Context',
-    durationSec: 34,
+    durationSec: 37,
     narration:
-      "Now the hero feature. We load all 500 cases, over 275,000 tokens, into a single Claude Opus 4.6 prompt. No RAG, no chunking. The AI sees every case simultaneously. Claude uses 60,000 tokens of extended thinking to scan the entire caseload. It discovers that Officer Rodriguez appears in four separate traffic stop cases, all with contested vehicle searches. That's a Fourth Amendment pattern no attorney could spot manually across 500 files.",
+      "Now the hero feature. We load all five hundred cases — over two hundred seventy-five thousand tokens — into a single prompt. No RAG. No chunking. The AI sees every case simultaneously. Claude uses sixty thousand tokens of extended thinking to scan the entire caseload. It discovers that Officer Rodriguez appears in four separate traffic stop cases, all with contested vehicle searches. A Fourth Amendment pattern no attorney could spot manually.",
   },
   {
     id: 'cascade',
     title: 'Cascade Intelligence',
-    durationSec: 33,
+    durationSec: 31,
     narration:
-      "Cascade Intelligence turns Claude into an autonomous investigator. It has nine tools. It can pull any case, look up Georgia statutes, search real case law through the CourtListener API, and find cross-case patterns. It decides what to investigate on its own. Watch as Claude pulls case CR-2025-0089 for deeper investigation, then looks up the relevant Georgia statute, then searches for case law precedent. This is genuine autonomous investigation. Up to eight rounds of tool use with extended thinking visible at every step.",
+      "Cascade Intelligence turns Claude into an autonomous investigator with nine tools. It pulls cases, looks up Georgia statutes, searches real case law, and finds cross-case patterns — all on its own. Watch as Claude investigates a case, looks up the relevant statute, then searches for precedent. When it finishes, you get a strategic brief and smart actions you can execute with one click.",
   },
   {
     id: 'adversarial',
     title: 'Adversarial Simulation',
-    durationSec: 29,
+    durationSec: 31,
     narration:
-      "The adversarial simulation chains three separate Claude sessions. A prosecution AI builds the strongest possible case. A defense AI reads the prosecution's actual arguments and dismantles them. Then a judicial analyst synthesizes both sides. Each phase uses its own extended thinking budget, over 80,000 tokens of chained reasoning. The attorney sees the case from three adversarial perspectives, each with visible reasoning chains.",
+      "The adversarial simulation chains three separate Claude sessions. A prosecution AI builds the strongest possible case. A defense AI reads the prosecution's arguments and dismantles them. A judicial analyst synthesizes both sides. Each phase uses its own thinking budget — over eighty thousand tokens of chained reasoning. Three adversarial perspectives, each with full visible reasoning.",
   },
   {
     id: 'closing',
-    title: 'Closing',
-    durationSec: 22,
+    title: 'Closing — Capabilities',
+    durationSec: 17,
     narration:
-      "Case Nexus uses every major Opus 4.6 capability. The million-token context window, extended thinking with streaming, autonomous tool use, 128K output, and sequential reasoning chains, all in service of one goal: making sure no public defender's client falls through the cracks.",
+      "Case Nexus uses every major Opus capability. The million-token context window. Extended thinking with streaming. Autonomous tool use. Long-form output generation. And multi-phase reasoning chains.",
+  },
+  {
+    id: 'builtwith',
+    title: 'Built With Claude Code',
+    durationSec: 19,
+    narration:
+      "One more thing. This entire video demo was built with Claude Code — same model powering Case Nexus. Every scene, every animation, even the title card. Over twenty thousand lines of code. One model. Zero manual editing.",
+  },
+  {
+    id: 'finale',
+    title: 'Finale — Mission',
+    durationSec: 6,
+    narration:
+      "All in service of one goal... making sure no public defender's client falls through the cracks.",
   },
 ];
 

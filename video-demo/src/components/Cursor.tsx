@@ -105,24 +105,29 @@ export const Cursor: React.FC<CursorProps> = ({ waypoints, appearAt = 0 }) => {
     extrapolateRight: 'clamp',
   });
 
+  // The SVG cursor tip is at (2, 2) within its viewBox.
+  // Offset the container so the tip lands exactly at (x, y).
+  const TIP_X = 2;
+  const TIP_Y = 2;
+
   return (
     <div
       style={{
         position: 'absolute',
-        left: x,
-        top: y,
+        left: x - TIP_X,
+        top: y - TIP_Y,
         zIndex: 9999,
         pointerEvents: 'none',
         opacity,
       }}
     >
-      {/* Click ring */}
+      {/* Click ring — centered on cursor tip */}
       {isClicking && (
         <div
           style={{
             position: 'absolute',
-            left: -20,
-            top: -20,
+            left: TIP_X - 20,
+            top: TIP_Y - 20,
             width: 40,
             height: 40,
             borderRadius: '50%',
@@ -141,7 +146,7 @@ export const Cursor: React.FC<CursorProps> = ({ waypoints, appearAt = 0 }) => {
         style={{
           transform: `scale(${cursorScale})`,
           filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
-          transformOrigin: '4px 2px',
+          transformOrigin: `${TIP_X}px ${TIP_Y}px`,
         }}
       >
         <path

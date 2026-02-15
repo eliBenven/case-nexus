@@ -3,11 +3,16 @@
 Flask + SocketIO server that orchestrates caseload analysis
 with streaming extended thinking from Claude Opus 4.6.
 
-Four analysis modes:
+Nine analysis modes + autonomous agent:
 1. Caseload Health Check (1M context, all cases at once)
 2. Deep Case Analysis (single case strategy)
 3. Adversarial Simulation (prosecution vs defense debate)
 4. Motion Generation (128K output)
+5. Evidence Analysis (multimodal vision)
+6. Caseload Chat (conversational Q&A across 500 cases)
+7. Hearing Prep Brief (30-second court brief)
+8. Client Letter (plain-language case explanation)
+9. Cascade Intelligence (autonomous 9-tool agent loop)
 """
 
 import os
@@ -546,16 +551,16 @@ def handle_dismiss_alert(data):
 # --- Citation Verification ---
 
 def _verify_motion_citations(motion_text: str, case_number: str, sid: str):
-    """Verify citations in a generated motion via CourtListener API."""
+    """Verify citations in a generated motion via Claude + web search."""
     socketio.emit("citation_verification_started", {
         "case_number": case_number,
-        "status": "Verifying citations against CourtListener...",
+        "status": "Verifying citations via AI web search...",
     }, to=sid)
 
     # First try local regex extraction as a quick preview
     local_cites = courtlistener.extract_citations_local(motion_text)
 
-    # Then hit the CourtListener API for authoritative verification
+    # Then use Claude + web search for authoritative verification
     result = courtlistener.verify_citations(motion_text)
 
     socketio.emit("citation_verification_results", {
@@ -890,7 +895,7 @@ def handle_client_letter(data):
 
 @socketio.on("search_case_law")
 def handle_search_case_law(data):
-    """Search CourtListener for relevant case law."""
+    """Search for relevant case law via Claude + web search."""
     query = data.get("query", "")
     court = data.get("court", "ga")
     if not query:
