@@ -124,7 +124,7 @@ echo "ANTHROPIC_API_KEY=your-key-here" > .env
 python app.py
 ```
 
-Open `http://localhost:5001` → Click **Sync Caseload** → 500 cases load in seconds.
+Open `http://localhost:5555` → Click **Sync Caseload** → 500 cases load in seconds.
 
 ## Demo Data
 

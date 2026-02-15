@@ -76,7 +76,7 @@ echo "ANTHROPIC_API_KEY=your-key-here" > .env
 python app.py
 ```
 
-Open `http://localhost:5001` and click **Sync Caseload** to load 500 demo cases.
+Open `http://localhost:5555` and click **Sync Caseload** to load 500 demo cases.
 
 ## How Opus 4.6 Is Used
 

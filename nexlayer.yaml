@@ -4,7 +4,7 @@ application:
     - name: "app"
       image: "registry.nexlayer.io/nexlayer-mcp/elibenveniste/case-nexus:latest"
       path: "/"
-      servicePorts: [5001]
+      servicePorts: [5555]
       vars:
-        PORT: "5001"
+        PORT: "5555"
         ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
